@@ -13,23 +13,26 @@ end
 
 describe "eval" do
   # see https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf
-  it "should do nothing if the first item is an empty list" do
+  it "should delete the first item if it is an empty list" do
     d = PushForth.new([[],3])
     expect(d.eval.stack).to eq [3]
   end
 
-  it "should move across the next token if it's a literal" do
+  it "should pull out the first sub-item the 1st item is a list" do
     d = PushForth.new([[1],2,3])
     expect(d.eval.stack).to eq [[],1,2,3]
     expect(d.eval.stack).to eq [1,2,3]
   end
 
-  it "should keep the remaining list items if the list isn't empty" do
+  it "should only unpack one item at a time" do
     d = PushForth.new([[1,2,3],4,5])
     expect(d.eval.stack).to eq [[2,3],1,4,5]
+    expect(d.eval.stack).to eq [[3],2,1,4,5]
+    expect(d.eval.stack).to eq [[],3,2,1,4,5]
+    expect(d.eval.stack).to eq [3,2,1,4,5]
   end
 
-  it "should move across lists as well" do
+  it "should unpack items that are themselves lists" do
     d = PushForth.new([[[1],2,[3]],4,5])
     expect(d.eval.stack).to eq [[2,[3]],[1],4,5]
   end
@@ -40,14 +43,19 @@ describe "eval" do
   end
 end
 
+
 describe ":dup" do
-  it "should recognize :dup as an instruction" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:dup)).to be true
+  end
+
+  it "should actually duplicate the top remaining item" do
     d = PushForth.new([[1,:dup]])
     expect(d.eval.stack).to eq [[:dup], 1]
     expect(d.eval.stack).to eq [1, 1]
   end
 
-  it "should not do anything if there's nothing on the stack" do
+  it "should disappear if there's nothing on the stack" do
     d = PushForth.new([[:dup]])
     expect(d.eval.stack).to eq []
   end
