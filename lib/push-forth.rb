@@ -1,11 +1,11 @@
 class PushForth
   attr_accessor :stack
 
-  @@instructions = [:dup]
+  @@instructions = [:dup, :swap]
 
 
   def initialize(items_array=[[]])
-    @stack = items_array  
+    @stack = items_array
   end
 
 
@@ -16,8 +16,13 @@ class PushForth
 
   def dup
     @stack.unshift(@stack[0]) unless @stack.empty?
+    return self
   end
   
+  def swap
+    @stack.unshift(*@stack.shift(2).reverse) unless @stack.length < 2
+    return self
+  end
 
   def eval
     return self unless @stack[0].kind_of?(Array)

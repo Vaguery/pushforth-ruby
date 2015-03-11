@@ -66,3 +66,25 @@ describe ":dup" do
       [[[[[[[1], 2], 3], 4], 5], 6], [[[[[[1], 2], 3], 4], 5], 6], 7])
   end
 end
+
+
+describe "swap" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:swap)).to be true
+  end
+
+  it "should disappear unless there are two args" do
+    expect(PushForth.new([[:swap]]).eval.stack).to eq []
+    expect(PushForth.new([[:swap],1]).eval.stack).to eq [1]
+  end
+
+  it "should swap things if there are at least two" do
+    expect(PushForth.new([[:swap],1,2]).eval.stack).to eq [2,1]
+    expect(PushForth.new([[:swap],1,2,3,4]).eval.stack).to eq [2,1,3,4]
+  end
+
+  it "should work for fancy items" do
+    d = PushForth.new([[:swap],[[[[[[1],2],3],4],5],6],7])
+    expect(d.eval.stack).to eq [7, [[[[[[1], 2], 3], 4], 5], 6]]
+  end
+end
