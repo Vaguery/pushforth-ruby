@@ -6,7 +6,7 @@ See [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/com
 
 ## Adaptations and interpretations
 
-- Maarten's original syntax was very lisp-like in its unadorned instruction tokens. In order to set these off from the background text of the script, I've used Ruby's `Symbol` notation for them, adding an initial colon. This would just be semantic sugar, except that it also helps simplify interpreter's evaluation loop.
+- Maarten's original syntax was very lisp-like in its unadorned instruction tokens. In order to set these off from the background text of the script, I've used Ruby's `Symbol` notation for them, adding an initial colon. This would just be semantic sugar, except that it also helps simplify my interpreter's evaluation loop.
 
 - It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.
 
@@ -24,7 +24,7 @@ Anyway, the rules for `eval` are:
 - if the stack starts with a non-list (instruction or other literal), do nothing (and `halt`)
 - if the stack starts with an empty list, throw it away
 - pop the top item, which must be a non-empty list; call the remaining stack the `data` stack and the one you've popped the `code` stack
-  - pop its first element on the `code` stack, setting aside the remaining `code` stack
+  - pop the first element of the `code` stack, setting aside the remaining `code` stack for later
   - if the popped item is a literal or a list, push it onto the `data` stack, followed by the reduced `code` stack
   - if the popped item is an instruction, execute it, then push back the (possibly altered) `code` stack onto the (possibly altered) `data` stack
 
@@ -49,7 +49,7 @@ code           active   data
                         [2]
 ~~~
 
-The interpreter I've written here has a proxy `#step` method which calls `eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `push-forth` source code. See below.
+The interpreter I've written here has a proxy `#step` method which applies `:eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `push-forth` source code. See below.
 
 ## Instructions
 
