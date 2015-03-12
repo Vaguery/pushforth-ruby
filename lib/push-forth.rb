@@ -9,8 +9,9 @@ end
 class PushForth
   attr_accessor :stack
 
-  @@instructions = [:dup, :swap, :eval, 
-    :add, :subtract, :multiply, :divide]
+  @@instructions = [:dup, :swap, :rotate, :eval, 
+    :add, :subtract, :multiply, :divide, 
+    :enlist]
 
 
   def initialize(items_array=[[]])
@@ -31,6 +32,23 @@ class PushForth
   
   def swap(data,code)
     data.unshift(*data.shift(2).reverse) unless data.length < 2
+    return [data,code]
+  end
+
+
+  def rotate(data,code)
+    unless data.length < 3
+      a1,a2,a3 = data.shift(3)
+      data.unshift(a2,a3,a1)
+    end
+    return [data,code]
+  end
+
+
+  def enlist(data,code)
+    if data[0].kind_of?(Array)
+      code += data.shift
+    end
     return [data,code]
   end
 
@@ -116,17 +134,22 @@ class PushForth
   end
 
 
+  def evaluable?(array)
+    !array.empty? && array[0].kind_of?(Array)
+  end
 
-  def eval(data,code)
-    if data[0].kind_of?(Array)
-      to_eval = data.shift
-      if !to_eval.empty? 
-        eval_item = to_eval.shift
-        if instruction?(eval_item)
-          data,code = self.method(eval_item).call(data,to_eval)
-          data.unshift(to_eval)
+
+  def eval(data,code)  ## the core of the language
+    if evaluable?(data)
+      new_code = data.shift
+      if new_code.empty?
+      else
+        running_item = new_code.shift
+        if instruction?(running_item)
+          data,new_code = self.method(running_item).call(data,new_code)
+          data.unshift(new_code)
         else
-          data.unshift(to_eval,eval_item)
+          data.unshift(new_code,running_item)
         end
       end
     end
@@ -135,7 +158,7 @@ class PushForth
 
 
   def step
-    @stack,discard = eval(@stack,nil) if @stack[0].kind_of?(Array)
+    @stack,code = eval(@stack,nil) if @stack[0].kind_of?(Array)
     return self
   end
 end
