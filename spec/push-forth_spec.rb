@@ -14,6 +14,7 @@ describe "initialization" do
   end
 end
 
+
 describe "step (eval)" do
   describe "at the interpreter level" do
     it "should delete the first item if it is an empty list" do
@@ -97,6 +98,7 @@ describe ":dup" do
 end
 
 
+
 describe "swap" do
   it "be a recognized instruction" do
     expect(PushForth.new.instruction?(:swap)).to be true
@@ -115,5 +117,26 @@ describe "swap" do
   it "should work for fancy items" do
     d = PushForth.new([[:swap],[[[[[[1],2],3],4],5],6],7])
     expect(d.step.stack).to eq [[], 7, [[[[[[1], 2], 3], 4], 5], 6]]
+  end
+
+  describe "add" do
+    it "be a recognized instruction" do
+      expect(PushForth.new.instruction?(:add)).to be true
+    end
+
+    it "should disappear if there are not two args" do
+      expect(PushForth.new([[:add]]).step.stack).to eq [[]]
+      expect(PushForth.new([[:add],1]).step.stack).to eq [[],1]
+    end
+
+    it "should return the sum if there are two Numerics there" do
+      expect(PushForth.new([[:add],1,2]).step.stack).to eq [[],3]
+      expect(PushForth.new([[:add],Rational("1/4"),Complex(-4,1)]).step.stack).to eq [[],Complex(Rational("-15/4"),1)]
+    end
+
+    it "should build a continuation if either of the args isn't Numeric" do
+      expect(PushForth.new([[:add],"a",2,3]).step.stack).to eq [[:add,"a"],2,3]
+      expect(PushForth.new([[:add],2,"b",3]).step.stack).to eq [[:add,"b"],2,3]
+    end
   end
 end

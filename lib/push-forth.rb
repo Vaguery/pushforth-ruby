@@ -1,7 +1,7 @@
 class PushForth
   attr_accessor :stack
 
-  @@instructions = [:dup, :swap, :eval]
+  @@instructions = [:dup, :swap, :eval, :add]
 
 
   def initialize(items_array=[[]])
@@ -26,9 +26,18 @@ class PushForth
   end
 
 
-  def step
-    @stack = eval(@stack) if @stack[0].kind_of?(Array)
-    return self
+  def add(context)
+    return context unless context.length > 1
+    arg1, arg2 = context.shift(2)
+    k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+    if k1 && k2
+      context.unshift(arg1+arg2)
+    elsif k1
+    elsif k2
+    else
+      context.unshift(arg2,arg1)
+    end
+    return context
   end
 
 
@@ -47,5 +56,11 @@ class PushForth
       end
     end
     return context
+  end
+
+
+  def step
+    @stack = eval(@stack) if @stack[0].kind_of?(Array)
+    return self
   end
 end
