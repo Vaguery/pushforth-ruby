@@ -33,14 +33,17 @@ class PushForth
 
 
   def eval(context)
-    arg = context.shift
-    unless arg.empty?
-      item = arg.shift
-      case
-      when instruction?(item)
-        context = self.method(item).call(context)
-      else
-        context.unshift(arg,item)
+    if context[0].kind_of?(Array)
+      arg = context.shift
+      unless arg.empty? 
+        item = arg.shift
+        case
+        when instruction?(item)
+          context = self.method(item).call(context)
+          context.unshift(arg)
+        else
+          context.unshift(arg,item)
+        end
       end
     end
     return context
