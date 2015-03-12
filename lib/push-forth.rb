@@ -1,7 +1,16 @@
+class Error
+  attr_reader :string
+  def initialize(string)
+    @string = string
+  end
+end
+
+
 class PushForth
   attr_accessor :stack
 
-  @@instructions = [:dup, :swap, :eval, :add]
+  @@instructions = [:dup, :swap, :eval, 
+    :add, :subtract, :multiply, :divide]
 
 
   def initialize(items_array=[[]])
@@ -14,53 +23,119 @@ class PushForth
   end
 
 
-  def dup(context)
-    context.unshift(context[0]) unless context.empty?
-    return context
+  def dup(data,code)
+    data.unshift(data[0]) unless data.empty?
+    return [data,code]
   end
 
   
-  def swap(context)
-    context.unshift(*context.shift(2).reverse) unless context.length < 2
-    return context
+  def swap(data,code)
+    data.unshift(*data.shift(2).reverse) unless data.length < 2
+    return [data,code]
   end
 
 
-  def add(context)
-    return context unless context.length > 1
-    arg1, arg2 = context.shift(2)
-    k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-    if k1 && k2
-      context.unshift(arg1+arg2)
-    elsif k1
-    elsif k2
-    else
-      context.unshift(arg2,arg1)
+  def add(data,code)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        data.unshift(arg1+arg2)
+      elsif k1
+        code.unshift(:add,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:add,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
     end
-    return context
+    return [data,code]
   end
 
 
-  def eval(context)
-    if context[0].kind_of?(Array)
-      arg = context.shift
-      unless arg.empty? 
-        item = arg.shift
-        case
-        when instruction?(item)
-          context = self.method(item).call(context)
-          context.unshift(arg)
+  def subtract(data,code)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        data.unshift(arg1-arg2)
+      elsif k1
+        code.unshift(:subtract,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:subtract,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return [data,code]
+  end
+
+
+  def multiply(data,code)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        data.unshift(arg1*arg2)
+      elsif k1
+        code.unshift(:multiply,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:multiply,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return [data,code]
+  end
+
+
+  def divide(data,code)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        result = (arg2 == 0 ? Error.new("div0") : arg1/arg2)
+        data.unshift(result)
+      elsif k1
+        code.unshift(:divide,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:divide,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return [data,code]
+  end
+
+
+
+  def eval(data,code)
+    if data[0].kind_of?(Array)
+      to_eval = data.shift
+      if !to_eval.empty? 
+        eval_item = to_eval.shift
+        if instruction?(eval_item)
+          data,code = self.method(eval_item).call(data,to_eval)
+          data.unshift(to_eval)
         else
-          context.unshift(arg,item)
+          data.unshift(to_eval,eval_item)
         end
       end
     end
-    return context
+    return data,code
   end
 
 
   def step
-    @stack = eval(@stack) if @stack[0].kind_of?(Array)
+    @stack,discard = eval(@stack,nil) if @stack[0].kind_of?(Array)
     return self
   end
 end
