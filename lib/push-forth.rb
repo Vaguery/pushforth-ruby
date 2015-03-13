@@ -7,143 +7,72 @@ end
 
 
 class PushForth
-  attr_accessor :stack
+  @@instructions = [:eval, :noop,
+  :add, :subtract, :multiply, :divide, 
+  :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
+  :car, :cdr, :concat, :unit]
 
-  @@instructions = [:eval, 
-    :add, :subtract, :multiply, :divide, 
-    :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-    :car, :cdr, :concat, :unit]
+  attr_accessor :code,:data
 
 
-  def initialize(items_array=[[]])
-    @stack = items_array
+  def initialize(token_array=[])
+    @data = token_array
+    @code = nil
   end
 
 
-  def instruction?(thing)
-    return @@instructions.include?(thing) ? true : false
+  def evaluable?(thing=@data)
+    thing[0].kind_of?(Array) &&
+    !thing[0].empty?
   end
 
 
-  def dup(data,code)
-    data.unshift(data[0]) unless data.empty?
-    return [data,code]
-  end
-
-  
-  def swap(data,code)
-    data.unshift(*data.shift(2).reverse) unless data.length < 2
-    return [data,code]
+  def setup!
+    @code = @data.shift if evaluable?
+    return self
   end
 
 
-  def rotate(data,code)
-    unless data.length < 3
-      a1,a2,a3 = data.shift(3)
-      data.unshift(a2,a3,a1)
-    end
-    return [data,code]
+  def stack
+    @code.nil? ? @data : @data.unshift(@code)
   end
 
 
-  def pop(data,code)
-    unless data.length < 1
-      discard = data.shift
-    end
-    return [data,code]
+  def instruction?(item)
+    @@instructions.include?(item)
+  end
+
+  def evaluable?(thing=@data)
+    thing[0].kind_of?(Array) &&
+    !thing[0].empty?
   end
 
 
-  def split(data,code)
-    unless data.length < 1
-      if data[0].kind_of?(Array) && data[0].length > 1 
-        arg = data.shift
-        data.unshift(arg[0],arg.drop(1))
-      end
-    end
-    return [data,code]
-  end
-
-
-  def enlist(data,code)
-    if data[0].kind_of?(Array)
-      code += data.shift
-    end
-    return [data,code]
-  end
-
-
-  def car(data,code)
-    if data[0].kind_of?(Array)
-      arg = data.shift
-      data.unshift(arg[0]) unless arg.empty?
-    end
-    return [data,code]
-  end
-
-
-  def cdr(data,code)
-    if data[0].kind_of?(Array)
-      arg = data.shift
-      data.unshift(arg.drop(1)) unless arg.empty?
-    end
-    return [data,code]
-  end
-
-
-  def unit(data,code)
-    if data[0].kind_of?(Array)
-      arg = data.shift
-      case arg.length
-      when 0
-        data.unshift([],[])
-      when 1
-        data.unshift(arg,[])
+  def eval(code,data)
+    if evaluable?(data)
+      inner_code = data.shift # known to be a nonempty list: it's evaluable
+      item = inner_code.shift
+      if instruction?(item)
+        inner_code,data = self.method(item).call(inner_code,data)
       else
-        data.unshift([arg[0]],arg[1..-1])
+        data.unshift(item)
       end
+      data.unshift(inner_code)
     end
-    return [data,code]
+    return code,data
   end
 
 
-
-  def cons(data,code)
-    if data.length > 1
-      arg1,arg2 = data.shift(2)
-      if arg2.kind_of?(Array)
-        data.unshift(arg2.unshift(arg1))
-      else
-        code.unshift(:cons,arg2)
-        data.unshift(arg1)
-      end
-    end
-    return [data,code]
+  def step!
+    @code,@data = eval(@code,@data) if evaluable?
+    self
   end
 
+  ### instructions
 
-  def concat(data,code)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Array),arg2.kind_of?(Array)]
-      if k1 && k2
-        data.unshift(arg1+arg2)
-      elsif k1
-        code.unshift(:concat,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:concat,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
-    end
-    return [data,code]
-  end
+  ### arithmetic
 
-
-
-  def add(data,code)
+  def add(code,data)
     unless data.length < 2
       arg1, arg2 = data.shift(2)
       k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
@@ -159,51 +88,11 @@ class PushForth
         data.unshift(arg2,arg1)
       end
     end
-    return [data,code]
+    return code,data
   end
 
 
-  def subtract(data,code)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-      if k1 && k2
-        data.unshift(arg1-arg2)
-      elsif k1
-        code.unshift(:subtract,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:subtract,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
-    end
-    return [data,code]
-  end
-
-
-  def multiply(data,code)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-      if k1 && k2
-        data.unshift(arg1*arg2)
-      elsif k1
-        code.unshift(:multiply,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:multiply,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
-    end
-    return [data,code]
-  end
-
-
-  def divide(data,code)
+  def divide(code,data)
     unless data.length < 2
       arg1, arg2 = data.shift(2)
       k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
@@ -220,35 +109,172 @@ class PushForth
         data.unshift(arg2,arg1)
       end
     end
-    return [data,code]
+    return code,data
   end
 
 
-  def evaluable?(array)
-    result = !array.empty? && array[0].kind_of?(Array) && !array[0].empty?
-    return result
-  end
-
-
-  def eval(data,code)  ## the core of the language
-    if evaluable?(data)
-      new_code = data.shift
-      running_item = new_code.shift
-      if instruction?(running_item)
-        data,new_code = self.method(running_item).call(data,new_code)
-        data.unshift(new_code)
+  def multiply(code,data)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        data.unshift(arg1*arg2)
+      elsif k1
+        code.unshift(:multiply,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:multiply,arg1)
+        data.unshift(arg2)
       else
-        data.unshift(running_item)
-        data.unshift(new_code)
+        data.unshift(arg2,arg1)
       end
     end
-    return data,code
+    return code,data
   end
 
 
-  def step
-    new_data,new_code = eval(@stack,nil) if evaluable?(@stack)
-    @stack = new_data.unshift(new_code) unless new_code.nil?
-    return self
+  def subtract(code,data)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
+      if k1 && k2
+        data.unshift(arg1-arg2)
+      elsif k1
+        code.unshift(:subtract,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:subtract,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return code,data
+  end
+
+
+  ### combinators
+
+  def car(code,data)
+    if data[0].kind_of?(Array)
+      arg = data.shift
+      data.unshift(arg[0]) unless arg.empty?
+    end
+    return code,data
+  end
+
+
+  def cdr(code,data)
+    if data[0].kind_of?(Array)
+      arg = data.shift
+      data.unshift(arg.drop(1)) unless arg.empty?
+    end
+    return code,data
+  end
+
+
+  def concat(code,data)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Array),arg2.kind_of?(Array)]
+      if k1 && k2
+        data.unshift(arg1+arg2)
+      elsif k1
+        code.unshift(:concat,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:concat,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return code,data
+  end
+
+
+  def cons(code,data)
+    if data.length > 1
+      arg1,arg2 = data.shift(2)
+      if arg2.kind_of?(Array)
+        data.unshift(arg2.unshift(arg1))
+      else
+        code.unshift(:cons,arg2)
+        data.unshift(arg1)
+      end
+    end
+    return code,data
+  end
+
+
+  def dup(code,data)
+    data.unshift(data[0]) unless data.empty?
+    return code,data
+  end
+
+
+  def enlist(code,data)
+    if data[0].kind_of?(Array)
+      code += data.shift
+    end
+    return code,data
+  end
+
+
+  def pop(code,data)
+    unless data.length < 1
+      discard = data.shift
+    end
+    return code,data
+  end
+
+
+  def rotate(code,data)
+    unless data.length < 3
+      a1,a2,a3 = data.shift(3)
+      data.unshift(a2,a3,a1)
+    end
+    return code,data
+  end
+
+
+  def split(code,data)
+    unless data.length < 1
+      if data[0].kind_of?(Array) && data[0].length > 1 
+        arg = data.shift
+        data.unshift(arg[0],arg.drop(1))
+      end
+    end
+    return code,data
+  end
+
+
+  def swap(code,data)
+    data.unshift(*data.shift(2).reverse) unless data.length < 2
+    return code,data
+  end
+
+
+  def unit(code,data)
+    if data[0].kind_of?(Array)
+      arg = data.shift
+      case arg.length
+      when 0
+        data.unshift([],[])
+      when 1
+        data.unshift(arg,[])
+      else
+        data.unshift([arg[0]],arg[1..-1])
+      end
+    end
+    return code,data
+  end
+
+
+  ### misc
+
+
+  def noop(code,data)
+    return code,data
   end
 end
