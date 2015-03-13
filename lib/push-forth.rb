@@ -12,7 +12,7 @@ class PushForth
   @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
     :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-    :car, :cdr]
+    :car, :cdr, :concat]
 
 
   def initialize(items_array=[[]])
@@ -103,6 +103,27 @@ class PushForth
     end
     return [data,code]
   end
+
+
+  def concat(data,code)
+    unless data.length < 2
+      arg1, arg2 = data.shift(2)
+      k1,k2 = [arg1.kind_of?(Array),arg2.kind_of?(Array)]
+      if k1 && k2
+        data.unshift(arg1+arg2)
+      elsif k1
+        code.unshift(:concat,arg2)
+        data.unshift(arg1)
+      elsif k2
+        code.unshift(:concat,arg1)
+        data.unshift(arg2)
+      else
+        data.unshift(arg2,arg1)
+      end
+    end
+    return [data,code]
+  end
+
 
 
   def add(data,code)

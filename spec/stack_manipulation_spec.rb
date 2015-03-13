@@ -240,3 +240,41 @@ describe ":cdr" do
     expect(PushForth.new([[:cdr],[]]).step.stack).to eq [[]]
   end
 end
+
+
+describe ":concat (was ':cat')" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:concat)).to be true
+  end
+
+  it "should disappear if the top item isn't a list" do
+    expect(PushForth.new([[:concat]]).step.stack).to eq [[]]
+    expect(PushForth.new([[:concat],1]).step.stack).to eq [[],1]
+  end
+
+  it "should combine two lists" do
+    expect(PushForth.new([[:concat],[1,2],[3]]).step.stack).
+      to eq [[],[1,2,3]]
+    expect(PushForth.new([[:concat],[[1,2],3],[4]]).step.stack).
+      to eq [[],[[1,2],3,4]]
+  end
+
+  it "should use a continuation form when only one arg is a list" do
+    expect(PushForth.new([[:concat],[1,2],3,[4]]).step.stack).
+      to eq [[:concat, 3], [1, 2], [4]]
+    expect(PushForth.new([[:concat],1,[2,3],[4]]).step.stack).
+      to eq [[:concat, 1], [2, 3], [4]]
+
+  end
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:concat,1,2],[3,4],[5,6]]).step.stack).
+      to eq [[1,2],[3,4,5,6]]
+  end
+
+  it "should be comfortable 'concatenating' empty lists" do
+    expect(PushForth.new([[:concat],[],[1,2]]).step.stack).to eq [[], [1, 2]]
+    expect(PushForth.new([[:concat],[1,2],[]]).step.stack).to eq [[], [1, 2]]
+    expect(PushForth.new([[:concat],[],[]]).step.stack).to eq [[], []]
+  end
+end

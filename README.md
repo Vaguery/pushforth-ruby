@@ -36,6 +36,7 @@ I've made some changes, and probably some mistakes
 - Maarten's nomenclature with the "pivot" operator is not used here. Maybe when we print stuff, but personally I find it confusing.
 - When an instruction would raise an exception (for example, division by 0), instead of failing silently it produces an `Error` object as a result (pushed to the appropriate stack).
 - the `i combinator` is called `:enlist`
+- the `:cat` combinator is `:concat`
 - as a rule, I've implemented any instruction that wants multiple strongly-typed arguments as able to "scroll forward" as a continuation form
 
 ## Sort of how it works
@@ -129,7 +130,13 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:cdr,1,2],[3,4,5]]` ☛ `[[1,2],[4,5]]` # pop and discard top item of arg
   - `[[:cdr],1,[2,3]]` ☛ `[[],1,[2,3]]` # fails if arg is not a list
   - `[[:cdr],[]]` ☛ `[[]]` # deletes an empty arg
-- `:cat`
+- `:concat` signature:(list,list)
+  - `[[:concat,1,2],[3,4],[5,6]]` ☛ `[[1,2],[3,4,5,6]]` # combine two list args
+  - `[[:concat],1,2]` ☛ `[[],1,2]` # fail if no arg matches
+  - `[[:concat],1,[2,3],[4]]` ☛ `[[:concat,1],[2,3],[4]]` # continuation form
+  - `[[:concat],[1],2,[3,4]]` ☛ `[[:concat,2],[1],[3,4]]` # continuation form
+  - `[[:concat],[],[1,2]]` ☛ `[[],[1,2]]` # fine with empty list
+  - `[[:concat],[],[]]` ☛ `[[],[]]` # even when both args are empty
 - `:unit`
 - `:while`
 - `:put`
