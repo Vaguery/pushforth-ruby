@@ -12,7 +12,7 @@ class PushForth
   @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
     :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-    :car]
+    :car, :cdr]
 
 
   def initialize(items_array=[[]])
@@ -77,6 +77,15 @@ class PushForth
     if data[0].kind_of?(Array)
       arg = data.shift
       data.unshift(arg[0]) unless arg.empty?
+    end
+    return [data,code]
+  end
+
+
+  def cdr(data,code)
+    if data[0].kind_of?(Array)
+      arg = data.shift
+      data.unshift(arg.drop(1)) unless arg.empty?
     end
     return [data,code]
   end

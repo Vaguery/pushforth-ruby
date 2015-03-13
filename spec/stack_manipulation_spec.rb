@@ -215,3 +215,28 @@ describe ":car" do
     expect(PushForth.new([[:car],[]]).step.stack).to eq [[]]
   end
 end
+
+
+describe ":cdr" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:cdr)).to be true
+  end
+
+  it "should disappear if the top item isn't a list" do
+    expect(PushForth.new([[:cdr]]).step.stack).to eq [[]]
+    expect(PushForth.new([[:cdr],1]).step.stack).to eq [[],1]
+  end
+
+  it "should delete the top item of the top item on the data stack" do
+    expect(PushForth.new([[:cdr],[1,2]]).step.stack).to eq [[], [2]]
+    expect(PushForth.new([[:cdr],[[1,2],3],4]).step.stack).to eq [[],[3],4]
+  end
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:cdr,1,2],[3,4]]).step.stack).to eq [[1,2],[4]]
+  end
+
+  it "should delete an empty list argument" do
+    expect(PushForth.new([[:cdr],[]]).step.stack).to eq [[]]
+  end
+end
