@@ -126,7 +126,7 @@ describe ":cons" do
     expect(PushForth.new([[:cons],7]).step.stack).to eq [[],7]
   end
 
-  it "uses a continuation if the second arg isn't a list" do
+  it "uses a continuation form if the second arg isn't a list" do
     expect(PushForth.new([[:cons],1,2,3]).step.stack).to eq [[:cons, 2], 1, 3]
     expect(PushForth.new([[:cons, 2], 1, 3]).step.stack).to eq(
       [[:cons, 3, 2], 1])

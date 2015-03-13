@@ -54,19 +54,47 @@ The interpreter I've written here has a proxy `#step` method which applies `:eva
 
 ## Instructions
 
-Instructions Maarten explicitly mentions in his brief account are (details to follow):
+Instructions Maarten explicitly mentions in his brief account are, as I implement them:
 
-- `:eval`
-- `:dup`
-- `:swap`
-- `:rot`
-- `:add`
-  - uses a continuation
-- `:i` combinator
-- `:cons`
-  - uses a continuation
-- `:pop`
-- `:split`
+- `:eval` signature:(list with a list as its first element)
+  - `[[:eval,1,2],3,4,5]` ☛ `[[1,2],3,4,5]`  # arg doesn't match
+  - `[[:eval,1,2],[3,4,5]]` ☛ `[[1,2],[3,4,5]]` # arg doesn't match
+  - `[[:eval]]` ☛ `[[]]` # no arg
+  - `[[:eval,1,2],[[3],4],5]` ☛ [[1,2],[3,4],5]` # eval a literal: unshift it in context
+  - `[[:eval,1,2],[[:add],3,4],5]` ☛ [[1,2],[7],5]` # eval an instruction in context: run it
+  - `[[:eval],[[],3,4],5]` ☛ [[],[3,4],5]` # eval an empty list in context: delete it
+- `:dup` signature:(anything)
+  - `[[:dup,1,2],3,4,5]` ☛ `[[1,2],3,3,4,5]`
+  - `[[:dup]]` ☛ `[[]]` # fails if no arg
+- `:swap` signature:(anything,anything)
+  - `[[:swap,1,2],3,4,5]` ☛ `[[1,2],4,3,5]`
+  - `[[:swap]]` ☛ `[[]]` # fails if no arg
+  - `[[:swap],1]` ☛ `[[],1]`
+- `:rotate` signature:(anything,anything,anything)
+  - `[[:rotate,1,2],3,4,5]` ☛ `[[1,2],4,5,3]`
+  - `[[:rotate]]` ☛ `[[]]` # fails if any arg is missing
+  - `[[:rotate],1]` ☛ `[[],1]`
+  - `[[:rotate],1,2]` ☛ `[[],1,2]`
+- `:add` signature:(Number,Number)
+  - `[[:add,1,2],3,4+5i]` ☛ `[[1,2],7+5i]`
+  - `[[:add]]` ☛ `[[]]`
+  - `[[:add,1,2],"foo",3,4]` ☛ `[[:add,"foo",1,2],3,4]` # continuation form
+  - `[[:add,1,2],3,"bar",4]` ☛ `[[:add,"bar",1,2],3,4]` # continuation form
+  - `[[:add,1,2],"foo","bar",3,4]` ☛ `[[1,2],"foo","bar",3,4]` # fails if no arg matches
+- `:enlist` signature:(list)
+  - `[[:enlist,1,2],[3,4]]` ☛ `[[1,2,3,4]]`  # appends a list to the code stack
+  - `[[:enlist],3,4]` ☛ `[[],3,4]`  # fails if arg doesn't match
+  - `[[:enlist],[[3,[4]]]]` ☛ `[[[3,[4]]]]`
+- `:cons` signature:(anything,list)
+  - `[[:cons,1,2],3,[4]]` ☛ `[[1,2],[3,4]]` # prepends 1st arg onto list arg
+  - `[[:cons]]` ☛ `[[]] # fails if no 1st arg
+  - `[[:cons],3,"foo",[4]]` ☛ `[[:cons,"foo"],3,[4]] # uses a continuation form if 1st arg matches
+- `:pop` signature:(anything)
+  - `[[:pop,1,2],3,4,5]` ☛ `[[1,2],4,5]` # discards next item
+  - `[[:pop,1,2]]` ☛ `[[1,2]]` # fails if no arg
+- `:split` signature:(list)
+  - `[[:split,1,2],[3,4,5]]` ☛ `[[1,2],3,[4,5]]`
+  - `[[:split],1,[2,3]]` ☛ `[[],1,[2,3]]` # fails if arg is not a list
 - `:car`
 - `:cdr`
 - `:cat`

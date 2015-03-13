@@ -20,6 +20,13 @@ describe "add" do
     expect(PushForth.new([[:add],"a",2,3]).step.stack).to eq [[:add,"a"],2,3]
     expect(PushForth.new([[:add],2,"b",3]).step.stack).to eq [[:add,"b"],2,3]
   end
+
+  it "should work when the code stack is populated" do
+    expect(PushForth.new([[:add,1,2],"a",3,4]).step.stack).
+      to eq [[:add,"a",1,2],3,4]
+    expect(PushForth.new([[:add,1,2],3,"a",4]).step.stack).
+      to eq [[:add,"a",1,2],3,4]
+  end
 end
 
 
