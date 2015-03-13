@@ -75,9 +75,8 @@ class PushForth
 
   def car(data,code)
     if data[0].kind_of?(Array)
-      unless data[0].empty?
-        data.unshift(data.shift[0])
-      end
+      arg = data.shift
+      data.unshift(arg[0]) unless arg.empty?
     end
     return [data,code]
   end

@@ -117,10 +117,14 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
 - `:pop` signature:(anything)
   - `[[:pop,1,2],3,4,5]` ☛ `[[1,2],4,5]` # discards next item
   - `[[:pop,1,2]]` ☛ `[[1,2]]` # fails if no arg
-- `:split` signature:(list)
+- `:split` signature:(non-empty list)
   - `[[:split,1,2],[3,4,5]]` ☛ `[[1,2],3,[4,5]]` # pop and retain top item of arg
   - `[[:split],1,[2,3]]` ☛ `[[],1,[2,3]]` # fails if arg is not a list
-- `:car`
+  - `[[:split],[]]` ☛ `[[],[]]` # no net effect if arg is empty (vs `:car`)
+- `:car` signature:(non-empty list)
+  - `[[:car,1,2],[3,4,5]]` ☛ `[[1,2],3]` # pop and retain ONLY top item of arg
+  - `[[:car],1,[2,3]]` ☛ `[[],1,[2,3]]` # fails if arg is not a list
+  - `[[:car],[]]` ☛ `[[]]` # deletes an empty arg
 - `:cdr`
 - `:cat`
 - `:unit`

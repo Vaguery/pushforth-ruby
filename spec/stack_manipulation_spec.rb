@@ -185,6 +185,10 @@ describe ":split" do
   it "should work when the :code stack is populated" do
     expect(PushForth.new([[:split,1,2],[3,4]]).step.stack).to eq [[1,2],3,[4]]
   end
+
+  it "should have no (net) effect when the list is empty" do
+    expect(PushForth.new([[:split],[]]).step.stack).to eq [[], []]
+  end
 end
 
 
@@ -205,5 +209,9 @@ describe ":car" do
 
   it "should work when the :code stack is populated" do
     expect(PushForth.new([[:car,1,2],[3,4]]).step.stack).to eq [[1,2],3]
+  end
+
+  it "should delete an empty list argument" do
+    expect(PushForth.new([[:car],[]]).step.stack).to eq [[]]
   end
 end
