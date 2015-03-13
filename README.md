@@ -1,10 +1,35 @@
 # pushforth-ruby
 
-Sketch of Maarten Keijzer's push-forth interpreter in Ruby
+This is a "quick" test-driven implementatoin of Maarten Keijzer's push-forth interpreter in the Ruby language. For the description I'm working from, see [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
 
-See [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
+Like many languages designed for use in genetic programming (or as I prefer to say, _generative programming_) settings, `push-forth` is not really for people to read or write. Rather it's designed to be
+
+- extraordinarily robust, in the sense of having only short-range syntactical constraints (like list parentheses matching)
+- extraordinarily simple to run, having a single consistent "start" state and a single "step" method that moves interpretation forward to the next state
+- readily extensible, with explicit design patterns that help one understand the "reasonable" way to add domain-specific instructions or libraries of types
+- [reentrant](http://en.wikipedia.org/wiki/Reentrancy_(computing)), a thing shared by all the "Pushlike" languages
+
+Things `pushforth` is not:
+- legible
+- easy to follow what's happening
+- "reasonable" when you look at how programs work
+
+That said, it's not an "esoteric" language, in the sense of [malbolge](http://en.wikipedia.org/wiki/Malbolge) or [INTERCAL](http://en.wikipedia.org/wiki/INTERCAL), but actually is intended to be a form of _evolvable low-level code_. For example, in his first paper on the language, Maarten demonstrates (though in his typical offhand style) that rather complex but core pieces of "normal" programming languages can be _evolved_ in `pushforth` from the raw materials he provides, based only on a suite of acceptance tests as targets.
+
+Since many folks still don't quite "get" generative programming approaches, let me clarify that for a second (see any good book on generative programming for way more detail than you want):
+- the "user" builds a suite of automated rubrics or "expectations", which sum up the desired code's behavior; think of these as being like [RSpec's](http://rspec.info) "expectations": "given state X, I expect state Y to result"
+- a few hundred _random_ programs in `pushforth` can be generated
+- because the language is robust and flexible, those can be expected to run, and they are passed the initial "state X" from the rubrics as arguments
+- when each "guess" is finished running, the resulting state is compared to the desired "state Y"
+- "grade" the code, and make _more random code that takes into account the scores of the code you've already run_
+
+That last step is, of course, the entire body of work in the field called "genetic programming", but it's not rocket science. You can use any heuristic or metaheuristic you like, as long as it's able to learn from experience: hill-climbing, population-based evolutionary search, particle swarms, whatever you like. If you're worried about the results being too complicated or convoluted, then make it a multiobjective search and keep the complexity down as well as the error. Boom, you're done.
+
+The point is, these stupid unreadable little languages that _run_ and "do something_ even when you insert or delete arbitrary code have a very different use case from the readable, rational languages you may be used to.
 
 ## Adaptations and interpretations
+
+I've made some changes, and probably some mistakes
 
 - Maarten's original syntax was very lisp-like in its unadorned instruction tokens. In order to set these off from the background text of the script, I've used Ruby's `Symbol` notation for them, adding an initial colon. This would just be semantic sugar, except that it also helps simplify my interpreter's evaluation loop.
 - It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.
@@ -133,7 +158,7 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:divide,1,2],"foo","bar",3,4]` ☛ `[[1,2],"foo","bar",3,4]` # fails if no arg matches
 
 And here are the types I've encountered so far:
-- `Numeric`: using Ruby's built in for the moment, without being too concerned about the error-producing overflows and such; will let the execution of random pushforth programs "stress-test" these definitions and tell me whether i need to capture exceptions on the fly or try to plan ahead for them
+- `Numeric`: using Ruby's built in for the moment, without being too concerned about the error-producing overflows and such; will let the execution of random pushforth programs "stress-test" these definitions and tell me whether I need to capture exceptions on the fly or try to plan ahead for them
 - `Error`: records a "runtime" error generated by pushforth, like `div0`
 - `Boolean`
 - `Instruction`
