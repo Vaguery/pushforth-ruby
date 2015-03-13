@@ -11,7 +11,8 @@ class PushForth
 
   @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
-    :enlist, :cons, :pop, :dup, :swap, :rotate, :split]
+    :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
+    :car]
 
 
   def initialize(items_array=[[]])
@@ -67,6 +68,16 @@ class PushForth
   def enlist(data,code)
     if data[0].kind_of?(Array)
       code += data.shift
+    end
+    return [data,code]
+  end
+
+
+  def car(data,code)
+    if data[0].kind_of?(Array)
+      unless data[0].empty?
+        data.unshift(data.shift[0])
+      end
     end
     return [data,code]
   end
