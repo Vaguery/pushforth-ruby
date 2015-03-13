@@ -242,6 +242,33 @@ describe ":cdr" do
 end
 
 
+describe ":unit" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:unit)).to be true
+  end
+
+  it "should disappear if the top item isn't a list" do
+    expect(PushForth.new([[:unit]]).step.stack).to eq [[]]
+    expect(PushForth.new([[:unit],1]).step.stack).to eq [[],1]
+  end
+
+  it "should split the arg list into two, with the top item in the first" do
+    expect(PushForth.new([[:unit],[1,2]]).step.stack).to eq [[],[1],[2]]
+    expect(PushForth.new([[:unit],[[1,2],3],4]).step.stack).to eq [[],[[1,2]],[3],4]
+  end
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:unit,1,2],[3,4]]).step.stack).to eq [[1,2],[3],[4]]
+  end
+
+  it "should create a new empty list when arg.length < 2" do
+    expect(PushForth.new([[:unit],[1]]).step.stack).to eq [[],[1],[]]
+    expect(PushForth.new([[:unit],[]]).step.stack).to eq [[],[],[]]
+  end
+end
+
+
+
 describe ":concat (was ':cat')" do
   it "be a recognized instruction" do
     expect(PushForth.new.instruction?(:concat)).to be true

@@ -12,7 +12,7 @@ class PushForth
   @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
     :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-    :car, :cdr, :concat]
+    :car, :cdr, :concat, :unit]
 
 
   def initialize(items_array=[[]])
@@ -89,6 +89,23 @@ class PushForth
     end
     return [data,code]
   end
+
+
+  def unit(data,code)
+    if data[0].kind_of?(Array)
+      arg = data.shift
+      case arg.length
+      when 0
+        data.unshift([],[])
+      when 1
+        data.unshift(arg,[])
+      else
+        data.unshift([arg[0]],arg[1..-1])
+      end
+    end
+    return [data,code]
+  end
+
 
 
   def cons(data,code)

@@ -138,6 +138,10 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:concat],[],[1,2]]` ☛ `[[],[1,2]]` # fine with empty list
   - `[[:concat],[],[]]` ☛ `[[],[]]` # even when both args are empty
 - `:unit`
+  - `[[:unit,1,2],[3,4,5]]` ☛ `[[1,2],[3],[4,5]]` # pop and wrap top item in arg
+  - `[[:cdr],1]]` ☛ `[[],1]` # fail if arg is not a list
+  - `[[:cdr],[]]` ☛ `[[],[],[]]` # create a new empty list if arg empty
+  - `[[:cdr],[712]]` ☛ `[[],[712],[]]` # …or if it has 1 element
 - `:while`
 - `:put`
 - `:get`
