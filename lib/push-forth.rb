@@ -27,12 +27,6 @@ class PushForth
   end
 
 
-  def setup!
-    @code = @data.shift if evaluable?
-    return self
-  end
-
-
   def stack
     @code.nil? ? @data : @data.unshift(@code)
   end

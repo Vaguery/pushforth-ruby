@@ -39,21 +39,6 @@ describe PushForth do
   end
 
 
-  describe "setup!" do
-    it "should shift the top item of data" do
-      d = PushForth.new([[1,2],3]).setup!
-      expect(d.code).to eq [1,2]
-      expect(d.data).to eq [3]
-    end
-
-    it "should do nothing unless evaluable" do
-      d = PushForth.new([[],3]).setup!
-      expect(d.code).to be nil
-      expect(d.data).to eq [[],3]
-    end
-  end
-
-
   describe "step!" do
     it "should do nothing unless evaluable" do
       expect(PushForth.new([1,2,3]).step!.stack).to eq [1,2,3]
