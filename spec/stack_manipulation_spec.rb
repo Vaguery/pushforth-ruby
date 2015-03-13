@@ -15,7 +15,6 @@ describe ":dup" do
   it "should disappear if there's nothing on the stack" do
     d = PushForth.new([[:dup]])
     expect(d.step.stack).to eq [[]]
-    expect(d.step.stack).to eq []
   end
 
   it "should work for fancy arguments" do

@@ -1,6 +1,6 @@
 # pushforth-ruby
 
-This is a "quick" test-driven implementatoin of Maarten Keijzer's push-forth interpreter in the Ruby language. For the description I'm working from, see [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
+This is a "quick" test-driven implementation of Maarten Keijzer's push-forth interpreter in the Ruby language. For the description I'm working from, see [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
 
 Like many languages designed for use in genetic programming (or as I prefer to say, _generative programming_) settings, `push-forth` is not really for people to read or write. Rather it's designed to be
 
@@ -32,7 +32,7 @@ The point is, these stupid unreadable little languages that _run_ and _do someth
 I've made some changes, and probably some mistakes
 
 - Maarten's original syntax was very lisp-like in its unadorned instruction tokens. In order to set these off from the background text of the script, I've used Ruby's `Symbol` notation for them, adding an initial colon. This would just be semantic sugar, except that it also helps simplify my interpreter's evaluation loop.
-- It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.
+- It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. ~~I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.~~ Oh, yeah, it seems to make a difference when you get to his note on the `:while` instruction ("Dammit, Maarten!"). So to make it absolutely clear: **A pushforth program evaluates to itself _unless_ the first item is a non-empty list.**
 - Maarten's nomenclature with the "pivot" operator is not used here. Maybe when we print stuff, but personally I find it confusing.
 - When an instruction would raise an exception (for example, division by 0), instead of failing silently it produces an `Error` object as a result (pushed to the appropriate stack).
 - the `i combinator` is called `:enlist`
@@ -137,7 +137,7 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:concat],[1],2,[3,4]]` ☛ `[[:concat,2],[1],[3,4]]` # continuation form
   - `[[:concat],[],[1,2]]` ☛ `[[],[1,2]]` # fine with empty list
   - `[[:concat],[],[]]` ☛ `[[],[]]` # even when both args are empty
-- `:unit`
+- `:unit` signature:(list)
   - `[[:unit,1,2],[3,4,5]]` ☛ `[[1,2],[3],[4,5]]` # pop and wrap top item in arg
   - `[[:unit],1]]` ☛ `[[],1]` # fail if arg is not a list
   - `[[:unit],[]]` ☛ `[[],[],[]]` # create a new empty list if arg empty

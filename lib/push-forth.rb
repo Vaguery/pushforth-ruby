@@ -225,15 +225,14 @@ class PushForth
 
 
   def evaluable?(array)
-    !array.empty? && array[0].kind_of?(Array)
+    !array.empty? && array[0].kind_of?(Array) && !array[0].empty?
   end
 
 
   def eval(data,code)  ## the core of the language
     if evaluable?(data)
       new_code = data.shift
-      if new_code.empty?
-      else
+      unless new_code.empty?
         running_item = new_code.shift
         if instruction?(running_item)
           data,new_code = self.method(running_item).call(data,new_code)

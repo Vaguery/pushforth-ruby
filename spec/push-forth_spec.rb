@@ -17,15 +17,15 @@ end
 
 describe "step (eval)" do
   describe "at the interpreter level" do
-    it "should delete the first item if it is an empty list" do
+    it "should do nothing if the first item is an empty list" do
       d = PushForth.new([[],3])
-      expect(d.step.stack).to eq [3]
+      expect(d.step.stack).to eq [[],3]
     end
 
     it "should pull out the first sub-item the 1st item is a list" do
       d = PushForth.new([[1],2,3])
       expect(d.step.stack).to eq [[],1,2,3]
-      expect(d.step.stack).to eq [1,2,3]
+      expect(d.step.stack).to eq [[],1,2,3]
     end
 
     it "should only unpack one item at a time" do
@@ -33,7 +33,7 @@ describe "step (eval)" do
       expect(d.step.stack).to eq [[2,3],1,4,5]
       expect(d.step.stack).to eq [[3],2,1,4,5]
       expect(d.step.stack).to eq [[],3,2,1,4,5]
-      expect(d.step.stack).to eq [3,2,1,4,5]
+      expect(d.step.stack).to eq [[],3,2,1,4,5]
     end
 
     it "should unpack items that are themselves lists" do
@@ -53,12 +53,13 @@ describe "step (eval)" do
   end
 
   describe "inside a script" do
-    it "should delete the first item if an empty list" do
+    it "should do nothing the first item if an empty list" do
       d = PushForth.new([[:eval,3],[],1,2])
-      expect(d.step.stack).to eq [[3],1,2]
+      expect(d.step.stack).to eq [[3],[],1,2]
+      expect(PushForth.new([[:eval,3],[[]]]).step.stack).to eq [[3],[],[]]
     end
 
-    it "should pull out the first item of an initial list" do
+    it "should pull out the first literal item of an initial list" do
       d = PushForth.new([[:eval],[1,2],3,4])
       expect(d.step.stack).to eq [[],[2],1,3,4]
     end
