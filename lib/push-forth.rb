@@ -7,13 +7,11 @@ end
 
 
 class PushForth
-  @@instructions = [:eval, :noop,
-  :add, :subtract, :multiply, :divide, 
+  @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, 
   :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
   :car, :cdr, :concat, :unit]
 
   attr_accessor :code,:data
-
 
   def initialize(token_array=[])
     @data = token_array
@@ -34,11 +32,6 @@ class PushForth
 
   def instruction?(item)
     @@instructions.include?(item)
-  end
-
-  def evaluable?(thing=@data)
-    thing[0].kind_of?(Array) &&
-    !thing[0].empty?
   end
 
 
