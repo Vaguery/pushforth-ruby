@@ -86,7 +86,7 @@ describe "rotate" do
 end
 
 
-describe "i combinator (:enlist)" do
+describe ":enlist (i combinator)" do
   it "be a recognized instruction" do
     expect(PushForth.new.instruction?(:enlist)).to be true
   end
@@ -112,6 +112,35 @@ describe "i combinator (:enlist)" do
   it "should ignore a non-list item" do
     expect(PushForth.new([[:enlist,88],1,2,3]).step.stack).to eq(
       [[88],1,2,3])
+  end
+end
+
+
+describe ":cons" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:cons)).to be true
+  end
+
+  it "should won't work unless there are two args" do
+    expect(PushForth.new([[:cons]]).step.stack).to eq [[]]
+    expect(PushForth.new([[:cons],7]).step.stack).to eq [[],7]
+  end
+
+  it "uses a continuation if the second arg isn't a list" do
+    expect(PushForth.new([[:cons],1,2,3]).step.stack).to eq [[:cons, 2], 1, 3]
+    expect(PushForth.new([[:cons, 2], 1, 3]).step.stack).to eq(
+      [[:cons, 3, 2], 1])
+  end
+
+  it "prepends the first arg onto the second (a list)" do
+    expect(PushForth.new([[:cons],1,[2]]).step.stack).to eq [[],[1,2]]
+    expect(PushForth.new([[:cons],[1],[2]]).step.stack).to eq [[],[[1],2]]
+  end
+
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:cons,1,2,3],4,[5]]).step.stack).to eq(
+      [[1, 2, 3], [4, 5]])
   end
 
 end

@@ -11,6 +11,7 @@ See [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/com
 - Maarten's nomenclature with the "pivot" operator is not used here. Maybe when we print stuff, but personally I find it confusing.
 - When an instruction would raise an exception (for example, division by 0), instead of failing silently it produces an `Error` object as a result (pushed to the appropriate stack).
 - the `i combinator` is called `:enlist`
+- as a rule, I've implemented any instruction that wants multiple strongly-typed arguments as able to "scroll forward" as a continuation form
 
 ## Sort of how it works
 
@@ -59,9 +60,11 @@ Instructions Maarten explicitly mentions in his brief account are (details to fo
 - `:dup`
 - `:swap`
 - `:rot`
-- `:add` or `:+`
+- `:add`
+  - uses a continuation
 - `:i` combinator
 - `:cons`
+  - uses a continuation
 - `:pop`
 - `:split`
 - `:car`

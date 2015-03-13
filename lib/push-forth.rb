@@ -11,7 +11,7 @@ class PushForth
 
   @@instructions = [:dup, :swap, :rotate, :eval, 
     :add, :subtract, :multiply, :divide, 
-    :enlist]
+    :enlist, :cons]
 
 
   def initialize(items_array=[[]])
@@ -52,6 +52,19 @@ class PushForth
     return [data,code]
   end
 
+
+  def cons(data,code)
+    if data.length > 1
+      arg1,arg2 = data.shift(2)
+      if arg2.kind_of?(Array)
+        data.unshift(arg2.unshift(arg1))
+      else
+        code.unshift(:cons,arg2)
+        data.unshift(arg1)
+      end
+    end
+    return [data,code]
+  end
 
   def add(data,code)
     unless data.length < 2
