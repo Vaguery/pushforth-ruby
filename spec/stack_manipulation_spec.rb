@@ -142,5 +142,26 @@ describe ":cons" do
     expect(PushForth.new([[:cons,1,2,3],4,[5]]).step.stack).to eq(
       [[1, 2, 3], [4, 5]])
   end
-
 end
+
+
+describe ":pop" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:pop)).to be true
+  end
+
+  it "should disappear without an arg" do
+    expect(PushForth.new([[:pop]]).step.stack).to eq [[]]
+  end
+
+  it "should delete the top item on the data stack" do
+    expect(PushForth.new([[:pop],1,2,3]).step.stack).to eq [[], 2, 3]
+    expect(PushForth.new([[:pop],[1, 2],3]).step.stack).to eq [[],3]
+  end
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:pop,1,2,3],4,[5]]).step.stack).to eq(
+      [[1, 2, 3], [5]])
+  end
+end
+

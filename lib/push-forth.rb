@@ -9,9 +9,9 @@ end
 class PushForth
   attr_accessor :stack
 
-  @@instructions = [:dup, :swap, :rotate, :eval, 
+  @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
-    :enlist, :cons]
+    :enlist, :cons, :pop, :dup, :swap, :rotate]
 
 
   def initialize(items_array=[[]])
@@ -45,6 +45,14 @@ class PushForth
   end
 
 
+  def pop(data,code)
+    unless data.length < 1
+      discard = data.shift
+    end
+    return [data,code]
+  end
+
+
   def enlist(data,code)
     if data[0].kind_of?(Array)
       code += data.shift
@@ -65,6 +73,7 @@ class PushForth
     end
     return [data,code]
   end
+
 
   def add(data,code)
     unless data.length < 2
