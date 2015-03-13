@@ -68,7 +68,7 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:dup]]` ☛ `[[]]` # fails if no arg
 - `:swap` signature:(anything,anything)
   - `[[:swap,1,2],3,4,5]` ☛ `[[1,2],4,3,5]`
-  - `[[:swap]]` ☛ `[[]]` # fails if no arg
+  - `[[:swap]]` ☛ `[[]]` # fails if any arg is missing
   - `[[:swap],1]` ☛ `[[],1]`
 - `:rotate` signature:(anything,anything,anything)
   - `[[:rotate,1,2],3,4,5]` ☛ `[[1,2],4,5,3]`
@@ -82,13 +82,13 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:add,1,2],3,"bar",4]` ☛ `[[:add,"bar",1,2],3,4]` # continuation form
   - `[[:add,1,2],"foo","bar",3,4]` ☛ `[[1,2],"foo","bar",3,4]` # fails if no arg matches
 - `:enlist` signature:(list)
-  - `[[:enlist,1,2],[3,4]]` ☛ `[[1,2,3,4]]`  # appends a list to the code stack
+  - `[[:enlist,1,2],[3,4],5,6]` ☛ `[[1,2,3,4],5,6]`  # appends a list to the code stack
   - `[[:enlist],3,4]` ☛ `[[],3,4]`  # fails if arg doesn't match
-  - `[[:enlist],[[3,[4]]]]` ☛ `[[[3,[4]]]]`
+  - `[[:enlist],[[3,[4]]],5,6]` ☛ `[[[3,[4]]],5,6]`
 - `:cons` signature:(anything,list)
   - `[[:cons,1,2],3,[4]]` ☛ `[[1,2],[3,4]]` # prepends 1st arg onto list arg
-  - `[[:cons]]` ☛ `[[]] # fails if no 1st arg
-  - `[[:cons],3,"foo",[4]]` ☛ `[[:cons,"foo"],3,[4]] # uses a continuation form if 1st arg matches
+  - `[[:cons]]` ☛ `[[]]` # fails if no 1st arg
+  - `[[:cons],3,"foo",[4]]` ☛ `[[:cons,"foo"],3,[4]]` # uses a continuation form if 1st arg matches
 - `:pop` signature:(anything)
   - `[[:pop,1,2],3,4,5]` ☛ `[[1,2],4,5]` # discards next item
   - `[[:pop,1,2]]` ☛ `[[1,2]]` # fails if no arg
