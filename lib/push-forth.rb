@@ -35,7 +35,7 @@ class PushForth
   end
 
 
-  def eval(code,data)
+  def eval(code,data)         # note this is the instruction AND the step
     if evaluable?(data)
       inner_code = data.shift # known to be a nonempty list: it's evaluable
       item = inner_code.shift
@@ -56,87 +56,53 @@ class PushForth
   end
 
   ### instructions
-
   ### arithmetic
 
-  def add(code,data)
+  def arithmetic(instruction, code, data, &math_proc)
     unless data.length < 2
       arg1, arg2 = data.shift(2)
       k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
       if k1 && k2
-        data.unshift(arg1+arg2)
+        data.unshift(math_proc.call(arg1,arg2))
       elsif k1
-        code.unshift(:add,arg2)
+        code.unshift(instruction,arg2)
         data.unshift(arg1)
       elsif k2
-        code.unshift(:add,arg1)
+        code.unshift(instruction,arg1)
         data.unshift(arg2)
       else
         data.unshift(arg2,arg1)
       end
     end
     return code,data
+  end
+
+
+  def add(code,data)
+    return arithmetic(:add, code, data) do |a,b|
+      a+b
+    end
   end
 
 
   def divide(code,data)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-      if k1 && k2
-        result = (arg2 == 0 ? Error.new("div0") : arg1/arg2)
-        data.unshift(result)
-      elsif k1
-        code.unshift(:divide,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:divide,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
+    return arithmetic(:divide, code, data) do |a,b|
+      (b.zero? ? Error.new("div0") : a/b)
     end
-    return code,data
   end
 
 
   def multiply(code,data)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-      if k1 && k2
-        data.unshift(arg1*arg2)
-      elsif k1
-        code.unshift(:multiply,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:multiply,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
+    return arithmetic(:multiply, code, data) do |a,b|
+      a*b
     end
-    return code,data
   end
 
 
   def subtract(code,data)
-    unless data.length < 2
-      arg1, arg2 = data.shift(2)
-      k1,k2 = [arg1.kind_of?(Numeric),arg2.kind_of?(Numeric)]
-      if k1 && k2
-        data.unshift(arg1-arg2)
-      elsif k1
-        code.unshift(:subtract,arg2)
-        data.unshift(arg1)
-      elsif k2
-        code.unshift(:subtract,arg1)
-        data.unshift(arg2)
-      else
-        data.unshift(arg2,arg1)
-      end
+    return arithmetic(:subtract, code, data) do |a,b|
+      a-b
     end
-    return code,data
   end
 
 
@@ -257,9 +223,7 @@ class PushForth
     return code,data
   end
 
-
   ### misc
-
 
   def noop(code,data)
     return code,data
