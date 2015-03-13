@@ -32,7 +32,7 @@ The point is, these stupid unreadable little languages that _run_ and _do someth
 I've made some changes, and probably some mistakes
 
 - Maarten's original syntax was very lisp-like in its unadorned instruction tokens. In order to set these off from the background text of the script, I've used Ruby's `Symbol` notation for them, adding an initial colon. This would just be semantic sugar, except that it also helps simplify my interpreter's evaluation loop.
-- It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. ~~I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.~~ Oh, yeah, it seems to make a difference when you get to his note on the `:while` instruction ("Dammit, Maarten!"). So to make it absolutely clear: **A pushforth program evaluates to itself _unless_ the first item is a non-empty list.**
+- It was unclear in the original paper whether Maarten intended the interpreter to halt _only_ when the initial token was an empty list, a non-list item, or both. ~~I've tried to be consistent here, and made it explicit that an empty list is popped when executed. This may have consequences downstream that I'm unaware of at this point.~~ Oh, yeah, it seems to make a difference when you get to his note on the `:while` instruction ("Dammit, Maarten!"). So to make it absolutely clear: **A pushforth program evaluates to itself (that is, halts) _unless_ the first item is a non-empty list.**
 - Maarten's nomenclature with the "pivot" operator is not used here. Maybe when we print stuff, but personally I find it confusing.
 - When an instruction would raise an exception (for example, division by 0), instead of failing silently it produces an `Error` object as a result (pushed to the appropriate stack).
 - the `i combinator` is called `:enlist`
@@ -47,10 +47,8 @@ The program code (literals, instructions, and lists composed of those) is initia
 
 Anyway, the rules for `eval` are:
 
-- if the stack is empty, do nothing (and `halt`)
-- if the stack starts with a non-list (instruction or other literal), do nothing (and `halt`)
-- if the stack starts with an empty list, throw it away
-- pop the top item, which must be a non-empty list; call the remaining stack the `data` stack and the one you've popped the `code` stack
+- if the stack is empty, starts with a literal (instruction or non-list value) or starts with an empty list, do nothing (and `halt`)
+- pop the top item, which _must_ be a non-empty list; call the remaining stack the `data` stack and the one you've popped the `code` stack
   - pop the first element of the `code` stack, setting aside the remaining `code` stack for later
   - if the popped item is a literal or a list, push it onto the `data` stack, followed by the reduced `code` stack
   - if the popped item is an instruction, execute it, then push back the (possibly altered) `code` stack onto the (possibly altered) `data` stack
@@ -72,8 +70,7 @@ code           active   data
 []                 :+   [1, 1]
 []                      [2]                 instruction; apply it
                         [[], 2]             replace "code"
-                        ...
-                        [2]
+                                            HALT STATE
 ~~~
 
 The interpreter I've written here has a proxy `#step` method which applies `:eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `push-forth` source code. See below.
@@ -88,7 +85,7 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:eval]]` ☛ `[[]]` # no arg
   - `[[:eval,1,2],[[3],4],5]` ☛ `[[1,2],[3,4],5]` # eval a literal: unshift it in context
   - `[[:eval,1,2],[[:add],3,4],5]` ☛ `[[1,2],[7],5]` # eval an instruction in context: run it
-  - `[[:eval],[[],3,4],5]` ☛ `[[],[3,4],5]` # eval an empty list in context: delete it
+  - `[[:eval],[[],3,4],5]` ☛ `[[],[3,4],5]` # do nothing (HALT)
 - `:dup` signature:(anything)
   - `[[:dup,1,2],3,4,5]` ☛ `[[1,2],3,3,4,5]`
   - `[[:dup]]` ☛ `[[]]` # fails if no arg
