@@ -23,9 +23,9 @@ Since many folks still don't quite "get" generative programming approaches, let 
 - when each "guess" is finished running, the resulting state is compared to the desired "state Y"
 - "grade" the code, and make _more random code that takes into account the scores of the code you've already run_
 
-That last step is, of course, the entire body of work in the field called "genetic programming", but it's not rocket science. You can use any heuristic or metaheuristic you like, as long as it's able to learn from experience: hill-climbing, population-based evolutionary search, particle swarms, whatever you like. If you're worried about the results being too complicated or convoluted, then make it a multiobjective search and keep the complexity down as well as the error. Boom, you're done.
+That last step is, of course, the entire body of work in the field called "genetic programming", but it's not rocket science. You can use any heuristic or metaheuristic you like, as long as it's able to learn from experience: hill-climbing, population-based evolutionary search, particle swarms, whatever you like. If you're worried about the results being too complicated or convoluted, then make it a multiobjective search and keep the complexity down as well as the error. Boom, you're done. (Eventually)
 
-The point is, these stupid unreadable little languages that _run_ and "do something_ even when you insert or delete arbitrary code have a very different use case from the readable, rational languages you may be used to.
+The point is, these stupid unreadable little languages that _run_ and _do something_ even when you insert or delete arbitrary code have a very different use case from the readable, rational languages you may be used to.
 
 ## Adaptations and interpretations
 
