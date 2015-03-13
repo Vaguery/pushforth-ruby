@@ -60,9 +60,9 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:eval,1,2],3,4,5]` ☛ `[[1,2],3,4,5]`  # arg doesn't match
   - `[[:eval,1,2],[3,4,5]]` ☛ `[[1,2],[3,4,5]]` # arg doesn't match
   - `[[:eval]]` ☛ `[[]]` # no arg
-  - `[[:eval,1,2],[[3],4],5]` ☛ [[1,2],[3,4],5]` # eval a literal: unshift it in context
-  - `[[:eval,1,2],[[:add],3,4],5]` ☛ [[1,2],[7],5]` # eval an instruction in context: run it
-  - `[[:eval],[[],3,4],5]` ☛ [[],[3,4],5]` # eval an empty list in context: delete it
+  - `[[:eval,1,2],[[3],4],5]` ☛ `[[1,2],[3,4],5]` # eval a literal: unshift it in context
+  - `[[:eval,1,2],[[:add],3,4],5]` ☛ `[[1,2],[7],5]` # eval an instruction in context: run it
+  - `[[:eval],[[],3,4],5]` ☛ `[[],[3,4],5]` # eval an empty list in context: delete it
 - `:dup` signature:(anything)
   - `[[:dup,1,2],3,4,5]` ☛ `[[1,2],3,3,4,5]`
   - `[[:dup]]` ☛ `[[]]` # fails if no arg
