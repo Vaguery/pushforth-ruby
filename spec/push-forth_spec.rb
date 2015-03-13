@@ -22,6 +22,11 @@ describe "step (eval)" do
       expect(d.step.stack).to eq [[],3]
     end
 
+    it "should do nothing if the first item isn't a list" do
+      d = PushForth.new([1,2,3])
+      expect(d.step.stack).to eq [1,2,3]
+    end
+
     it "should pull out the first sub-item the 1st item is a list" do
       d = PushForth.new([[1],2,3])
       expect(d.step.stack).to eq [[],1,2,3]
@@ -46,17 +51,13 @@ describe "step (eval)" do
       expect(d.step.stack).to eq [[[2]], [[1]], 3]
     end
 
-    it "should do nothing if the first item isn't a list" do
-      d = PushForth.new([1,2,3])
-      expect(d.step.stack).to eq [1,2,3]
-    end
   end
 
   describe "inside a script" do
-    it "should do nothing the first item if an empty list" do
-      d = PushForth.new([[:eval,3],[],1,2])
-      expect(d.step.stack).to eq [[3],[],1,2]
-      expect(PushForth.new([[:eval,3],[[]]]).step.stack).to eq [[3],[],[]]
+    it "should do nothing ('halt') if the arg is an empty list" do
+      d = PushForth.new([[:eval],[],1,2])
+      expect(d.step.stack).to eq [[],[],1,2]
+      expect(PushForth.new([[:eval],[[]]]).step.stack).to eq [[],[],[]]
     end
 
     it "should pull out the first literal item of an initial list" do
@@ -74,6 +75,9 @@ describe "step (eval)" do
       expect(d.step.stack).to eq [[],1,2,3]
     end
 
+    it "should do nothing if the first item is an empty list" do
+      expect(PushForth.new([[:eval],[[],1]]).step.stack).to eq [[],[[],1]]
+    end
   end
 end
 
