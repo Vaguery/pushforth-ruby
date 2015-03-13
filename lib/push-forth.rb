@@ -225,21 +225,21 @@ class PushForth
 
 
   def evaluable?(array)
-    !array.empty? && array[0].kind_of?(Array) && !array[0].empty?
+    result = !array.empty? && array[0].kind_of?(Array) && !array[0].empty?
+    return result
   end
 
 
   def eval(data,code)  ## the core of the language
     if evaluable?(data)
       new_code = data.shift
-      unless new_code.empty?
-        running_item = new_code.shift
-        if instruction?(running_item)
-          data,new_code = self.method(running_item).call(data,new_code)
-          data.unshift(new_code)
-        else
-          data.unshift(new_code,running_item)
-        end
+      running_item = new_code.shift
+      if instruction?(running_item)
+        data,new_code = self.method(running_item).call(data,new_code)
+        data.unshift(new_code)
+      else
+        data.unshift(running_item)
+        data.unshift(new_code)
       end
     end
     return data,code
@@ -247,7 +247,8 @@ class PushForth
 
 
   def step
-    @stack,code = eval(@stack,nil) if @stack[0].kind_of?(Array)
+    new_data,new_code = eval(@stack,nil) if evaluable?(@stack)
+    @stack = new_data.unshift(new_code) unless new_code.nil?
     return self
   end
 end

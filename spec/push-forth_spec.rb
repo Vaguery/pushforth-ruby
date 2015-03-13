@@ -75,8 +75,13 @@ describe "step (eval)" do
       expect(d.step.stack).to eq [[],1,2,3]
     end
 
+    it "should execute an instruction if that's in the arg" do
+      d = PushForth.new([[:eval],[[:add],1,1],99])
+      expect(d.step.stack).to eq [[],[2],99]
+    end
+
     it "should do nothing if the first item is an empty list" do
-      expect(PushForth.new([[:eval],[[],1]]).step.stack).to eq [[],[[],1]]
+      expect(PushForth.new([[:eval],[[],1],2,3]).step.stack).to eq [[],[[],1]]
     end
   end
 end
