@@ -165,3 +165,26 @@ describe ":pop" do
   end
 end
 
+
+describe ":split" do
+  it "be a recognized instruction" do
+    expect(PushForth.new.instruction?(:split)).to be true
+  end
+
+  it "should disappear if the top item isn't a list" do
+    expect(PushForth.new([[:split]]).step.stack).to eq [[]]
+    expect(PushForth.new([[:split],1]).step.stack).to eq [[],1]
+  end
+
+  it "should unshift the top item of the top item on the data stack" do
+    expect(PushForth.new([[:split],[1,2]]).step.stack).to eq [[], 1, [2]]
+    expect(PushForth.new([[:split],[[1,2],3],4]).step.stack).to eq(
+      [[], [1, 2], [3], 4])
+  end
+
+  it "should work when the :code stack is populated" do
+    expect(PushForth.new([[:split,1,2],[3,4]]).step.stack).to eq [[1,2],3,[4]]
+  end
+end
+
+

@@ -11,7 +11,7 @@ class PushForth
 
   @@instructions = [:eval, 
     :add, :subtract, :multiply, :divide, 
-    :enlist, :cons, :pop, :dup, :swap, :rotate]
+    :enlist, :cons, :pop, :dup, :swap, :rotate, :split]
 
 
   def initialize(items_array=[[]])
@@ -48,6 +48,17 @@ class PushForth
   def pop(data,code)
     unless data.length < 1
       discard = data.shift
+    end
+    return [data,code]
+  end
+
+
+  def split(data,code)
+    unless data.length < 1
+      if data[0].kind_of?(Array) && data[0].length > 1 
+        arg = data.shift
+        data.unshift(arg[0],arg.drop(1))
+      end
     end
     return [data,code]
   end
