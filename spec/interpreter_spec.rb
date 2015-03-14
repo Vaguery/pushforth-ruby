@@ -7,36 +7,25 @@ require_relative '../lib/push-forth'
 describe PushForth do
   describe "initialization" do
     it "should work with a default" do
-      expect(PushForth.new().data).to eq []
-    end
-
-    it "should store an array passed in" do
-      expect(PushForth.new([1,2,3]).data).to eq [1,2,3]
-    end
-
-    it "should leave @code empty" do
-      expect(PushForth.new([1,2,3]).code).to eq nil
+      expect(PushForth.new().stack).to eq []
     end
   end
 
 
-  describe "evaluable?" do
-    it "should be false when @data is empty" do
-      expect(PushForth.new().evaluable?).to be false
-    end
-
-    it "should be false when @data[0] is not an array" do
-      expect(PushForth.new([1,2,3]).evaluable?).to be false
-    end
-
-    it "should be false when @data[0] is an empty array" do
-      expect(PushForth.new([[],1,2,3]).evaluable?).to be false
-    end
-
-    it "should be true when @data[0] is a non-empty array" do
-      expect(PushForth.new([[1,2],3]).evaluable?).to be true
-    end
+describe "evaluable" do
+  it "should match Maarten's definition" do
+    expect(PushForth.new().evaluable? 4 ).to be false          # type error
+    expect(PushForth.new().evaluable? nil ).to be false        # type error
+    expect(PushForth.new().evaluable? []).to be false         # structural error
+    expect(PushForth.new().evaluable? [3]).to be false        # structural error
+    expect(PushForth.new().evaluable? [[],[1,2,3]] ).to be false # halted
+    expect(PushForth.new().evaluable? [[],[1,[2]]] ).to be false # halted
+    expect(PushForth.new().evaluable? [[],[]] ).to be false      # halted
+    expect(PushForth.new().evaluable? [[1,2,3],[]] ).to be true
+    expect(PushForth.new().evaluable? [[1,2,3],[1,2,3]] ).to be true
+    expect(PushForth.new().evaluable? [[[]],[]] ).to be true
   end
+end
 
 
   describe "step!" do
@@ -65,8 +54,8 @@ describe PushForth do
     it "should run an :eval it finds on the code stack" do
       expect(PushForth.new([[:add,1,2],3,4]).step!.stack).to eq [[1,2], 7]
       # just making sure it's consistent
-      d = PushForth.new([[:eval],[:add,1,2],3,4])
-      expect(d.step!.stack).to eq [[], [1, 2], 7]
+      d = PushForth.new([[:eval],[[:add,1,2],3,4]])
+      expect(d.step!.stack).to eq [[], [[1, 2], 7]]
     end
 
     it "should act as Maarten indicates in his paper" do
@@ -76,8 +65,5 @@ describe PushForth do
       expect(PushForth.new([[:eval],[[1,1,:add]]]).step!.stack).
         to eq [[],expected]
     end
-
   end
-
-
 end
