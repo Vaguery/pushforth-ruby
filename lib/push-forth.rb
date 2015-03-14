@@ -59,6 +59,7 @@ class PushForth
     # nil               [[anything],anything]]       STEP  after split
 
 
+
   def eval(code,data)
     if evaluable?(code,data)
       inner_code = data.shift # known to be a nonempty list: it's evaluable
