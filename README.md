@@ -75,6 +75,10 @@ code           active   data
 
 The interpreter I've written here has a proxy `#step` method which applies `:eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `push-forth` source code. See below.
 
+## A more complex example
+
+Maarten's paper outlines a little `push-forth` interpreter written in `push-forth`. [Here it is, as a sort of over-ambitious acceptance test](https://gist.github.com/Vaguery/f2fcf15496720419146c), running itself running a script that adds 1+1. In other words: the interpreter "runs" an interpreter "running" `[[1, 1, :add]]`
+
 ## Instructions
 
 Instructions Maarten explicitly mentions in his brief account are, as I implement them:
@@ -139,7 +143,14 @@ Instructions Maarten explicitly mentions in his brief account are, as I implemen
   - `[[:unit],1]]` ☛ `[[],1]` # fail if arg is not a list
   - `[[:unit],[]]` ☛ `[[],[],[]]` # create a new empty list if arg empty
   - `[[:unit],[712]]` ☛ `[[],[712],[]]` # …or if it has 1 element
-- `:while`
+- `:while` signature:(3 lists)
+  - `[[:while]]` ☛ `[[]]`
+  - `[[:while],1]` ☛ `[[]]`
+  - `[[:while],1,1]` ☛ `[[]]`
+  - `[[:while],1,1,1]` ☛ `[[]]`
+  - etcetera; there is no continuation form (for now) for `:while`
+  - `[[:while],[1],[2],[3]]` ☛ `[[1, [[1], :while], :enlist], [3]]`
+  - **the interpreter** `[[[[]],[:eval,:dup,:car],:while],[[1,1,:add]]]` ☛ ☛ ☛ ... (many steps later) ☛ ☛ ☛ `[[], [], [[], 2]]`
 - `:put`
 - `:get`
 - `:cake`

@@ -26,7 +26,7 @@ describe "the :while instruction" do
   end
 
   it "should build The Thing otherwise" do
-    # while([ X Z Y ]) = [ [ X [ Z while ] i ] Y ]
+    # while([ X Z Y ]) = [ [ X [ X while ] i ] Y ]
     d = PushForth.new([[:while],[1],[2],[3]])
     d.step!
     expect(d.stack).to eq [[1, [[1], :while], :enlist], [3]]
