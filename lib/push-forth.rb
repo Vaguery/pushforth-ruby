@@ -9,7 +9,8 @@ end
 class PushForth
   @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, 
   :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-  :car, :cdr, :concat, :unit]
+  :car, :cdr, :concat, :unit,
+  :while]
 
   attr_accessor :code,:data
 
@@ -35,12 +36,16 @@ class PushForth
   end
 
 
-  def eval(code,data)         # note this is the instruction AND the step
+  def eval(code,data)
     if evaluable?(data)
       inner_code = data.shift # known to be a nonempty list: it's evaluable
       item = inner_code.shift
       if instruction?(item)
-        inner_code,data = self.method(item).call(inner_code,data)
+        if item == :eval
+          inner_code,data = eval(inner_code,data)
+        else
+          inner_code,data = self.method(item).call(inner_code,data)
+        end
       else
         data.unshift(item)
       end
@@ -226,6 +231,28 @@ class PushForth
   ### misc
 
   def noop(code,data)
+    return code,data
+  end
+
+
+  def while(code,data)
+    if data.length > 2
+      arg1,arg2,arg3 = data.shift(3)
+      # puts "#{arg1},#{arg2},#{arg3}"
+      k1,k2,k3 = [arg1,arg2,arg3].collect {|a| a.kind_of?(Array)}
+      if (k1 && k2 && k3) 
+        if arg2.empty?
+          data.unshift(arg2,arg3)
+        else
+          data.unshift(arg3)
+          code.unshift(:enlist)
+          code.unshift([arg1,:while])
+          code.unshift(*arg1)
+        end
+      else # for now; this could become a continuation
+        data.unshift(arg1,arg2,arg3)
+      end
+    end
     return code,data
   end
 end

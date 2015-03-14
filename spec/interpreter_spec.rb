@@ -56,12 +56,18 @@ describe PushForth do
       expect(PushForth.new([[:noop,1,2],3]).step!.stack).to eq [[1,2],3]
     end
 
-    # yes, this is redundant and a bit out of place; but it's core
-    it "should even run an :eval it finds on the code stack" do
-      d = PushForth.new([[[:noop,1,2],:eval],3])
-      expect(d.step!.stack).to eq [[:eval], [:noop, 1, 2], 3]
-      expect(d.step!.stack).to eq [[], [1, 2], 3]
+  end
+
+  describe "the :eval instruction" do
+    it "should run an :eval it finds on the code stack" do
+      expect(PushForth.new([[:add], 1, 2]).step!.stack).to eq [[], 3]
+      # just making sure
+
+      d = PushForth.new([[:eval], [[:add], 1, 2], 4])
+      expect(d.step!.stack).to eq [[], [[], 3], 4]
     end
+
+
   end
 
 

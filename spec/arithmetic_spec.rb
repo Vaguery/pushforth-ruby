@@ -2,7 +2,7 @@ require 'rspec'
 require_relative '../lib/push-forth'
 
 describe "add" do
-  it "be a recognized instruction" do
+  it "should be a recognized instruction" do
     expect(PushForth.new.instruction?(:add)).to be true
   end
 
@@ -31,7 +31,7 @@ end
 
 
 describe "subtract" do
-  it "be a recognized instruction" do
+  it "should be a recognized instruction" do
     expect(PushForth.new.instruction?(:subtract)).to be true
   end
 
@@ -57,7 +57,7 @@ end
 
 
 describe "multiply" do
-  it "be a recognized instruction" do
+  it "should be a recognized instruction" do
     expect(PushForth.new.instruction?(:multiply)).to be true
   end
 
@@ -84,7 +84,7 @@ end
 
 
 describe "divide" do
-  it "be a recognized instruction" do
+  it "should be a recognized instruction" do
     expect(PushForth.new.instruction?(:divide)).to be true
   end
 
