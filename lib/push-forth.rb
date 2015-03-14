@@ -14,15 +14,22 @@ class PushForth
 
   attr_accessor :code,:data
 
+
   def initialize(token_array=[])
     @data = token_array
     @code = nil
   end
 
 
-  def evaluable?(thing=@data)
-    thing[0].kind_of?(Array) &&
-    !thing[0].empty?
+  def evaluable?(code=@code,data=@data)
+    if code.nil?
+      result = data[0].kind_of?(Array) &&
+               !data[0].empty?
+    else
+      result = code.kind_of?(Array) && 
+               data.kind_of?(Array)
+    end
+    return result
   end
 
 
@@ -36,13 +43,27 @@ class PushForth
   end
 
 
+    # code              data
+    # ----              ----
+    # nil               nil                          FAIL  type error
+    # not list          not list                     FAIL  type error
+    # not list          []                           FAIL  type error
+    # []                not list                     FAIL  type error
+    # nil               [[]]                         HALT  normal
+    # nil               [[],1,2,3]                   HALT  normal
+    # []                []                           HALT  normal
+    # []                [1,2,3]                      HALT  normal
+    # [1,2,3]           []                           STEP  no split  
+    # [1,2,3]           [1,2,3]                      STEP  no split
+    # nil               [[],anything]]               STEP  after split
+    # nil               [[anything],anything]]       STEP  after split
+
+
   def eval(code,data)
-    if evaluable?(data)
+    if evaluable?(code,data)
       inner_code = data.shift # known to be a nonempty list: it's evaluable
       item = inner_code.shift
-      puts "item is #{item}"
       if instruction?(item)
-        puts "  calling #{item}(#{inner_code},#{data})"
         inner_code,data = self.method(item).call(inner_code,data)
       else
         data.unshift(item)
@@ -54,7 +75,7 @@ class PushForth
 
 
   def step!
-    @code,@data = eval(@code,@data) if evaluable?
+    @code,@data = eval(@code,@data) if self.evaluable?
     self
   end
 
