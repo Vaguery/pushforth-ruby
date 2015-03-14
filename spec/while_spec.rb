@@ -42,17 +42,13 @@ describe "the :while instruction" do
       to eq [[:while], [:eval, :dup, :car], [[]], [[1, 1, :add]]]
     runner.step!
     expect(runner.stack).
-      to eq [[:eval, 
-              :dup, 
-              :car, 
-              [[:eval, :dup, :car], 
-              :while], 
-              :enlist], 
+      to eq [[:eval, :dup, :car, [[:eval, :dup, :car], :while], :enlist], 
               [[1, 1, :add]]]
     runner.step!
     expect(runner.stack).
       to eq [[:dup, :car, [[:eval, :dup, :car], :while], :enlist], [], [1, 1,
-              :add]]  #### WRONG  :eval                           ^^^^^
+              :add]]  #### WRONG  :eval                            ^^
+                #                                                  [[1,:add],1]     
     runner.step!
     expect(runner.stack).
       to eq [[:car, [[:eval, :dup, :car], :while], :enlist], [], [], [1, 1, :add]]
@@ -68,5 +64,8 @@ describe "the :while instruction" do
     runner.step!
     expect(runner.stack).
       to eq [[:while], [:eval, :dup, :car], [], [1, 1, :add]]
+    runner.step!
+    expect(runner.stack).
+      to eq [[], [], [1, 1, :add]]
   end
 end

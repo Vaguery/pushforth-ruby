@@ -56,17 +56,26 @@ describe PushForth do
       expect(PushForth.new([[:noop,1,2],3]).step!.stack).to eq [[1,2],3]
     end
 
+    it "should act as Maarten indicates in his paper" do
+      expect(PushForth.new([[1,1,:add]]).step!.stack).to eq [[1, :add], 1]
+    end
   end
 
   describe "the :eval instruction" do
     it "should run an :eval it finds on the code stack" do
-      expect(PushForth.new([[:add], 1, 2]).step!.stack).to eq [[], 3]
-      # just making sure
-
-      d = PushForth.new([[:eval], [[:add], 1, 2], 4])
-      expect(d.step!.stack).to eq [[], [[], 3], 4]
+      expect(PushForth.new([[:add,1,2],3,4]).step!.stack).to eq [[1,2], 7]
+      # just making sure it's consistent
+      d = PushForth.new([[:eval],[:add,1,2],3,4])
+      expect(d.step!.stack).to eq [[], [1, 2], 7]
     end
 
+    it "should act as Maarten indicates in his paper" do
+      expected = PushForth.new([[1,1,:add]]).step!.stack # [[1, :add], 1]
+      # just checking
+      expect(PushForth.new().evaluable?([[1,1,:add]])).to be true
+      expect(PushForth.new([[:eval],[[1,1,:add]]]).step!.stack).
+        to eq [[],expected]
+    end
 
   end
 

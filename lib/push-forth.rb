@@ -40,12 +40,10 @@ class PushForth
     if evaluable?(data)
       inner_code = data.shift # known to be a nonempty list: it's evaluable
       item = inner_code.shift
+      puts "item is #{item}"
       if instruction?(item)
-        if item == :eval
-          inner_code,data = eval(inner_code,data)
-        else
-          inner_code,data = self.method(item).call(inner_code,data)
-        end
+        puts "  calling #{item}(#{inner_code},#{data})"
+        inner_code,data = self.method(item).call(inner_code,data)
       else
         data.unshift(item)
       end
