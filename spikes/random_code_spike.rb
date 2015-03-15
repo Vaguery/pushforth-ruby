@@ -19,7 +19,7 @@ def randomBool
 end
 
 def randomToken
-  which = [:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool].sample
+  which = [:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool].sample
   self.method(which).call()
 end
 
@@ -31,21 +31,75 @@ def blockOf50
   10.times.collect {blockOf5}
 end
 
-def rando
+def random_tree
   PushForthInterpreter.new ([blockOf50.flatten ] + blockOf50)
 end
 
 
-## this might easily fall into an infinite loop...
-counts = 1000.times.collect do
-  runner = rando
-  @counter = 0
-  until runner.halted? do
-    runner.step!
-    @counter += 1
+def build_tree(tokens)
+  tree = []
+  done = false
+  until tokens.empty? || done
+    token = tokens.shift
+    if token == "("
+      meta_token = build_tree(tokens)
+      tree << meta_token
+    elsif token == ")"
+      done = true
+    else
+      tree << token
+    end
   end
-  # puts "#{runner.stack.inspect}"
-  @counter
+  return tree
 end
 
-puts counts.sort
+
+def tree2(points,prob=0.1)
+  triggers = []
+  script = []
+  while points > 0
+    if Random.rand() < prob
+      # branch
+      triggers << 0
+      script << "("
+    else
+      script << randomToken
+    end
+    points -= 1
+    triggers = triggers.map {|t| t += 1}
+    if triggers[0] && triggers[0] > 1.0/prob
+      script << ")"
+      points -= 1
+      triggers = triggers.drop(1)
+    end
+    puts triggers.inspect
+  end
+  while triggers[0]
+    script << ")"
+    points -= 1
+    triggers = triggers.drop(1)
+  end
+
+  script = build_tree(script)
+
+  return script
+end
+
+
+t = tree2(40)
+puts t.inspect
+puts build_tree(t).inspect
+
+## this might easily fall into an infinite loop...
+# counts = 1000.times.collect do
+#   runner = random_tree
+#   @counter = 0
+#   until runner.halted? do
+#     runner.step!
+#     @counter += 1
+#   end
+#   # puts "#{runner.stack.inspect}"
+#   @counter
+# end
+
+# puts counts.sort

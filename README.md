@@ -230,15 +230,22 @@ For example, here are some more instructions I've added to flesh it out:
 - `:data_size`
 
 ### aggregation
-- `:gather_alike`
-- `:lift_alike`
-- `:bury_alike`
-- `:archive!`
+- `:gather_type`
+- `:lift_type`
+- `:bury_type`
+- `:archive`
+- `:snapshot`
 
 ### functional
 - `:map`
 - `:fold`
 - `:reduce`
+
+### type
+- `:type`
+- `:is_type?`
+- `:same_type?`
+- `:yank_args`
 
 ### 
 
@@ -252,4 +259,5 @@ And here are the types I've encountered so far:
 And the types I expect to want in fleshing things out:
 - `String`
 - `Iterator`
+- `Type`
 - some kind of key-value hash
