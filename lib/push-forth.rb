@@ -10,10 +10,10 @@ class PushForth
   @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, 
   :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
   :car, :cdr, :concat, :unit,
-  :while]
+  :while,
+  :and, :or, :not]
 
   attr_accessor :stack
-
 
   def initialize(token_array=[])
     @stack = token_array
@@ -110,6 +110,55 @@ class PushForth
     end
   end
 
+  ### boolean
+
+  def boolean?(thing)
+    thing == true || thing == false
+  end
+
+
+  def boolean_arity_2(instruction, stack, &math_proc)
+    unless stack.length < 3
+        code = stack.shift
+      arg1, arg2 = stack.shift(2)
+      k1,k2 = [boolean?(arg1),boolean?(arg2)]
+      if k1 && k2
+        stack.unshift(math_proc.call(arg1,arg2))
+      elsif k1
+        code.unshift(instruction,arg2)
+        stack.unshift(arg1)
+      elsif k2
+        code.unshift(instruction,arg1)
+        stack.unshift(arg2)
+      else
+        stack.unshift(arg2,arg1)
+      end
+      stack.unshift(code)
+    end
+    return stack
+  end
+
+
+  def and(stack)
+    return boolean_arity_2(:and, stack) do |a,b|
+      a && b
+    end
+  end
+
+
+  def or(stack)
+    return boolean_arity_2(:or, stack) do |a,b|
+      a || b
+    end
+  end
+
+
+  def not(stack)
+    if boolean?(stack[1])
+      stack[1] = !stack[1]
+    end
+    return stack
+  end
 
   ### combinators
 
