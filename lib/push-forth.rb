@@ -9,6 +9,27 @@ module PushForth
   end
 
 
+  class Dictionary
+    attr_accessor :contents
+
+    def initialize(hash = {})
+      @contents = hash
+    end
+
+    def set(key,value)
+      contents[key] = value
+    end
+
+    def get(key)
+      return contents[key] || Error.new("key not found")
+    end
+
+    def eql?(other)
+      return @contents.eql?(other.contents)
+    end
+  end
+
+
   class PushForthInterpreter
 
     def self.instructions
@@ -19,13 +40,15 @@ module PushForth
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
       :car, :cdr, :concat, :unit,
       :while,
-      :and, :or, :not, :if, :which]
+      :and, :or, :not, :if, :which,
+      :set, :get, :dict]
 
 
-    attr_accessor :stack
+    attr_accessor :stack,:steps
 
     def initialize(token_array=[])
       @stack = token_array
+      @steps = 0
     end
 
 
@@ -52,24 +75,33 @@ module PushForth
 
 
     def eval(state)
-        if evaluable?(state)
-            code = state[0]
-            focus = code.shift
-            if focus == :eval
-                state[1] = eval(state[1]) if evaluable?(state[1])
-            elsif instruction?(focus)
-                state = self.method(focus).call(state)
-            else
-                state.insert(1,focus)
-            end
+      if evaluable?(state)
+        code = state[0]
+        focus = code.shift
+        if focus == :eval
+          state[1] = eval(state[1]) if evaluable?(state[1])
+        elsif instruction?(focus)
+          state = self.method(focus).call(state)
+        else
+          state.insert(1,focus)
         end
-        return state
+      end
+      return state
     end
 
 
     def step!
+      @steps += 1
       @stack = eval(@stack)
       return self
+    end
+
+
+    def run
+      while evaluable?(@stack) && @steps < 2000
+        self.step!
+      end
+      self
     end
 
     ### instructions
@@ -203,6 +235,50 @@ module PushForth
         stack.unshift(code)
       end
       return stack
+    end
+
+    ### dictionary
+
+    def dictionary?(thing)
+      thing.kind_of? Dictionary
+    end
+
+
+    def get(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if dictionary?(arg1)
+          stack.unshift(arg1.get(arg2),arg1)
+        else
+          code.unshift(:get,arg1)
+          stack.unshift(arg2)
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
+
+
+    def set(stack)
+      if stack.length > 3
+        code = stack.shift
+        arg1,arg2,arg3 = stack.shift(3)
+        if dictionary?(arg1)
+          arg1.set(arg2,arg3)
+          stack.unshift(arg1)
+        else
+          code.unshift(:set,arg1)
+          stack.unshift(arg2,arg3)
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
+
+
+    def dict(stack)
+      return stack.insert(1,PushForth::Dictionary.new)
     end
 
     ### combinators

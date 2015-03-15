@@ -197,6 +197,23 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:which],true,3,4]` ☛ `[[],3]`
   - `[[:which],"foo",3,4,5]` ☛ `[[:which,"foo"],3,4,5]`
 
+### dictionary
+- `:get`: signature:(Dictionary,Any), with continuation form
+  - `[[:get],«Dictionary:{3:88}»,3]` ☛ `[[],88,«Dictionary:{3:88}»]` (keeps Dictionary)
+  - `[[:get],3,4,5]` ☛ `[[:get,3],4,5]`
+  - `[[:get],«Dictionary:{3:88}»,4]` ☛ `[[],«Error:key not found»]`
+- `:set`: signature:(Dictionary,Any,Any), with continuation form
+  - `[[:set],«Dictionary:{3:88}»,3,4]` ☛ `[[],«Dictionary:{3:4}»]`
+  - `[[:set],«Dictionary:{3:88}»,:add,false]` ☛ `[[],«Dictionary:{3:4,:add:false}»]`
+  - `[[:set],3,4,5]` ☛ `[[:set,3],4,5]`
+  - `[[:set],«Dictionary:{3:88}»,4]` ☛ `[[],«Dictionary:{3:88}»,4]`
+- `:dict`: signature:()
+  - `[[:dict],1,2,3]` ☛ `[[],«Dictionary:{}»,1,2,3]`
+- `:keys`: signature:(Dictionary) (machine order)
+  - `[[:keys],«Dictionary:{3:88}»]` ☛ `[[],[3],«Dictionary:{3:88}»]`
+- `:values`: signature:(Dictionary) (machine order)
+  - `[[:values],«Dictionary:{3:88}»]` ☛ `[[],[88],«Dictionary:{3:88}»]`
+
 ## A silly list of possibilities and wants
 
 (not needs)
@@ -209,10 +226,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:==`
 - `:≠`
 
-### dictionary
-- `:assoc`
-- `:get`
-- `:set`
 
 ### i/o
 - variables?
@@ -231,8 +244,11 @@ For example, here are some more instructions I've added to flesh it out:
 
 ### aggregation
 - `:gather_type`
+- `:gather_same`
 - `:lift_type`
+- `:lift_same`
 - `:bury_type`
+- `:bury_same`
 - `:archive`
 - `:snapshot`
 
@@ -255,9 +271,9 @@ And here are the types I've encountered so far:
 - `Boolean`
 - `Instruction`
 - `List`
+- `Dictionary`
 
 And the types I expect to want in fleshing things out:
 - `String`
 - `Iterator`
 - `Type`
-- some kind of key-value hash

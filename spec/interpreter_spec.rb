@@ -67,4 +67,18 @@ end
         to eq [[],expected]
     end
   end
+
+  describe "run" do
+    it "should step until it's not #evaluable?" do
+      hasrun = PushForthInterpreter.new([[1,1,:add,1,1,1,:add,1,1,:add]]).run.stack
+      expect(hasrun).to eq [[], 2, 2, 1, 2]
+    end
+
+    it "should step until its counter runs out" do
+      hasrun = PushForthInterpreter.new([[[[]],[:eval,:dup,:car],:while],[[16,1.0,:divide]]]).run
+      expect(hasrun.stack).to eq [[], [], [[], 0.0625]]
+      expect(hasrun.steps).to eq 24
+    end
+  end
+
 end

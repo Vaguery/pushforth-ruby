@@ -72,7 +72,6 @@ def tree2(points,prob=0.1)
       points -= 1
       triggers = triggers.drop(1)
     end
-    puts triggers.inspect
   end
   while triggers[0]
     script << ")"
@@ -86,20 +85,14 @@ def tree2(points,prob=0.1)
 end
 
 
-t = tree2(40)
-puts t.inspect
+t = tree2(100)
 puts build_tree(t).inspect
 
-## this might easily fall into an infinite loop...
-# counts = 1000.times.collect do
-#   runner = random_tree
-#   @counter = 0
-#   until runner.halted? do
-#     runner.step!
-#     @counter += 1
-#   end
-#   # puts "#{runner.stack.inspect}"
-#   @counter
-# end
+# this might easily fall into an infinite loop...
+dudes = 5000.times.collect do
+  pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
+  puts "#{pf.stack.inspect}"
+  pf.run
+end
 
-# puts counts.sort
+puts dudes.collect {|dude| dude.steps}.sort
