@@ -11,7 +11,7 @@ class PushForth
   :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
   :car, :cdr, :concat, :unit,
   :while,
-  :and, :or, :not]
+  :and, :or, :not, :if, :which]
 
   attr_accessor :stack
 
@@ -159,6 +159,38 @@ class PushForth
     end
     return stack
   end
+
+
+  def if(stack)
+    if stack.length > 2
+        code = stack.shift
+      arg1, arg2 = stack.shift(2)
+      if boolean?(arg1)
+        stack.unshift(arg2) if arg1
+      else
+        code.unshift(:if,arg1)
+      end
+      stack.unshift(code)
+    end
+    return stack
+  end
+
+  def which(stack)
+    if stack.length > 3
+        code = stack.shift
+      arg1, arg2, arg3 = stack.shift(3)
+      if boolean?(arg1)
+        stack.unshift(arg1 ? arg2 : arg3) 
+      else
+        code.unshift(:which,arg1)
+        stack.unshift(arg2,arg3)
+      end
+      stack.unshift(code)
+    end
+    return stack
+  end
+
+
 
   ### combinators
 

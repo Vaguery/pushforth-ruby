@@ -192,7 +192,14 @@ For example, here are some more instructions I've added to flesh it out:
 - `:and` signature:(Boolean,Boolean), with continuation form 
 - `:or` signature:(Boolean,Boolean), with continuation form
 - `:not` signature:(Boolean)
-- `:if`
+- `:if` signature:(Boolean,Any), with continuation form
+  - `[[:if],false,3,4]` ☛ `[[],4]`
+  - `[[:if],true,3,4]` ☛ `[[],3,4]` 
+  - `[[:if],77,3,4]` ☛ `[[:if,77],3,4]` 
+- `:which` signature:(Boolean,Any,Any), with continuation form
+  - `[[:which],false,3,4]` ☛ `[[],4]`
+  - `[[:which],true,3,4]` ☛ `[[],3]`
+  - `[[:which],"foo",3,4,5]` ☛ `[[:which,"foo"],3,4,5]`
 
 ### comparison
 - `:>`
