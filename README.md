@@ -184,10 +184,6 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:divide,1,2],3,"bar",4]` ☛ `[[:divide,"bar",1,2],3,4]` # continuation form
   - `[[:divide,1,2],"foo","bar",3,4]` ☛ `[[1,2],"foo","bar",3,4]` # fails if no arg matches
 
-## A silly list of possibilities and wants
-
-(not needs)
-
 ### boolean
 - `:and` signature:(Boolean,Boolean), with continuation form 
 - `:or` signature:(Boolean,Boolean), with continuation form
@@ -200,6 +196,10 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:which],false,3,4]` ☛ `[[],4]`
   - `[[:which],true,3,4]` ☛ `[[],3]`
   - `[[:which],"foo",3,4,5]` ☛ `[[:which,"foo"],3,4,5]`
+
+## A silly list of possibilities and wants
+
+(not needs)
 
 ### comparison
 - `:>`
@@ -241,7 +241,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:reduce`
 
 ### 
-
 
 And here are the types I've encountered so far:
 - `Numeric`: using Ruby's built in for the moment, without being too concerned about the error-producing overflows and such; will let the execution of random pushforth programs "stress-test" these definitions and tell me whether I need to capture exceptions on the fly or try to plan ahead for them

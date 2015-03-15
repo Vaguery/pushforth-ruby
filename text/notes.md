@@ -7,7 +7,7 @@ More or less the sections:
 - How does one use genetic programming?
 - Cases for and against "usable GP": cost, features, reliability, simplicity
 - "Artificial Intelligence investigated by Special Crimes Unit"; or, Even Athena needed the head of Zeus
-- How does one use X, ∀ X?
+- How does one use $$X$$, $$\forall{X}$$?
 - The mangle of practice and the mangle in practice
 - The yardstick and the bamboo hand
 - Leveraging "resistance": the problem of the dots and lines
