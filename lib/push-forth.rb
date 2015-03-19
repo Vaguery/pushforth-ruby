@@ -36,7 +36,7 @@ module PushForth
       return @@instructions
     end
 
-    @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, 
+    @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
       :car, :cdr, :concat, :unit,
       :while,
@@ -139,6 +139,20 @@ module PushForth
     def divide(stack)
       return arithmetic(:divide, stack) do |a,b|
         (b.zero? ? Error.new("div0") : a/b)
+      end
+    end
+
+
+    def divmod(stack)
+      return arithmetic(:divmod, stack) do |a,b|
+        case 
+        when b.kind_of?(Complex)
+          Error.new("divmod type error")
+        when b.zero?
+          Error.new("div0")
+        else
+          a.divmod(b)
+        end
       end
     end
 

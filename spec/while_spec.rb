@@ -2,6 +2,7 @@ require 'rspec'
 require_relative '../lib/push-forth'
 include PushForth
 
+
 describe "the :while instruction" do
 
   it "should be a recognized instruction" do

@@ -114,3 +114,41 @@ describe "divide" do
     expect(div0.stack[-1]).to be_a_kind_of(Error)
   end
 end
+
+
+describe "divmod" do
+  it "should be a recognized instruction" do
+    expect(PushForthInterpreter.new.instruction?(:divmod)).to be true
+  end
+
+  it "should disappear if there are not two args" do
+    expect(PushForthInterpreter.new([[:divmod]]).step!.stack).to eq [[]]
+    expect(PushForthInterpreter.new([[:divmod],1]).step!.stack).to eq [[],1]
+  end
+
+  it "should return the divmod list if there are two Numerics there" do
+    expect(PushForthInterpreter.new([[:divmod],9.4,5.9]).step!.stack).to eq [[],[1, 3.5]]
+    expect(PushForthInterpreter.new([[:divmod],Rational("-21/4"),Rational("11/3")]).step!.stack).to eq [[], [-2, (Rational("25/12"))]]
+  end
+
+  it "should build a continuation if either of the args isn't Numeric" do
+    skipA = PushForthInterpreter.new([[:divmod],"a",5,10.0])
+    expect(skipA.step!.stack).to eq [[:divmod,"a"],5,10.0]
+    expect(skipA.step!.stack).to eq [["a"], [0, 5.0]]
+    skipB = PushForthInterpreter.new([[:divmod],20.0,"b",5.0])
+    expect(skipB.step!.stack).to eq [[:divmod,"b"],20.0,5.0]
+    expect(skipB.step!.stack).to eq [["b"], [4, 0.0]]
+  end
+
+  it "should return an Error if the denominator is 0" do
+    div0 = PushForthInterpreter.new([[:divmod],5,0.0]).step!()
+    expect(div0.stack.length).to be 2
+    expect(div0.stack[-1]).to be_a_kind_of(Error)
+  end
+
+  it "should return an Error if the denominator is Complex" do
+    div0 = PushForthInterpreter.new([[:divmod],5,Complex(1,2)]).step!()
+    expect(div0.stack.length).to be 2
+    expect(div0.stack[-1]).to be_a_kind_of(Error)
+  end
+end
