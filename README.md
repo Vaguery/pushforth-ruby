@@ -216,7 +216,7 @@ For example, here are some more instructions I've added to flesh it out:
 
 ## A silly list of possibilities and wants
 
-(not needs)
+(but not needs)
 
 ### comparison
 - `:>`
@@ -253,8 +253,8 @@ For example, here are some more instructions I've added to flesh it out:
 - `:snapshot`
 
 ### functional
-- `:map`
-- `:fold`
+- `:map` (see below)
+- `:fold` (see below)
 - `:reduce`
 
 ### type
@@ -263,7 +263,38 @@ For example, here are some more instructions I've added to flesh it out:
 - `:same_type?`
 - `:yank_args`
 
-### 
+### ideas from von Thun's Joy
+
+Some ideas from [von Thun's introduction to the Joy language (PDF)](http://www.complang.tuwien.ac.at/anton/euroforth/ef01/thun01.pdf) make a lot of sense, too.
+
+- `:primrec` Primitive recursion, but there's an interesting problem with termination conditions there....
+- `:signum` (`sgn`)
+- `:pred` predecessor, for integers, characters, strings
+- `:succ` successor
+- various `Set` operators
+- `:reverse`
+- `:swons`
+- `:first`
+- `:rest`
+- `:at`
+- `:size` (length)
+- `:empty?` (was `:null`)
+- `:small?`: `true` if the length of a collection is 0 or 1
+- `:get` and `:put`, which in Joy are I/O instructions, not `Dictionary` things
+- `:filter`
+- `:step` (items from collections)
+- `:constr12`
+- `:==` (define)
+- `:linrec` (_hugely_ risky and interesting in genetic programming contexts)
+- `:binrec` (ditto)
+- `:split` (a filtering list combinator)
+- `:dip` ?
+- `:treerec`
+- `:powerlist`
+- `:mk_qsort`
+- the `un` versions of `:cons` and `:swons` and so forth...
+
+### Types
 
 And here are the types I've encountered so far:
 - `Numeric`: using Ruby's built in for the moment, without being too concerned about the error-producing overflows and such; will let the execution of random pushforth programs "stress-test" these definitions and tell me whether I need to capture exceptions on the fly or try to plan ahead for them
@@ -275,5 +306,7 @@ And here are the types I've encountered so far:
 
 And the types I expect to want in fleshing things out:
 - `String`
+- `Character`
 - `Iterator`
 - `Type`
+- `Set`
