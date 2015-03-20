@@ -222,6 +222,12 @@ For example, here are some more instructions I've added to flesh it out:
 - `:==` (works for all `Numeric` types)
 - `:≠` (works for all `Numeric` types)
 
+### it made sense at the time
+
+- `:flip!`: signature:(N/A); switches the positions of the `code` and `data` portions of the running interpreter state
+  - `[[:flip!],3,4,5]` ☛ `[[3,4,5]]`
+  - `[[:flip!,1,2],3,4]` ☛ `[[3,4],1,2]`
+
 ## A silly list of possibilities and wants
 
 (but not needs)
@@ -231,7 +237,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:emit`
 
 ### interpreter
-- `:flip`
 - `:spawn`
 
 ### introspection

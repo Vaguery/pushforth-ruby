@@ -38,7 +38,7 @@ module PushForth
 
     @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-      :car, :cdr, :concat, :unit,
+      :car, :cdr, :concat, :unit, :flip!,
       :while,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
@@ -417,6 +417,12 @@ module PushForth
         stack[0] += stack.delete_at(1)
       end
       return stack
+    end
+
+
+    def flip!(stack)
+      old_code = stack.shift
+      stack = [stack] + old_code 
     end
 
 
