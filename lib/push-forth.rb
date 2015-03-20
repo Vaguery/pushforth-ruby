@@ -39,7 +39,7 @@ module PushForth
     @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
       :car, :cdr, :concat, :unit, :flip!,
-      :map, :while, :until0,
+      :map, :while, :until0, :leafmap,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠]
@@ -482,6 +482,37 @@ module PushForth
     end
 
     ### functional
+
+    def append_to_leaves(tree_array,suffix_array)
+      result = []
+      tree_array.each do |item|
+        if item.kind_of?(Array)
+          result << append_to_leaves(item,suffix_array)
+        else
+          result += ([item] + suffix_array)
+        end
+      end
+      return result
+    end
+
+
+    def leafmap(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if arg1.kind_of?(Array) && arg2.kind_of?(Array)
+          mapped = append_to_leaves(arg1,arg2)
+        elsif arg2.kind_of?(Array)
+          mapped = arg2.unshift(arg1)
+        else
+          mapped = append_to_leaves([arg1],[arg2])
+        end
+        code.unshift(*mapped)
+        stack.unshift(code)
+      end
+      return stack
+    end
+
 
     def map(stack)
       if stack.length > 2

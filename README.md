@@ -237,7 +237,11 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:until0],7,1,[:add],[2]]` ☛ `[[:until0,1],7,[:add],[2]]`
   - `[[:until0],7,[1],:add,[2]]` ☛ `[[:until0,:add],7,[1],[2]]`
   - `[[:until0],7,1,:add,[2],[3]]` ☛ `[[:until0,1,:add],7,[2],[3]]`
-
+- `:leafmap` signature: (Any, List)
+  - was von Thun's `:treerec`
+  - `[[:leafmap],[3,[4]],5]` ☛ `[[3,5,[4,5]]]`
+  - `[[:leafmap,1,2],[3],[:dup,[4]],5]` ☛ `[[3,:dup,[4],1,2],5]`
+  - `[[:leafmap],[1,[2,[3]]],:foo]` ☛ `[[1, :foo, [2, :foo, [3, :foo]]]]`
 
 ### it made sense at the time
 
@@ -308,7 +312,6 @@ Some ideas from [von Thun's introduction to the Joy language (PDF)](http://www.c
 - `:binrec` (ditto)
 - `:split` (a filtering list combinator)
 - `:dip` "This combinator expects a quotation on top of the stack and below that another value. It pops the two, saving the value somewhere, executes the quotation, and then restores the saved value on top. So, for example, `[swap] dip` will interchange the second and third element on the stack."
-- `:treerec`
 - `:powerlist`
 - `:mk_qsort`
 - the `un` versions of `:cons` and `:swons` and so forth...
