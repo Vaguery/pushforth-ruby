@@ -214,18 +214,17 @@ For example, here are some more instructions I've added to flesh it out:
 - `:values`: signature:(Dictionary) (machine order)
   - `[[:values],«Dictionary:{3:88}»]` ☛ `[[],[88],«Dictionary:{3:88}»]`
 
-## A silly list of possibilities and wants
-
-(but not needs)
-
 ### comparison
-- `:>`
+- `:>` (for the moment, greater-than and less-than relations fail for `Complex` numbers)
 - `:≥`
 - `:<`
 - `:≤`
-- `:==`
-- `:≠`
+- `:==` (works for all `Numeric` types)
+- `:≠` (works for all `Numeric` types)
 
+## A silly list of possibilities and wants
+
+(but not needs)
 
 ### i/o
 - variables?
@@ -284,7 +283,7 @@ Some ideas from [von Thun's introduction to the Joy language (PDF)](http://www.c
 - `:filter`
 - `:step` (items from collections)
 - `:constr12`
-- `:==` (define)
+- `:define` (was `:==`, means "define")
 - `:linrec` (_hugely_ risky and interesting in genetic programming contexts)
 - `:binrec` (ditto)
 - `:split` (a filtering list combinator)
