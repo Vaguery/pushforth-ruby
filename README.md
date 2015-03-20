@@ -288,7 +288,7 @@ Some ideas from [von Thun's introduction to the Joy language (PDF)](http://www.c
 - `:linrec` (_hugely_ risky and interesting in genetic programming contexts)
 - `:binrec` (ditto)
 - `:split` (a filtering list combinator)
-- `:dip` ?
+- `:dip` "This combinator expects a quotation on top of the stack and below that another value. It pops the two, saving the value somewhere, executes the quotation, and then restores the saved value on top. So, for example, `[swap] dip` will interchange the second and third element on the stack."
 - `:treerec`
 - `:powerlist`
 - `:mk_qsort`

@@ -41,7 +41,8 @@ module PushForth
       :car, :cdr, :concat, :unit,
       :while,
       :and, :or, :not, :if, :which,
-      :set, :get, :dict]
+      :set, :get, :dict,
+      :>, :<, :≥, :≤, :==, :≠]
 
 
     attr_accessor :stack,:steps
@@ -167,6 +168,60 @@ module PushForth
     def subtract(stack)
       return arithmetic(:subtract, stack) do |a,b|
         a-b
+      end
+    end
+
+    ### comparison 
+
+    def >(stack)
+      return arithmetic(:>, stack) do |a,b|
+        if a.kind_of?(Complex) || b.kind_of?(Complex)
+          Error.new("compared Complex values")
+        else
+           a > b
+        end
+      end
+    end
+
+    def <(stack)
+      return arithmetic(:<, stack) do |a,b|
+        if a.kind_of?(Complex) || b.kind_of?(Complex)
+          Error.new("compared Complex values")
+        else
+           a > b
+        end
+      end
+    end
+
+    def ≥(stack)
+      return arithmetic(:≥, stack) do |a,b|
+        if a.kind_of?(Complex) || b.kind_of?(Complex)
+          Error.new("compared Complex values")
+        else
+           a >= b
+        end
+      end
+    end
+
+    def ≤(stack)
+      return arithmetic(:≤, stack) do |a,b|
+        if a.kind_of?(Complex) || b.kind_of?(Complex)
+          Error.new("compared Complex values")
+        else
+           a <= b
+        end
+      end
+    end
+
+    def ==(stack)
+      return arithmetic(:==, stack) do |a,b|
+        a == b
+      end
+    end
+
+    def ≠(stack)
+      return arithmetic(:≠, stack) do |a,b|
+        a != b
       end
     end
 
