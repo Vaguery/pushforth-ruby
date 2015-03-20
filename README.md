@@ -222,6 +222,14 @@ For example, here are some more instructions I've added to flesh it out:
 - `:==` (works for all `Numeric` types)
 - `:≠` (works for all `Numeric` types)
 
+
+### functional
+- `:map` signature: (Any, Any) "applies" the first argument to the second one by interspersing copies of the second between the first on the `:code` stack
+  - `[[:map],3,4,5]` ☛ `[[3,4],5]`
+  - `[[:map,1,2],[3],[:dup,[4]],5]` ☛ `[[3,:dup,[4]],5]`
+  - `[[:map,1,2],3,[:add],4,5]` ☛ `[[3,:add],4,5]`
+
+
 ### it made sense at the time
 
 - `:flip!`: signature:(N/A); switches the positions of the `code` and `data` portions of the running interpreter state
@@ -257,7 +265,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:snapshot`
 
 ### functional
-- `:map` (see below)
 - `:fold` (see below)
 - `:reduce`
 

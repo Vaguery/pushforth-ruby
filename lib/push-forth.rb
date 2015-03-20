@@ -39,7 +39,7 @@ module PushForth
     @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
       :car, :cdr, :concat, :unit, :flip!,
-      :while,
+      :map, :while,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠]
@@ -423,6 +423,7 @@ module PushForth
     def flip!(stack)
       old_code = stack.shift
       stack = [stack] + old_code 
+      return stack
     end
 
 
@@ -477,6 +478,25 @@ module PushForth
     ### misc
 
     def noop(stack)
+      return stack
+    end
+
+    ### functional
+
+    def map(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if arg1.kind_of?(Array) && arg2.kind_of?(Array)
+          mapped = (arg1.collect {|i| [i] + arg2}).flatten(1)
+        elsif arg2.kind_of?(Array)
+          mapped = arg2.unshift(arg1)
+        else
+          mapped = [arg1,arg2]
+        end
+        code.unshift(*mapped)
+        stack.unshift(code)
+      end
       return stack
     end
 
