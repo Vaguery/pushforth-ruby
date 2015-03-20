@@ -39,7 +39,7 @@ module PushForth
     @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
       :car, :cdr, :concat, :unit, :flip!,
-      :map, :while,
+      :map, :while, :until0,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠]
@@ -99,7 +99,7 @@ module PushForth
 
 
     def run
-      while evaluable?(@stack) && @steps < 2000
+      while evaluable?(@stack) && @steps < 5000
         self.step!
       end
       self
@@ -495,6 +495,45 @@ module PushForth
           mapped = [arg1,arg2]
         end
         code.unshift(*mapped)
+        stack.unshift(code)
+      end
+      return stack
+    end
+
+
+    def until0(stack)
+      if stack.length > 3
+        code = stack.shift
+        arg1,arg2,arg3 = stack.shift(3)
+        match1 = arg1.kind_of?(Integer) && arg1 >= 0
+        match2 = arg2.kind_of?(Array)
+        match3 = arg3.kind_of?(Array)
+        if match1
+          if match2
+            if match3
+              if arg1 > 0
+                code.unshift(*arg3,arg3,arg2,arg1-1,:until0)
+              elsif arg1 == 0
+                code.unshift(*arg2)
+              else # negative arg1
+                stack.unshift(arg1,arg2,arg3)
+              end
+            else # arg2 not arg3
+              code.unshift(:until0,arg3)
+              stack.unshift(arg1,arg2)
+            end
+          else
+            if match3 # arg3 not arg2
+              code.unshift(:until0,arg2)
+              stack.unshift(arg1,arg3)
+            else # neither is list
+              code.unshift(:until0,arg2,arg3)
+              stack.unshift(arg1)
+            end
+          end
+        else
+          stack.unshift(arg1,arg2,arg3)
+        end
         stack.unshift(code)
       end
       return stack

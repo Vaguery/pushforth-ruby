@@ -224,10 +224,19 @@ For example, here are some more instructions I've added to flesh it out:
 
 
 ### functional
-- `:map` signature: (Any, Any) "applies" the first argument to the second one by interspersing copies of the second between the first on the `:code` stack
+- `:map` signature: (Any, Any) "applies" the first argument to the second one by interspersing copies of the second between the first on the `:code` stack 
   - `[[:map],3,4,5]` ☛ `[[3,4],5]`
   - `[[:map,1,2],[3],[:dup,[4]],5]` ☛ `[[3,:dup,[4]],5]`
   - `[[:map,1,2],3,[:add],4,5]` ☛ `[[3,:add],4,5]`
+- `:until0`: signature: (Positive Integer,List,List)
+  - (based on von Thun's :primrec`) Primitive recursion, using a positive integer to count down to 0; uses continuation form
+  - `[[:until0],1,[1],[:add]]` ☛ `[[:add, [:add], [1], 0, :until0]]`
+  - `[[:until0],0,[1],[:add]]` ☛ `[[1]]`
+  - `[[:until0],-1,[1],[:add]]` ☛ `[[],-1,[1],[:add]]`
+  - `[[:until0],-1,1,[:add]]` ☛ `[[],-1,[1],[:add]]`
+  - `[[:until0],7,1,[:add],[2]]` ☛ `[[:until0,1],7,[:add],[2]]`
+  - `[[:until0],7,[1],:add,[2]]` ☛ `[[:until0,:add],7,[1],[2]]`
+  - `[[:until0],7,1,:add,[2],[3]]` ☛ `[[:until0,1,:add],7,[2],[3]]`
 
 
 ### it made sense at the time
@@ -278,7 +287,6 @@ For example, here are some more instructions I've added to flesh it out:
 
 Some ideas from [von Thun's introduction to the Joy language (PDF)](http://www.complang.tuwien.ac.at/anton/euroforth/ef01/thun01.pdf) make a lot of sense, too.
 
-- `:primrec` Primitive recursion, but there's an interesting problem with termination conditions there....
 - `:signum` (`sgn`)
 - `:pred` predecessor, for integers, characters, strings
 - `:succ` successor
