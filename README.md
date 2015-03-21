@@ -56,24 +56,24 @@ Anyway, the rules for `eval` are:
 So for example, the execution of a script `1 1 +` would go like this:
 
 ~~~ text
+whole script: [[1, 1, :+], 44] # the '44' is there as a placeholder
+               ^^^^^^^^^^  ^^
+                "code"     "data"
+
 code           active   data
-                        [[1, 1, :+]]        initial script on "data" as list
-[1, 1, :+]              []                  pop top item from "data"
-[1, :+]            1    []                  pop top of "code"
-[1, :+]                 [1]                 literal; push onto "data"
-                        [[1, :+], 1]        push "code" onto "data"
-[1, :+]                 [1]                 pop top item from "data"
-[:+]               1    [1]
-[:+]                    [1, 1]              literal; push it
-                        [[:+], 1, 1]        replace "code"
-[:+]                    [1, 1]
-[]                 :+   [1, 1]
-[]                      [2]                 instruction; apply it
+                        [[1, 1, :+], 44]   
+[1, 1, :+]              [44]                isolate "code" stack
+[1, :+]            1    [44]                pop top of "code"
+[1, :+]                 [1, 44]             literal; push onto "data"
+[:+]               1    [1, 44]
+[:+]                    [1, 1, 44]          literal; push it
+[]                 :+   [1, 1, 44]
+[]                      [2, 44]             instruction; find args on "data"
                         [[], 2]             replace "code"
                                             HALT STATE
 ~~~
 
-The interpreter I've written here has a proxy `#step` method which applies `:eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `push-forth` source code. See below.
+The interpreter I've written here has a proxy `#step` method which applies `:eval` on the interpreter stack one step at a time until it's done. The `:eval` instruction does its thing on any _arbitrary_ list of tokens, and as a result it can also occur within `pushforth` source code. See below.
 
 ## A more complex example
 
@@ -250,8 +250,6 @@ For example, here are some more instructions I've added to flesh it out:
   - `[[:flip!,1,2],3,4]` ☛ `[[3,4],1,2]`
 
 ## A silly list of possibilities and wants
-
-(but not needs)
 
 ### i/o
 - variables?
