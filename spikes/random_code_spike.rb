@@ -89,10 +89,12 @@ t = tree2(100)
 puts build_tree(t).inspect
 
 # this might easily fall into an infinite loop...
-dudes = 5000.times.collect do
+dudes = 5000 .times.collect do
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
   puts "#{pf.stack.inspect}"
   pf.run
+  puts ">>>   #{pf.stack.inspect}"
+  pf
 end
 
 puts dudes.collect {|dude| dude.steps}.sort

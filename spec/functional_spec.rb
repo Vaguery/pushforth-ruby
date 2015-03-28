@@ -22,7 +22,7 @@ describe ":map" do
 
   it "should not over-flatten the mapped item(s)" do
     expect(PushForthInterpreter.new([[:map],[1,[2]],[:dup,[:add,8],:map]]).step!.stack).
-    to eq [[1,:dup,[:add,8], :map, [2], :dup, [:add, 8], :map]]
+      to eq [[1,:dup,[:add,8], :map, [2], :dup, [:add, 8], :map]]
   end
 
   it "should build a 'mapping' on the code stack if arg1 isn't a list" do
@@ -33,6 +33,16 @@ describe ":map" do
   it "should build a 'mapping' on the code stack when neither is a list" do
     expect(PushForthInterpreter.new([[:map],1, 2,3,4]).step!.stack).
       to eq [[1, 2], 3, 4]
+  end
+
+  it "clones any argument that is a list" do
+    pf = PushForthInterpreter.new([[:map],[[1,[2]]],[[:dup,[:add,8]]]])
+    oldID_1 = pf.stack[1].object_id
+    oldID_2 = pf.stack[2].object_id
+    pf.step!
+    expect(pf.stack).to eq [[[1, [2]], [:dup, [:add, 8]]]]
+    expect(pf.stack[0].object_id).not_to eq oldID_1
+    expect(pf.stack[0][1].object_id).not_to eq oldID_2
   end
 end
 

@@ -17,6 +17,7 @@ module PushForth
     end
 
     def set(key,value)
+      value = value.clone if value.kind_of?(Array) || value.kind_of?(Dictionary)
       contents[key] = value
     end
 
@@ -26,6 +27,22 @@ module PushForth
 
     def eql?(other)
       return @contents.eql?(other.contents)
+    end
+
+    def keys
+      @contents.keys
+    end
+
+    def clone
+      copy = Dictionary.new()
+      self.keys.each do |k|
+        safe_key = k
+        safe_key = safe_key.clone if safe_key.kind_of?(Dictionary) || safe_key.kind_of?(Array)
+        safe_val = @contents[k]
+        safe_val = safe_val.clone if safe_val.kind_of?(Dictionary) || safe_val.kind_of?(Array)
+        copy.contents[safe_key] = safe_val
+      end
+      return copy
     end
   end
 
@@ -103,6 +120,19 @@ module PushForth
         self.step!
       end
       self
+    end
+
+
+    def deep_copy(item)
+      # puts item.class
+      case item.class
+      when Dictionary
+        item.clone
+      when Array
+        item.collect {|i| deep_copy(i)}
+      else
+        item
+      end
     end
 
     ### instructions
@@ -306,11 +336,17 @@ module PushForth
       return stack
     end
 
-    ### dictionary
+    ### type
 
     def dictionary?(thing)
       thing.kind_of? Dictionary
     end
+
+    def list?(thing)
+      thing.kind_of? Array
+    end
+
+    ### dictionary
 
 
     def get(stack)
@@ -394,9 +430,9 @@ module PushForth
     def cons(stack)
       if stack.length > 2
         arg1 = stack.delete_at(1)
-        arg2 = stack.delete_at(1) # filled in
+        arg2 = stack.delete_at(1)
         if arg2.kind_of?(Array)
-          stack.insert(1, arg2.unshift(arg1) )
+          stack.insert(1, arg2.unshift(deep_copy(arg1)) )
         else
           stack[0].unshift(:cons,arg2)
           stack.insert(1,arg1)
@@ -487,9 +523,9 @@ module PushForth
       result = []
       tree_array.each do |item|
         if item.kind_of?(Array)
-          result << append_to_leaves(item,suffix_array)
+          result << append_to_leaves(deep_copy(item),deep_copy(suffix_array))
         else
-          result += ([item] + suffix_array)
+          result += ([deep_copy(item)] + deep_copy(suffix_array))
         end
       end
       return result
@@ -501,11 +537,11 @@ module PushForth
         code = stack.shift
         arg1,arg2 = stack.shift(2)
         if arg1.kind_of?(Array) && arg2.kind_of?(Array)
-          mapped = append_to_leaves(arg1,arg2)
+          mapped = append_to_leaves(deep_copy(arg1),deep_copy(arg2))
         elsif arg2.kind_of?(Array)
-          mapped = arg2.unshift(arg1)
+          mapped = deep_copy(arg2).unshift(deep_copy(arg1))
         else
-          mapped = append_to_leaves([arg1],[arg2])
+          mapped = append_to_leaves([deep_copy(arg1)],[deep_copy(arg2)])
         end
         code.unshift(*mapped)
         stack.unshift(code)
@@ -519,7 +555,11 @@ module PushForth
         code = stack.shift
         arg1,arg2 = stack.shift(2)
         if arg1.kind_of?(Array) && arg2.kind_of?(Array)
-          mapped = (arg1.collect {|i| [i] + arg2}).flatten(1)
+          mapped = arg1.collect do |i|
+            arg2 = arg2.clone if dictionary?(arg2) || list?(arg2)
+            [i] + arg2
+          end
+          mapped = mapped.flatten(1)
         elsif arg2.kind_of?(Array)
           mapped = arg2.unshift(arg1)
         else

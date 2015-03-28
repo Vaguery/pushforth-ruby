@@ -12,6 +12,20 @@ describe "Dictionary" do
       d.set(fancy_key,3)
       expect(d.contents.keys).to include fancy_key
     end
+
+    it "should clone stored values if possible" do
+      d = Dictionary.new
+      did = d.object_id
+      d.set(3,d) # would form a loop!
+      expect(d.contents[3].object_id).not_to eq did
+    end
+
+    it "should clone keys" do
+      d = Dictionary.new
+      d.set([3],88) 
+      did = d.keys[0].object_id
+      expect(d.clone.keys[0].object_id).not_to eq did
+    end
   end
 
   describe "getting" do
@@ -27,7 +41,6 @@ describe "Dictionary" do
       expect(d.get(3).string).to eq "key not found"
     end
   end
-
 
   describe ":dict" do
     it "should be a recognized instruction" do
