@@ -70,8 +70,10 @@ module PushForth
       :map, :while, :until0, :leafmap,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
-      :>, :<, :≥, :≤, :==, :≠]
+      :>, :<, :≥, :≤, :==, :≠,
+      :type]
 
+    @@types = [:BooleanType, :DictionaryType, :InstructionType, :ListType, :NumberType, :TypeType, :UnknownType]
 
     attr_accessor :stack,:steps
 
@@ -342,6 +344,40 @@ module PushForth
 
     def list?(thing)
       thing.kind_of? Array
+    end
+
+    def pushforth_type(item)
+      case item
+        when Numeric
+          :NumberType
+        when Array
+          :ListType
+        when Dictionary
+          :DictionaryType
+        when TrueClass,FalseClass
+          :BooleanType
+        when Error
+          :ErrorType
+        else
+          if @@instructions.include?(item)
+            :InstructionType
+          elsif @@types.include?(item)
+            :TypeType
+          else
+            :UnknownType
+          end
+        end
+    end
+
+
+    def type(stack)
+      if stack.length > 1
+        code = stack.shift
+        arg = stack.shift
+        stack.unshift pushforth_type(arg)
+        stack.unshift(code)
+      end
+      return stack
     end
 
     ### dictionary
