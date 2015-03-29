@@ -84,16 +84,22 @@ def tree2(points,prob=0.1)
   return script
 end
 
+def first_number(dude)
+  dude.stack.detect {|item| item.kind_of?(Numeric)}
+end
 
 t = tree2(100)
 puts build_tree(t).inspect
 
-# this might easily fall into an infinite loop...
-dudes = 5000 .times.collect do
+dudes = 5000.times.collect do
+  x = 23
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
+  pf.stack[0].unshift(x)
   puts "#{pf.stack.inspect}"
   pf.run
   puts ">>>   #{pf.stack.inspect}"
+  err = first_number(pf) ? (first_number(pf) - (x+6)).abs  : nil
+  puts "#{err}\n\n"
   pf
 end
 

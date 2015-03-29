@@ -13,7 +13,7 @@ describe "Dictionary" do
       expect(d.contents.keys).to include fancy_key
     end
 
-    it "should clone stored values if possible" do
+    it "should use deep_copy to copy stored values if possible" do
       d = Dictionary.new
       did = d.object_id
       d.set(3,d) # would form a loop!

@@ -13,20 +13,20 @@ describe PushForth do
   end
 
 
-describe "evaluable" do
-  it "should match Maarten's definition" do
-    expect(PushForthInterpreter.new().evaluable? 4 ).to be false          # type error
-    expect(PushForthInterpreter.new().evaluable? nil ).to be false        # type error
-    expect(PushForthInterpreter.new().evaluable? []).to be false         # structural error
-    expect(PushForthInterpreter.new().evaluable? [3]).to be false        # structural error
-    expect(PushForthInterpreter.new().evaluable? [[],[1,2,3]] ).to be false # halted
-    expect(PushForthInterpreter.new().evaluable? [[],[1,[2]]] ).to be false # halted
-    expect(PushForthInterpreter.new().evaluable? [[],[]] ).to be false      # halted
-    expect(PushForthInterpreter.new().evaluable? [[1,2,3],[]] ).to be true
-    expect(PushForthInterpreter.new().evaluable? [[1,2,3],[1,2,3]] ).to be true
-    expect(PushForthInterpreter.new().evaluable? [[[]],[]] ).to be true
+  describe "evaluable" do
+    it "should match Maarten's definition" do
+      expect(PushForthInterpreter.new().evaluable? 4 ).to be false          # type error
+      expect(PushForthInterpreter.new().evaluable? nil ).to be false        # type error
+      expect(PushForthInterpreter.new().evaluable? []).to be false         # structural error
+      expect(PushForthInterpreter.new().evaluable? [3]).to be false        # structural error
+      expect(PushForthInterpreter.new().evaluable? [[],[1,2,3]] ).to be false # halted
+      expect(PushForthInterpreter.new().evaluable? [[],[1,[2]]] ).to be false # halted
+      expect(PushForthInterpreter.new().evaluable? [[],[]] ).to be false      # halted
+      expect(PushForthInterpreter.new().evaluable? [[1,2,3],[]] ).to be true
+      expect(PushForthInterpreter.new().evaluable? [[1,2,3],[1,2,3]] ).to be true
+      expect(PushForthInterpreter.new().evaluable? [[[]],[]] ).to be true
+    end
   end
-end
 
 
   describe "step!" do
@@ -78,6 +78,45 @@ end
       hasrun = PushForthInterpreter.new([[[[]],[:eval,:dup,:car],:while],[[16,1.0,:divide]]]).run
       expect(hasrun.stack).to eq [[], [], [[], 0.0625]]
       expect(hasrun.steps).to eq 24
+    end
+  end
+
+  describe ":deep_copy" do
+    it "should just return simple types" do
+      pf = PushForthInterpreter.new
+      expect(deep_copy(9).object_id).to eq 9.object_id
+      expect(deep_copy(false).object_id).to eq false.object_id
+      expect(deep_copy(1.23).object_id).to eq (1.23).object_id
+      expect(deep_copy(:foo).object_id).to eq :foo.object_id
+    end
+
+    it "should change the object_id of Arrays" do
+      pf = PushForthInterpreter.new
+      expect(deep_copy([]).object_id).not_to eq [].object_id
+      expect(deep_copy([1,2,3]).object_id).not_to eq [1,2,3].object_id
+      expect(deep_copy([1,[2,3]]).object_id).not_to eq [1,[2,3]].object_id
+    end
+
+    it "should change the object_id of deep_copyable things inside Arrays" do
+      pf = PushForthInterpreter.new
+      expect(deep_copy([1,[2,3]])[0].object_id).to eq [1,[2,3]][0].object_id
+      expect(deep_copy([1,[2,3]])[1].object_id).not_to eq [1,[2,3]][1].object_id
+    end
+
+    it "should change the object_id of Dictionary items" do
+      pf = PushForthInterpreter.new
+      d = Dictionary.new
+      expect(deep_copy([d])[0].object_id).not_to eq d.object_id
+    end
+
+    it "should change the object_id of deep_copyable keys in Dictionaries" do
+      pf = PushForthInterpreter.new
+      d = Dictionary.new
+      k1 = [1,2,3]
+      v1 = [:foo,[4,5,6]]
+      d.set(k1,v1)
+      expect(deep_copy(d).keys[0].object_id).not_to eq d.keys[0].object_id
+      expect(deep_copy(d).get(d.keys[0]).object_id).not_to eq d.get(d.keys[0]).object_id
     end
   end
 

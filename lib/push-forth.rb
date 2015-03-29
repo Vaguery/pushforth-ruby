@@ -36,13 +36,24 @@ module PushForth
     def clone
       copy = Dictionary.new()
       self.keys.each do |k|
-        safe_key = k
-        safe_key = safe_key.clone if safe_key.kind_of?(Dictionary) || safe_key.kind_of?(Array)
-        safe_val = @contents[k]
-        safe_val = safe_val.clone if safe_val.kind_of?(Dictionary) || safe_val.kind_of?(Array)
+        safe_key = deep_copy(k)
+        safe_val = deep_copy(@contents[k])
         copy.contents[safe_key] = safe_val
       end
       return copy
+    end
+  end
+
+
+  def deep_copy(item)
+    # puts item.class
+    case item
+    when Dictionary
+      item.clone
+    when Array
+      item.collect {|i| deep_copy(i)}
+    else
+      item
     end
   end
 
@@ -120,19 +131,6 @@ module PushForth
         self.step!
       end
       self
-    end
-
-
-    def deep_copy(item)
-      # puts item.class
-      case item.class
-      when Dictionary
-        item.clone
-      when Array
-        item.collect {|i| deep_copy(i)}
-      else
-        item
-      end
     end
 
     ### instructions
@@ -443,7 +441,7 @@ module PushForth
 
 
     def dup(stack)
-      stack.insert(1,stack[1]) unless stack.length < 2
+      stack.insert(1,deep_copy(stack[1])) unless stack.length < 2
       return stack
     end
 
@@ -583,7 +581,7 @@ module PushForth
           if match2
             if match3
               if arg1 > 0
-                code.unshift(*arg3,arg3,arg2,arg1-1,:until0)
+                code.unshift(*deep_copy(arg3),arg3,arg2,arg1-1,:until0)
               elsif arg1 == 0
                 code.unshift(*arg2)
               else # negative arg1
@@ -624,7 +622,7 @@ module PushForth
             stack.insert(1,arg3)
             stack[0].unshift(:enlist)
             stack[0].unshift([arg1,:while])
-            stack[0].unshift(*arg1)
+            stack[0].unshift(*(deep_copy(arg1)))
           end
         else # for now; this could become a continuation
           stack.insert(1,arg1,arg2,arg3)

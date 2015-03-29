@@ -1,7 +1,8 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[true, :rotate, :until0, 5.03125, :set, :not, :enlist, :leafmap, false, :map, [:≠, true, 93, true, 379, :concat, :which, :rotate, 17, :==], :≥, :≤, :leafmap, :dup, :>, :add, [8.78125, 91, false, :>, :>, -109, false, -13.5, [:cons], -15.21875, :leafmap, :multiply, :divide, :not, :==, :or, :dict, :==]], :noop, :which, :and, :>, :divide, :set, :dict, :concat, :split, :>, false, :and, :cdr, :and, :dup, false, [:swap, :split, :which, true, :pop, [:pop, -512, :cdr, 14.0625], false, :≤, :swap, 116, :cons, :while], :≠, :divmod, :which, :not, :≠, -14.3125, :car, [225, :flip!, :add, 367, :not, :rotate, :multiply]]
+dude = [[0, -388, :while, :multiply, :noop, :==, false, :swap, :noop, :car, :cons, :eval, -394, :or, :concat, :cons, :cdr, :which, false, [-4.75, :add, :dict, :set, :until0, [:rotate, -176, :add, :swap], :<, true, false, :flip!, :multiply, false], true, :eval, -11.375, false, :unit, :<, :get, :while, :divmod, false, 29, [:get]], :set, :eval, -328, :dict, -177, 5.03125, :map, :dict, :subtract, :get, :≠, -368, -441, :while, [9.90625, -229, :pop, :≠, :rotate, [false, -321, :multiply, :dup], :multiply, -3.375, false, :while, :split, :swap], [:while, :leafmap, :dup, [false, 53, -245, :multiply, false, :pop], :dup, :subtract, :get, []]]
+
 
 
 pf = PushForthInterpreter.new(dude)
