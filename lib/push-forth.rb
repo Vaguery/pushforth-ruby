@@ -71,17 +71,22 @@ module PushForth
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠,
-      :type, :gather_all, :gather_same]
+      :type, :gather_all, :gather_same,
+      :args]
 
     @@types = [:BooleanType, :DictionaryType, :InstructionType, :ListType, :NumberType, :TypeType, :UnknownType]
 
-    attr_accessor :stack,:steps
+    attr_accessor :stack,:steps,:args
 
-    def initialize(token_array=[])
+    def initialize(token_array=[],args=[])
       @stack = token_array
       @steps = 0
+      @args = args
     end
 
+    def get_args
+      @args
+    end
 
     def nonemptyArray?(thing)
       thing.kind_of?(Array) &&
@@ -574,6 +579,14 @@ module PushForth
     end
 
     ### misc
+
+    def args(stack)
+      code = stack.shift
+      stack.unshift(*deep_copy(@args))
+      stack.unshift(code)
+      return stack
+    end
+
 
     def noop(stack)
       return stack

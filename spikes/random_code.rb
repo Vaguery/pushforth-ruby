@@ -92,13 +92,13 @@ t = tree2(100)
 puts build_tree(t).inspect
 
 dudes = 5000.times.collect do
-  x = 23
-  pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
-  pf.stack[0].unshift(x)
+  x = Random.rand(100)
+  y = 9*x*x - 11*x + 1964
+  pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
   puts "#{pf.stack.inspect}"
   pf.run
   puts ">>>   #{pf.stack.inspect}"
-  err = first_number(pf) ? (first_number(pf) - (x+6)).abs  : nil
+  err = first_number(pf) ? (first_number(pf) - y).abs  : nil
   puts "#{err}\n\n"
   pf
 end
