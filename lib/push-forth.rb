@@ -71,7 +71,7 @@ module PushForth
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠,
-      :type]
+      :type, :gather_all, :gather_same]
 
     @@types = [:BooleanType, :DictionaryType, :InstructionType, :ListType, :NumberType, :TypeType, :UnknownType]
 
@@ -369,7 +369,6 @@ module PushForth
         end
     end
 
-
     def type(stack)
       if stack.length > 1
         code = stack.shift
@@ -379,6 +378,35 @@ module PushForth
       end
       return stack
     end
+
+
+    def gather_all(stack)
+      if stack.length > 1
+        code = stack.shift
+        arg = stack.shift
+        if pushforth_type(arg) == :TypeType
+          hits,misses = stack.partition {|i| pushforth_type(i)==arg}
+          stack = misses.unshift(hits)
+        else
+          stack.unshift(arg)
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
+
+
+    def gather_same(stack)
+      if stack.length > 1
+        code = stack.shift
+        arg = stack.shift
+        hits,misses = stack.partition {|i| pushforth_type(i)==pushforth_type(arg)}
+        stack = misses.unshift(hits.unshift(arg))
+        stack.unshift(code)
+      end
+      return stack
+    end
+
 
     ### dictionary
 
