@@ -100,6 +100,7 @@ dudes = 5000.times.collect do
   puts ">>>   #{pf.stack.inspect}"
   err = first_number(pf) ? (first_number(pf) - y).abs  : nil
   puts "#{err}\n\n"
+  STDOUT.flush
   pf
 end
 

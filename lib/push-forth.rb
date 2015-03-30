@@ -46,7 +46,6 @@ module PushForth
 
 
   def deep_copy(item)
-    # puts item.class
     case item
     when Dictionary
       item.clone
@@ -77,22 +76,22 @@ module PushForth
     @@types = [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RationalType, :TypeType, :UnknownType]
 
 
-    @@type_tree = {BooleanType: [:BooleanType],
-                   ComplexType: [:ComplexType,:NumberType],
-                   DictionaryType: [:DictionaryType],
-                   ErrorType: [:ErrorType],
-                   FloatType: [:FloatType,:NumberType],
-                   InstructionType: [:InstructionType],
-                   IntegerType: [:IntegerType,:NumberType],
-                   ListType: [:ListType],
-                   NumberType: [:NumberType],
-                   RationalType: [:RationalType,:NumberType],
-                   TypeType: [:TypeType],
-                   UnknownType: [:UnknownType]
+    @@type_tree = {:BooleanType => [:BooleanType],
+                   :ComplexType => [:ComplexType,:NumberType],
+                   :DictionaryType => [:DictionaryType],
+                   :ErrorType => [:ErrorType],
+                   :FloatType => [:FloatType,:NumberType],
+                   :InstructionType => [:InstructionType],
+                   :IntegerType => [:IntegerType,:NumberType],
+                   :ListType => [:ListType],
+                   :NumberType => [:NumberType],
+                   :RationalType => [:RationalType,:NumberType],
+                   :TypeType => [:TypeType],
+                   :UnknownType => [:UnknownType]
                  }
 
     ## Doesn't include Symbol, since that's trickier
-    @@classes_to_types = {Array => :ListType, Complex => :ComplexType, PushForth::Dictionary => :DictionaryType, PushForth::Error => :ErrorClass, FalseClass => :BooleanType, Fixnum => :IntegerType, Float => :FloatType, Rational => :RationalType, TrueClass => :BooleanType}
+    @@classes_to_types = {Array => :ListType, Complex => :ComplexType, PushForth::Dictionary => :DictionaryType, PushForth::Error => :ErrorType, FalseClass => :BooleanType, Fixnum => :IntegerType, Float => :FloatType, Rational => :RationalType, TrueClass => :BooleanType}
 
 
     attr_accessor :stack,:steps,:args
@@ -382,7 +381,8 @@ module PushForth
         code = stack.shift
         arg1,arg2 = stack.shift(2)
         if pushforth_type(arg1) == :TypeType
-          stack.unshift(pushforth_types(arg2).include?(arg1))
+          alternatives = pushforth_types(arg2)
+          stack.unshift(alternatives.include?(arg1))
         else
           code.unshift(:is_a?, arg1)
           stack.unshift(arg2)
