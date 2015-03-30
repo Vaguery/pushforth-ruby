@@ -2,7 +2,7 @@ require 'rspec'
 require_relative '../lib/push-forth'
 include PushForth
 
-# PushForth::Type: Number, Boolean, Dictionary, Error, List, Symbol, Type
+# PushForth::Type: Number, Integer, FloatType, Rational, Complex, Boolean, Dictionary, Error, List, Symbol, Type
 
 describe ":type instruction" do
   it "should be a recognized instruction" do
@@ -14,10 +14,10 @@ describe ":type instruction" do
   end
 
   it "should recognize numbers" do
-    expect(PushForthInterpreter.new([[:type],8]).step!.stack).to eq [[],:NumberType]
-    expect(PushForthInterpreter.new([[:type],0.8]).step!.stack).to eq [[],:NumberType]
-    expect(PushForthInterpreter.new([[:type],Rational("1/4")]).step!.stack).to eq [[],:NumberType]
-    expect(PushForthInterpreter.new([[:type],Complex(3,1)]).step!.stack).to eq [[],:NumberType]
+    expect(PushForthInterpreter.new([[:type],8]).step!.stack).to eq [[],:IntegerType]
+    expect(PushForthInterpreter.new([[:type],0.8]).step!.stack).to eq [[],:FloatType]
+    expect(PushForthInterpreter.new([[:type],Rational("1/4")]).step!.stack).to eq [[],:RationalType]
+    expect(PushForthInterpreter.new([[:type],Complex(3,1)]).step!.stack).to eq [[],:ComplexType]
   end
 
   it "should recognize booleans" do
@@ -47,6 +47,36 @@ describe ":type instruction" do
   end
 end
 
+describe ":types instruction" do
+  it "should be a recognized instruction" do
+    expect(PushForthInterpreter.new.instruction?(:types)).to be true
+  end
+
+  it "should disappear if there isn't an arg" do
+    expect(PushForthInterpreter.new([[:types]]).step!.stack).to eq [[]]
+  end
+
+  it "should return a List containing the type of a root-typed item" do
+    expect(PushForthInterpreter.new([[:types],Dictionary.new()]).step!.stack).to eq [[],[:DictionaryType]]
+  end
+
+  it "should recognize numbers" do
+    expect(PushForthInterpreter.new([[:types],8]).step!.stack).to eq [[],[:IntegerType, :NumberType]]
+    expect(PushForthInterpreter.new([[:types],0.8]).step!.stack).to eq [[],[:FloatType, :NumberType]]
+    expect(PushForthInterpreter.new([[:types],Rational("1/4")]).step!.stack).to eq [[], [:RationalType, :NumberType]]
+    expect(PushForthInterpreter.new([[:types],Complex(3,1)]).step!.stack).to eq [[], [:ComplexType, :NumberType]]
+  end
+end
+
+# describe ":type? instruction" do
+#   it "should be a recognized instruction" do
+#     expect(PushForthInterpreter.new.instruction?(:type?)).to be true
+#   end
+
+#   it "should return take a Type and anything args, and return a bool 'is arg2 type arg1?'"
+
+# end
+
 describe ":gather_all instruction" do
   it "should be a recognized instruction" do
     expect(PushForthInterpreter.new.instruction?(:gather_all)).to be true
@@ -66,6 +96,13 @@ describe ":gather_all instruction" do
   it "should ignore things inside Lists" do
     expect(PushForthInterpreter.new([[:gather_all],:NumberType,[1,2],3,4]).step!.stack).
       to eq [[], [3, 4], [1, 2]]
+  end
+
+  it "should know about nested types" do
+    expect(PushForthInterpreter.new([[:gather_all],:FloatType,[1,2],3.9,4]).step!.stack).
+      to eq [[], [3.9], [1, 2], 4]
+    expect(PushForthInterpreter.new([[:gather_all],:NumberType,[1,2],3.9,4]).step!.stack).
+      to eq [[], [3.9, 4], [1, 2]]
   end
 end
 
@@ -87,5 +124,10 @@ describe ":gather_same instruction" do
   it "should ignore things inside Lists" do
     expect(PushForthInterpreter.new([[:gather_same],88,[1,2],3,4]).step!.stack).
       to eq [[], [88, 3, 4], [1, 2]]
+  end
+
+  it "should work at the most specific level when dealing with subtypes" do
+    expect(PushForthInterpreter.new([[:gather_same],88.2,1,2.9,3.9,4]).step!.stack).
+      to eq [[], [88.2, 2.9, 3.9], 1, 4]
   end
 end
