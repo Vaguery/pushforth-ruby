@@ -66,7 +66,7 @@ module PushForth
 
     @@instructions = [:eval, :noop, :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, 
-      :car, :cdr, :concat, :unit, :flip!,
+      :car, :cdr, :concat, :unit, :flip!, :reverse,
       :map, :while, :until0, :leafmap,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
@@ -584,6 +584,16 @@ module PushForth
     def pop(stack)
       if stack.length > 2
         stack.delete_at(1)
+      end
+      return stack
+    end
+
+
+    def reverse(stack)
+      if stack.length > 1
+        code = stack.shift
+        stack[0].reverse! if list?(stack[0])
+        stack.unshift(code)
       end
       return stack
     end
