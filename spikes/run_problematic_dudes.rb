@@ -1,7 +1,8 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[0, -388, :while, :multiply, :noop, :==, false, :swap, :noop, :car, :cons, :eval, -394, :or, :concat, :cons, :cdr, :which, false, [-4.75, :add, :dict, :set, :until0, [:rotate, -176, :add, :swap], :<, true, false, :flip!, :multiply, false], true, :eval, -11.375, false, :unit, :<, :get, :while, :divmod, false, 29, [:get]], :set, :eval, -328, :dict, -177, 5.03125, :map, :dict, :subtract, :get, :≠, -368, -441, :while, [9.90625, -229, :pop, :≠, :rotate, [false, -321, :multiply, :dup], :multiply, -3.375, false, :while, :split, :swap], [:while, :leafmap, :dup, [false, 53, -245, :multiply, false, :pop], :dup, :subtract, :get, []]]
+dude = [[5.1875, [-460, 7.25, :is_a?, [6.40625, true, [:which, -50, 510], -2.6875, :swap, :>, :cdr], :eval, :gather_all, :car], :while, :≤, :noop, -22, -381, :or, -1.46875, :≥, :while, :≠, :if, :split, [:args, :cdr, :==, :types, [false, :or, :until0, :which, :<], :gather_same, :not, :split, -13.03125]], :set, false, :unit, :until0, :unit, 6.75, false, 10.0, :divide, :args, 131, :==, :car, 181, :>, -106, :type, :cons, :set, :gather_all, :and, :not, :map, :if, false, false, :or, :gather_all, :add, :cons, :noop, :subtract, :gather_same, :dict, :concat, 9.59375, -3.78125, :split, [true, :or, :set, :until0, 506, true, :==, 314, :≠, :divmod]]
+
 
 
 

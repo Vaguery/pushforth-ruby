@@ -682,8 +682,7 @@ module PushForth
         arg1,arg2 = stack.shift(2)
         if arg1.kind_of?(Array) && arg2.kind_of?(Array)
           mapped = arg1.collect do |i|
-            arg2 = arg2.clone if dictionary?(arg2) || list?(arg2)
-            [i] + arg2
+            [i] + deep_copy(arg2)
           end
           mapped = mapped.flatten(1)
         elsif arg2.kind_of?(Array)
