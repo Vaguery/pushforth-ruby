@@ -214,13 +214,13 @@ For example, here are some more instructions I've added to flesh it out:
 - `:values`: signature:(Dictionary) (machine order)
   - `[[:values],«Dictionary:{3:88}»]` ☛ `[[],[88],«Dictionary:{3:88}»]`
 
-### comparison
+### numerical comparison
 - `:>` (for the moment, greater-than and less-than relations fail for `Complex` numbers)
 - `:≥`
 - `:<`
 - `:≤`
-- `:==` (works for all `Numeric` types)
-- `:≠` (works for all `Numeric` types)
+- `:==` (works for all `Number` types)
+- `:≠` (works for all `Number` types)
 
 
 ### functional
@@ -248,11 +248,24 @@ For example, here are some more instructions I've added to flesh it out:
 - `:flip!`: signature:(N/A); switches the positions of the `code` and `data` portions of the running interpreter state
   - `[[:flip!],3,4,5]` ☛ `[[3,4,5]]`
   - `[[:flip!,1,2],3,4]` ☛ `[[3,4],1,2]`
+- `:reverse`
+
+
+### i/o
+
+- `:args`: takes whatever is in the attribute `PushInterpreter#args` and puts it onto the top of the stack
+
+### type
+
+- `:type`: returns the (leaf) Type of the arg
+- `:types`: returns a list containing all the Types of the arg
+- `:is_a?`: takes a Type and anything, and returns a Boolean indicating if arg2 is an arg1
+- `:gather_all`: takes a Type as an arg, and moves all items in the stack of that Type into a List it puts at the top of the stack
+- -`:gather_same`: takes any item as an arg, and moves it and all items other in the stack of that into a List it puts at the top of the stack
 
 ## A silly list of possibilities and wants
 
 ### i/o
-- variables?
 - `:emit`
 
 ### interpreter
@@ -266,10 +279,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:data_size`
 
 ### aggregation
-- `:gather_type`
-- `:gather_same`
-- `:lift_type`
-- `:lift_same`
 - `:bury_type`
 - `:bury_same`
 - `:archive`
@@ -280,8 +289,6 @@ For example, here are some more instructions I've added to flesh it out:
 - `:reduce`
 
 ### type
-- `:type`
-- `:is_type?`
 - `:same_type?`
 - `:yank_args`
 
