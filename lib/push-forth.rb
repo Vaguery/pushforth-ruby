@@ -71,7 +71,7 @@ module PushForth
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠,
-      :type, :types, :gather_all, :gather_same,
+      :type, :types, :is_a?, :gather_all, :gather_same,
       :args]
 
     @@types = [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RationalType, :TypeType, :UnknownType]
@@ -366,12 +366,30 @@ module PushForth
       thing.kind_of? Dictionary
     end
 
+
     def list?(thing)
       thing.kind_of? Array
     end
 
+
     def recognized_ruby?(item)
       @@classes_to_types.keys.include? item.class
+    end
+
+
+    def is_a?(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if pushforth_type(arg1) == :TypeType
+          stack.unshift(pushforth_types(arg2).include?(arg1))
+        else
+          code.unshift(:is_a?, arg1)
+          stack.unshift(arg2)
+        end
+        stack.unshift(code)
+      end
+      return stack
     end
 
 

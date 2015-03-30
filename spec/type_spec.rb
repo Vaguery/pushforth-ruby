@@ -68,14 +68,28 @@ describe ":types instruction" do
   end
 end
 
-# describe ":type? instruction" do
-#   it "should be a recognized instruction" do
-#     expect(PushForthInterpreter.new.instruction?(:type?)).to be true
-#   end
+describe ":is_a? instruction" do
+  it "should be a recognized instruction" do
+    expect(PushForthInterpreter.new.instruction?(:is_a?)).to be true
+  end
 
-#   it "should return take a Type and anything args, and return a bool 'is arg2 type arg1?'"
+  it "should disappear if there aren't two arguments" do
+    expect(PushForthInterpreter.new([[:is_a?]]).step!.stack).to eq [[]]
+    expect(PushForthInterpreter.new([[:is_a?],77]).step!.stack).to eq [[],77]
+  end
 
-# end
+  it "should return take a Type and anything args, and return a bool 'is arg2 type arg1?'" do
+    expect(PushForthInterpreter.new([[:is_a?],:NumberType,77]).step!.stack).to eq [[],true]
+    expect(PushForthInterpreter.new([[:is_a?],:NumberType,false]).step!.stack).to eq [[],false]
+    expect(PushForthInterpreter.new([[:is_a?],:IntegerType,77]).step!.stack).to eq [[],true]
+    expect(PushForthInterpreter.new([[:is_a?],:IntegerType,77.7]).step!.stack).to eq [[],false]
+  end
+
+  it "should use a continuation if the first arg isn't a Type" do
+    expect(PushForthInterpreter.new([[:is_a?],false,77]).step!.stack).
+      to eq [[:is_a?,false],77]
+  end
+end
 
 describe ":gather_all instruction" do
   it "should be a recognized instruction" do
