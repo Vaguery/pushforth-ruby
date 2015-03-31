@@ -1,6 +1,4 @@
-require 'rspec'
-require_relative '../lib/push-forth'
-include PushForth
+require 'spec_helper'
 
 describe "setting arguments in the interpreter" do
   it "should be possible to set the arguments using a second initialization parameter" do

@@ -1,7 +1,8 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[250, :not, :until0, -0.1875, :add, [6.8125, :cdr, 10.09375, true, :types, :≤, :args, [9.8125, false], :while, :≠, false, true, [:cdr, true, [], :rotate, 5.28125, false, :>, :dict, :which, 411], :leafmap, :>, :dict], :types, :divmod, :noop, [:pop, :type, :add, :enlist, :and, 112, true, :or]], [:cons, 14.46875, :enlist, 14.96875, :get, true, false, :not, :==, :unit], :is_a?, 15.875, :dup, -10.78125, :≥, -5.40625, :map, :eval, false, -305, :divide, :flip!, :gather_all, true, [:multiply, :gather_same, :≥, :cdr, :is_a?, [:gather_all, [:unit, 13.0], -209, :pop, -12.6875, :==, :type, :map], 189, :swap], :set, :<]
+dude = [[4.4375, :divmod, 308, 398, :until0, :noop, :while, :divmod, false, 2.46875, 174, 300, -273, :if, [:which, :get, false, false, :if, [-5.0625, :car, :not, :is_a?], -30, :≥, :set, :which, :which, :swap], false, :swap, -309, true, -22, [:noop, 15.5625, :noop, [true, :gather_same, [:gather_same, :get, :divide]]]], :cdr, :dup, :dup, :cdr, false, -9.65625, false, true, [:leafmap, :not, :map, :>, :is_a?, :if, :split, -8.53125, :==, :divide], :map, :until0, :>, 71, :multiply, [:enlist, :pop, :leafmap, -8.3125, :enlist, :noop, :gather_same, :gather_same, :==, :until0], false, :==, :is_a?, :get, :<, :map, -3.375, -11, :gather_same, 2.25, :divmod, :types, -467]
+
 
 
 

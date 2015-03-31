@@ -1,7 +1,4 @@
-#encoding: utf-8 
-require 'rspec'
-require_relative '../lib/push-forth'
-include PushForth
+require 'spec_helper'
 
 describe "comparison" do
   describe ">" do

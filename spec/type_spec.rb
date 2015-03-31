@@ -1,6 +1,4 @@
-require 'rspec'
-require_relative '../lib/push-forth'
-include PushForth
+require 'spec_helper'
 
 # PushForth::Type: Number, Integer, FloatType, Rational, Complex, Boolean, Dictionary, Error, List, Symbol, Type
 

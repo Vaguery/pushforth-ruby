@@ -1,6 +1,4 @@
-require 'rspec'
-require_relative '../lib/push-forth'
-include PushForth
+require 'spec_helper'
 
 describe "Boolean functions" do
   describe "and" do

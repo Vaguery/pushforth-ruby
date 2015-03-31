@@ -1,8 +1,4 @@
-require 'rspec'
-require_relative '../lib/push-forth'
-include PushForth
-
-# see https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf
+require 'spec_helper'
 
 describe ":dup" do
   it "be a recognized instruction" do
