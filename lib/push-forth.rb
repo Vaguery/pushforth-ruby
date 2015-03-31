@@ -57,15 +57,15 @@ module PushForth
 
   class PushForthInterpreter
     ## types
-    require 'pf-types'
+    require_relative './pf-types'
 
     ## instructions
-    require 'pf-arithmetic'
-    require 'pf-boolean'
-    require 'pf-comparison'
-    require 'pf-dictionary'
-    require 'pf-functional'
-    require 'pf-miscellaneous'
+    require_relative './pf-arithmetic'
+    require_relative './pf-boolean'
+    require_relative './pf-comparison'
+    require_relative './pf-dictionary'
+    require_relative './pf-functional'
+    require_relative './pf-miscellaneous'
 
     def self.instructions
       return @@instructions

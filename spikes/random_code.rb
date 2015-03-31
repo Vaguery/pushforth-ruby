@@ -91,7 +91,7 @@ end
 t = tree2(100)
 puts build_tree(t).inspect
 
-dudes = 5000.times.collect do
+dudes = 100.times.collect do
   x = Random.rand(100)
   y = 9*x*x - 11*x + 1964
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
