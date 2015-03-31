@@ -19,7 +19,7 @@ def randomBool
 end
 
 def randomToken
-  which = [:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool].sample
+  which = [:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool].sample
   self.method(which).call()
 end
 
@@ -96,11 +96,10 @@ dudes = 1000.times.collect do
   y = 9*x*x - 11*x + 1964
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
   puts "#{pf.stack.inspect}"
-  pf.run(5000,1)
+  pf.run(5000,60)
   puts ">>>   #{pf.stack.inspect}"
   err = first_number(pf) ? (first_number(pf) - y).abs  : nil
   puts "#{err}\n\n"
-  STDOUT.flush
   pf
 end
 
