@@ -156,13 +156,21 @@ describe "type conversions" do
   end
 
   # 
-  # Dictionary -> Boolean
-  # Dictionary -> Complex
-  # Dictionary -> Float
-  # Dictionary -> Integer
+  # Dictionary -> Boolean; Dictionary -> Complex; Dictionary -> Float; Dictionary -> Integer
+  #   let it fail
+
   # Dictionary -> List
+  it "should make a Dictionary into a List of key-value pairs (in lists)" do
+    d = Dictionary.new({1 => 2, false => [11,22,33], "foo" => :BooleanType})
+    expect(PushForthInterpreter.new([[:become],d,:ListType]).step!.stack).
+      to eq [[], [[1, 2], [false, [11, 22, 33]], ["foo", :BooleanType]]]
+    expect(PushForthInterpreter.new([[:become],Dictionary.new(),:ListType]).step!.stack).
+      to eq [[], []]
+  end
+
   # Dictionary -> Rational
-  #
+  #   let it fail
+
   # Float -> Boolean
   # Float -> Complex
   # Float -> Dictionary

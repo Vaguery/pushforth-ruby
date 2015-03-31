@@ -145,8 +145,8 @@ module PushForth
       [:ComplexType,:FloatType] => Proc.new {|arg| [arg.real.to_f,arg.imag.to_f] },
       [:ComplexType,:IntegerType] => Proc.new {|arg| [arg.real.to_i,arg.imag.to_i] },
       [:ComplexType,:ListType] => Proc.new {|arg| [arg] },
-      [:ComplexType,:RationalType] => Proc.new {|arg| [arg.real.to_r,arg.imag.to_r] }
-
+      [:ComplexType,:RationalType] => Proc.new {|arg| [arg.real.to_r,arg.imag.to_r] },
+      [:DictionaryType,:ListType] => Proc.new {|arg| arg.contents.collect {|k,v| [k,v]} }
 
     }
 
