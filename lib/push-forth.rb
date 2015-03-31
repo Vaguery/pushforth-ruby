@@ -11,6 +11,7 @@ module PushForth
     end
   end
 
+
   class Dictionary
     attr_accessor :contents
 
@@ -153,6 +154,10 @@ module PushForth
 
     def list?(thing)
       thing.kind_of? Array
+    end
+
+    def number?(thing)
+      pushforth_types(thing)[-1] == :NumberType
     end
 
     ### interpreter-facing instructions

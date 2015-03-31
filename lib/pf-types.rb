@@ -18,13 +18,24 @@ module PushForth
                  }
 
     ## Doesn't include Symbol, since that's trickier
-    @@classes_to_types = {Array => :ListType, Complex => :ComplexType, PushForth::Dictionary => :DictionaryType, PushForth::Error => :ErrorType, FalseClass => :BooleanType, Fixnum => :IntegerType, Float => :FloatType, Rational => :RationalType, TrueClass => :BooleanType}
+    @@classes_to_types = {
+      Array => :ListType, 
+      Bignum => :IntegerType, 
+      Complex => :ComplexType, 
+      PushForth::Dictionary => :DictionaryType, 
+      PushForth::Error => :ErrorType, 
+      FalseClass => :BooleanType, 
+      Fixnum => :IntegerType, 
+      Float => :FloatType, 
+      Rational => :RationalType, 
+      TrueClass => :BooleanType}
 
     ### type instructions and helpers
 
     def recognized_ruby?(item)
       @@classes_to_types.keys.include? item.class
     end
+
 
     def is_a?(stack)
       if stack.length > 2

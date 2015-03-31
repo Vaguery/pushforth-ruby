@@ -88,7 +88,7 @@ describe PushForth do
     end
 
     it "should step until its counter runs out" do
-      hasrun = PushForthInterpreter.new([[[[]],[:eval,:dup,:car],:while],[[16,1.0,:divide]]]).run
+      hasrun = PushForthInterpreter.new([[[[]],[:eval,:dup,:car],:while],[[16.0,1.0,:divide]]]).run
       expect(hasrun.stack).to eq [[], [], [[], 0.0625]]
       expect(hasrun.steps).to eq 24
     end
