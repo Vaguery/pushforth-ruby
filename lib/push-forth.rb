@@ -78,7 +78,7 @@ module PushForth
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠,
-      :type, :types, :is_a?, :gather_all, :gather_same]
+      :type, :types, :is_a?, :gather_all, :gather_same, :become]
 
 
     attr_accessor :stack,:steps,:arg_list

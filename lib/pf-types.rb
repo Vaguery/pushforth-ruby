@@ -30,6 +30,10 @@ module PushForth
       Rational => :RationalType, 
       TrueClass => :BooleanType}
 
+    @@convertible_types = [:BooleanType, :ComplexType, 
+      :DictionaryType, :FloatType, :IntegerType, :ListType, :RationalType]
+
+
     ### type instructions and helpers
 
     def recognized_ruby?(item)
@@ -123,5 +127,42 @@ module PushForth
       end
       return stack
     end
+
+
+    def convertible?(thing)
+      @@convertible_types.include?(pushforth_type(thing))
+    end
+
+    @@type_conversions = {
+      [:BooleanType,:ComplexType] => Proc.new {|arg| arg ? Complex(1,1) : Complex(-1,-1) },
+      [:BooleanType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
+      [:BooleanType,:FloatType] => Proc.new {|arg| arg ? 1.0 : -1.0 }
+    }
+
+
+    def become(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        old_type = pushforth_type(arg1)
+        if convertible?(arg1)
+          if pushforth_type(arg2) == :TypeType
+            new_type = arg2
+            if old_type == new_type
+              stack.unshift(arg1)
+            else
+              proc = @@type_conversions[ [old_type,new_type] ]
+              stack.unshift(proc.call(arg1))
+            end
+          else
+          end
+        else
+          stack.unshift(arg1,arg2)
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
+
   end
 end

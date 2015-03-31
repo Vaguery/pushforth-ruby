@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-# PushForth::Type: Number, Integer, FloatType, Rational, Complex, Boolean, Dictionary, Error, List, Symbol, Type
-
 describe ":type instruction" do
   it "should be a recognized instruction" do
     expect(PushForthInterpreter.new.instruction?(:type)).to be true
@@ -143,3 +141,4 @@ describe ":gather_same instruction" do
       to eq [[], [88.2, 2.9, 3.9], 1, 4]
   end
 end
+
