@@ -166,22 +166,51 @@ describe PushForth do
     end
   end
 
+  describe ":wrapitup" do
+    it "should remove all copies of :henceforth from the code stack" do
+      expect(PushForthInterpreter.new([[:wrapitup, 1, 2, 3, :henceforth, 1, 2, 3], [4, 5, 6]]).step!.stack).
+        to eq [[1, 2, 3, 1, 2, 3], [4, 5, 6]]
+    end
+
+    it "should work when empty too" do
+      expect(PushForthInterpreter.new([[:wrapitup], [4, 5, 6]]).step!.stack).
+        to eq [[], [4, 5, 6]]
+    end
+  end
+
   describe ":snapshot" do
     it "should make a complete copy of the entire stack on the data stack" do
       expect(PushForthInterpreter.new([[:snapshot,1,[2,3]],4,5,6]).step!.stack).
         to eq [[1, [2, 3]], [[1, [2, 3]], 4, 5, 6], 4, 5, 6]
     end
 
-    it "should make a complete copy of the entire stack on the data stack" do
+    it "should work for an empty data stack" do
       expect(PushForthInterpreter.new([[:snapshot,1]]).step!.stack).
         to eq [[1], [[1]]]
     end
 
-    it "should make a complete copy of the entire stack on the data stack" do
+    it "should work when empty" do
       expect(PushForthInterpreter.new([[:snapshot]]).step!.stack).
         to eq  [[], [[]]]
     end
-
-
   end
+
+  describe ":again" do
+    it "should insert a complete copy of the data stack on the bottom of the code stack" do
+      expect(PushForthInterpreter.new([[:again,1,[2,3]],4,5,6]).step!.stack).
+        to eq [[1, [2, 3], 4, 5, 6], 4, 5, 6]
+    end
+
+    it "should work when data is empty" do
+      expect(PushForthInterpreter.new([[:again,1]]).step!.stack).
+        to eq [[1]]
+    end
+
+
+    it "should work when empty" do
+      expect(PushForthInterpreter.new([[:again]]).step!.stack).
+        to eq  [[]]
+    end
+  end
+
 end
