@@ -18,6 +18,7 @@ describe ":args instruction" do
 
   it "should push the List containing all the args onto the stack" do
     pf = PushForthInterpreter.new([[:args],1,2],[false,true])
+    puts pf.get_args.inspect
     expect(pf.step!.stack).to eq [[], false, true, 1, 2]
   end
 

@@ -1,36 +1,43 @@
 module PushForth
-  class Dictionary
-    attr_accessor :contents
+  class PushForthInterpreter
 
-    def initialize(hash = {})
-      @contents = hash
-    end
-
-    def set(key,value)
-      value = value.clone if value.kind_of?(Array) || value.kind_of?(Dictionary)
-      contents[key] = value
-    end
-
-    def get(key)
-      return contents[key] || Error.new("key not found")
-    end
-
-    def eql?(other)
-      return @contents.eql?(other.contents)
-    end
-
-    def keys
-      @contents.keys
-    end
-
-    def clone
-      copy = Dictionary.new()
-      self.keys.each do |k|
-        safe_key = deep_copy(k)
-        safe_val = deep_copy(@contents[k])
-        copy.contents[safe_key] = safe_val
+    ### dictionary instructions
+    
+    def get(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if dictionary?(arg1)
+          stack.unshift(arg1.get(arg2),arg1)
+        else
+          code.unshift(:get,arg1)
+          stack.unshift(arg2)
+        end
+        stack.unshift(code)
       end
-      return copy
+      return stack
+    end
+
+
+    def set(stack)
+      if stack.length > 3
+        code = stack.shift
+        arg1,arg2,arg3 = stack.shift(3)
+        if dictionary?(arg1)
+          arg1.set(arg2,arg3)
+          stack.unshift(arg1)
+        else
+          code.unshift(:set,arg1)
+          stack.unshift(arg2,arg3)
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
+
+
+    def dict(stack)
+      return stack.insert(1,PushForth::Dictionary.new)
     end
   end
 end
