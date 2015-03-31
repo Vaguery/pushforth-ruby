@@ -28,6 +28,14 @@ describe "add" do
     expect(PushForthInterpreter.new([[:add,1,2],3,"a",4]).step!.stack).
       to eq [[:add,"a",1,2],3,4]
   end
+
+  it "should create an overflow when the answer is a Bignum" do
+    expect(PushForthInterpreter.new([[:add],111111111111111111111111111,11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
+    expect(PushForthInterpreter.new([[:add],-111111111111111111111111111,
+      -11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
+  end
 end
 
 
@@ -54,6 +62,14 @@ describe "subtract" do
     expect(skipB.step!.stack).to eq [[:subtract,"b"],5,9]
     expect(skipB.step!.stack).to eq [["b"],-4]
   end
+
+  it "should create an overflow when the answer is a Bignum" do
+    expect(PushForthInterpreter.new([[:subtract],111111111111111111111111111,11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
+    expect(PushForthInterpreter.new([[:subtract],-111111111111111111111111111,
+      -11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
+  end
 end
 
 
@@ -79,6 +95,14 @@ describe "multiply" do
     skipB = PushForthInterpreter.new([[:multiply],5,"b",9])
     expect(skipB.step!.stack).to eq [[:multiply,"b"],5,9]
     expect(skipB.step!.stack).to eq [["b"],45]
+  end
+
+  it "should create an overflow when the answer is a Bignum" do
+    expect(PushForthInterpreter.new([[:multiply],111111111111111111111111111,11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
+    expect(PushForthInterpreter.new([[:multiply],111111111111111111111111111,
+      -11111111111111111111111111111111111]).step!.stack[1]).
+      to be_a_kind_of(Error)
   end
 end
 

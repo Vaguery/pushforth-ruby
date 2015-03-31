@@ -151,9 +151,20 @@ module PushForth
     end
 
 
-    def run
-      while evaluable?(@stack) && @steps < 5000
+    def run(max_steps=5000,timeout=120)
+      done = false
+      start_time = Time.now
+      while evaluable?(@stack) && !done
         self.step!
+        now = Time.now
+        if @steps >= max_steps
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{@steps} steps reached"))
+        end
+        if (now - start_time) >= timeout
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
+        end
       end
       self
     end
@@ -185,7 +196,11 @@ module PushForth
 
     def add(stack)
       return arithmetic(:add, stack) do |a,b|
-        a+b
+        if (a+b).kind_of?(Bignum)
+          Error.new("arithmetic overflow")
+        else
+          a+b
+        end
       end
     end
 
@@ -213,14 +228,22 @@ module PushForth
 
     def multiply(stack)
       return arithmetic(:multiply, stack) do |a,b|
-        a*b
+        if (a*b).kind_of?(Bignum)
+          Error.new("arithmetic overflow")
+        else
+          a*b
+        end
       end
     end
 
 
     def subtract(stack)
       return arithmetic(:subtract, stack) do |a,b|
-        a-b
+        if (a-b).kind_of?(Bignum)
+          Error.new("arithmetic overflow")
+        else
+          a-b
+        end
       end
     end
 

@@ -1,14 +1,19 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[15.59375, false, :and, :map, :get, :leafmap, :<, true, 361, :not, :>, -6.84375, :≤, :type, true, 233, -3.5, :if, false, :while, [true, :gather_all, :pop, :get, :map, :multiply, :not, :subtract, 204, -2.125], :leafmap, :is_a?, 285, [-7.5, [:cdr, -293, :until0, :cons, false, :until0, :multiply, -13.71875], :gather_all, -3]], :until0, :noop, :dict, 458, [:cdr, :rotate, true, true, :cdr, :<, :map, :while, :enlist, :divide], [:gather_all, -8, :swap, -13.84375, :if, :concat, -178, :map, -6.5, :subtract], -259, :which, :dup, false, :swap, :pop, :multiply, :enlist, 4.5, [:flip!, false, :rotate, [-388, :car, 1.28125, :dict, :dict, :flip!], :≠]]
+dude = [[250, :not, :until0, -0.1875, :add, [6.8125, :cdr, 10.09375, true, :types, :≤, :args, [9.8125, false], :while, :≠, false, true, [:cdr, true, [], :rotate, 5.28125, false, :>, :dict, :which, 411], :leafmap, :>, :dict], :types, :divmod, :noop, [:pop, :type, :add, :enlist, :and, 112, true, :or]], [:cons, 14.46875, :enlist, 14.96875, :get, true, false, :not, :==, :unit], :is_a?, 15.875, :dup, -10.78125, :≥, -5.40625, :map, :eval, false, -305, :divide, :flip!, :gather_all, true, [:multiply, :gather_same, :≥, :cdr, :is_a?, [:gather_all, [:unit, 13.0], -209, :pop, -12.6875, :==, :type, :map], 189, :swap], :set, :<]
+
+
+
+  x = Random.rand(100)
+  y = 9*x*x - 11*x + 1964
 
 
 
 
 
 
-pf = PushForthInterpreter.new(dude)
+pf = PushForthInterpreter.new(dude,[x])
 
 (0..1000).each do |i|
   puts i
