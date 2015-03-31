@@ -8,6 +8,16 @@ describe PushForth do
     end
   end
 
+  describe "#size function" do
+    it "should count items in the stack" do
+      expect(PushForthInterpreter.new.size [1,2,3,4,5]).to eq 6
+      expect(PushForthInterpreter.new.size []).to eq 1
+      expect(PushForthInterpreter.new.size [[],[]]).to eq 3
+      expect(PushForthInterpreter.new.size [1,[2,[3,[4]]]]).to eq 8
+      expect(PushForthInterpreter.new.size Dictionary.new({1 => 2, 3 => 4})).to eq 5
+      expect(PushForthInterpreter.new.size [:foo,:bar]).to eq 3
+    end
+  end
 
   describe "evaluable" do
     it "should match Maarten's definition" do
@@ -77,6 +87,14 @@ describe PushForth do
       pf = PushForthInterpreter.new([[1],2]).run(0)
       expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
       expect(pf.stack[1].string).to match /HALTED: .+ steps reached/
+    end
+  end
+
+  describe "size limit" do
+    it "should be possible to set it from the #run call" do
+      pf = PushForthInterpreter.new([[1,2,3,4,5,6,7,8,9],10]).run(11)
+      expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
+      expect(pf.stack[1].string).to match /HALTED: \d+ points/
     end
   end
 

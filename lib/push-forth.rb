@@ -92,11 +92,51 @@ module PushForth
       @arg_list = args
     end
 
-
     def get_args
       @arg_list
     end
 
+    def step!
+      @steps += 1
+      @stack = eval(@stack)
+      return self
+    end
+
+
+    def run(max_steps=5000,timeout=120)
+      done = false
+      start_time = Time.now
+      while !done && evaluable?(@stack)
+        self.step!
+        now = Time.now
+        if size(@stack) >= max_steps
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{size@stack} points in state"))
+        end
+        if @steps >= max_steps
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{@steps} steps reached"))
+        end
+        if (now - start_time) >= timeout
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
+        end
+      end
+      self
+    end
+
+    ### utilities
+
+    def size(thing)
+      case thing
+      when Array
+        thing.inject(1) {|sum,pt| sum + size(pt)}
+      when Dictionary
+        thing.contents.inject(1) {|sum,(key,value)| sum + size(key) + size(value)}
+      else
+        1
+      end
+    end
 
     def nonemptyArray?(thing)
       thing.kind_of?(Array) &&
@@ -118,34 +158,6 @@ module PushForth
     def halted?
       !evaluable?(@stack)      
     end
-
-
-    def step!
-      @steps += 1
-      @stack = eval(@stack)
-      return self
-    end
-
-
-    def run(max_steps=5000,timeout=120)
-      done = false
-      start_time = Time.now
-      while evaluable?(@stack) && !done
-        self.step!
-        now = Time.now
-        if @steps >= max_steps
-          done = true
-          @stack.insert(1,Error.new("HALTED: #{@steps} steps reached"))
-        end
-        if (now - start_time) >= timeout
-          done = true
-          @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
-        end
-      end
-      self
-    end
-
-    ### utilities
 
     def boolean?(thing)
       thing == true || thing == false
