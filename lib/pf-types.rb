@@ -136,7 +136,18 @@ module PushForth
     @@type_conversions = {
       [:BooleanType,:ComplexType] => Proc.new {|arg| arg ? Complex(1,1) : Complex(-1,-1) },
       [:BooleanType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
-      [:BooleanType,:FloatType] => Proc.new {|arg| arg ? 1.0 : -1.0 }
+      [:BooleanType,:FloatType] => Proc.new {|arg| arg ? 1.0 : -1.0 },
+      [:BooleanType,:IntegerType] => Proc.new {|arg| arg ? 1 : -1 },
+      [:BooleanType,:ListType] => Proc.new {|arg| arg ? [true] : [false] },
+      [:BooleanType,:RationalType] => Proc.new {|arg| arg ? Rational("1/1") : Rational("-1/1") },
+      [:ComplexType,:BooleanType] => Proc.new {|arg| arg.real > 0 ? true : false },
+      [:ComplexType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
+      [:ComplexType,:FloatType] => Proc.new {|arg| [arg.real.to_f,arg.imag.to_f] },
+      [:ComplexType,:IntegerType] => Proc.new {|arg| [arg.real.to_i,arg.imag.to_i] },
+      [:ComplexType,:ListType] => Proc.new {|arg| [arg] },
+      [:ComplexType,:RationalType] => Proc.new {|arg| [arg.real.to_r,arg.imag.to_r] }
+
+
     }
 
 
@@ -152,9 +163,13 @@ module PushForth
               stack.unshift(arg1)
             else
               proc = @@type_conversions[ [old_type,new_type] ]
-              stack.unshift(proc.call(arg1))
+              stack.unshift(proc.nil? ?
+                Error.new("Can't convert #{old_type} to #{new_type}") :
+                proc.call(arg1))
             end
           else
+            stack.unshift(arg1)
+            code.unshift(:become,arg2)
           end
         else
           stack.unshift(arg1,arg2)

@@ -36,6 +36,18 @@ require 'spec_helper'
         expect(PushForthInterpreter.new(starting_stack).step!.stack).
           to eq [[], -1.0]
       end
+
+      it "should return an Error if it doesn't have a converter" do
+        starting_stack = [[:become],false,:UnknownType]
+        expect(PushForthInterpreter.new(starting_stack).step!.stack[1]).
+          to be_a_kind_of(Error)
+      end
+
+      it "should build a continuation if the second arg isn't a Type" do
+        starting_stack = [[:become],false,33]
+        expect(PushForthInterpreter.new(starting_stack).step!.stack).
+          to eq [[:become, 33],false]
+      end
     end
   end
 
@@ -64,16 +76,85 @@ describe "type conversions" do
   end
 
   # Boolean -> Float
+  it "should make a Boolean into a 1.0 or -1.0, respectively" do
+    expect(PushForthInterpreter.new([[:become],true,:FloatType]).step!.stack).
+      to eq [[], 1.0]
+    expect(PushForthInterpreter.new([[:become],false,:FloatType]).step!.stack).
+      to eq [[], -1.0]
+  end
+
   # Boolean -> Integer
+  it "should make a Boolean into a 1 or -1, respectively" do
+    expect(PushForthInterpreter.new([[:become],true,:IntegerType]).step!.stack).
+      to eq [[], 1]
+    expect(PushForthInterpreter.new([[:become],false,:IntegerType]).step!.stack).
+      to eq [[], -1]
+  end
+
   # Boolean -> List
+  it "should make a Boolean into a [true] or [false], respectively" do
+    expect(PushForthInterpreter.new([[:become],true,:ListType]).step!.stack).
+      to eq [[], [true]]
+    expect(PushForthInterpreter.new([[:become],false,:ListType]).step!.stack).
+      to eq [[], [false]]
+  end
+
   # Boolean -> Rational
+  it "should make a Boolean into a 1 or -1, respectively" do
+    expect(PushForthInterpreter.new([[:become],true,:RationalType]).step!.stack).
+      to eq [[], Rational("1/1")]
+    expect(PushForthInterpreter.new([[:become],false,:RationalType]).step!.stack).
+      to eq [[], Rational("-1/1")]
+  end
+
   # 
   # Complex -> Boolean
+  it "should make a Complex into a true or false by inverting the relation" do
+    expect(PushForthInterpreter.new([[:become],Complex(5,2),:BooleanType]).step!.stack).
+      to eq [[], true]
+    expect(PushForthInterpreter.new([[:become],Complex(-5,-2),:BooleanType]).step!.stack).
+      to eq [[], false]
+    expect(PushForthInterpreter.new([[:become],Complex(-5,2),:BooleanType]).step!.stack).
+      to eq [[], false]
+    expect(PushForthInterpreter.new([[:become],Complex(5,-2),:BooleanType]).step!.stack).
+      to eq [[], true]
+    expect(PushForthInterpreter.new([[:become],Complex(-5,0),:BooleanType]).step!.stack).
+      to eq [[], false]
+    expect(PushForthInterpreter.new([[:become],Complex(5,0),:BooleanType]).step!.stack).
+      to eq [[], true]
+  end
+
   # Complex -> Dictionary
-  # Complex -> Float  
+  it "should make a Complex into a Dictionary with k,v = arg1" do
+    expect(PushForthInterpreter.new([[:become],Complex(1,2),:DictionaryType]).step!.stack[1].contents).to eq({Complex(1,2) => Complex(1,2)})
+  end
+
+  # Complex -> Float 
+  it "should make a Complex into two Floats" do
+    expect(PushForthInterpreter.new([[:become],Complex(1,2),:FloatType]).step!.stack).
+      to eq [[],[1.0,2.0]]
+  end
+
   # Complex -> Integer
+  it "should make a Complex into two Floats" do
+    expect(PushForthInterpreter.new([[:become],Complex(1,2),:IntegerType]).step!.stack).
+      to eq [[],[1,2]]
+  end
+
   # Complex -> List
+  it "should wrap itself into a List" do
+    expect(PushForthInterpreter.new([[:become],Complex(1,2),:ListType]).step!.stack).
+      to eq [[],[Complex(1,2)]]
+  end
+
   # Complex -> Rational
+  it "should make a Complex into two Rationals (using #to_r)" do
+    expect(PushForthInterpreter.new([[:become],Complex(1,2),:RationalType]).step!.stack).
+      to eq [[],[Rational("1/1"),Rational("2/1")]]
+    expect(PushForthInterpreter.new([[:become],Complex(-0.25,2.5),:RationalType]).step!.stack).
+      to eq [[], [Rational("-1/4"), Rational("5/2")]]
+  end
+
   # 
   # Dictionary -> Boolean
   # Dictionary -> Complex
