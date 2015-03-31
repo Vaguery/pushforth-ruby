@@ -72,9 +72,10 @@ module PushForth
       return @@instructions
     end
 
-    @@instructions = [:eval, :noop, :args,
+    @@instructions = [:eval, :noop, :args, :later, :flip!, :henceforth, :snapshot,
       :add, :subtract, :multiply, :divide, :divmod, 
-      :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, :unit, :flip!, :reverse, :map, :while, :until0, :leafmap,
+      :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, 
+               :unit, :reverse, :map, :while, :until0, :leafmap,
       :and, :or, :not, :if, :which,
       :set, :get, :dict,
       :>, :<, :≥, :≤, :==, :≠,
@@ -188,6 +189,22 @@ module PushForth
       return stack
     end
 
+    def later(stack)
+      stack[0].push(stack[0].shift) unless stack[0].empty?
+      return stack
+    end
+
+    def henceforth(stack)
+      code = stack.shift
+      code = code + [:henceforth] + deep_copy(code)
+      stack.unshift code
+      return stack
+    end
+
+    def snapshot(stack)
+      stack.insert(1,deep_copy(stack))
+      return stack
+    end
 
   end
 end

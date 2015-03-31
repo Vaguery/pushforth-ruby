@@ -140,4 +140,48 @@ describe PushForth do
     end
   end
 
+  describe ":later" do
+    it "should take the top item from code and put it at the bottom of the code" do
+      expect(PushForthInterpreter.new([[:later,1,2,3],[4,5,6]]).step!.stack).
+        to eq [[2, 3, 1], [4, 5, 6]]
+      expect(PushForthInterpreter.new([[:later]]).step!.stack).
+        to eq [[]]
+    end
+  end
+
+  describe ":henceforth" do
+    it "should append `:henceforth (copy of code stack)` to the code stack" do
+      expect(PushForthInterpreter.new([[:henceforth,1,2,3],[4,5,6]]).step!.stack).
+        to eq [[1, 2, 3, :henceforth, 1, 2, 3], [4, 5, 6]]
+      expect(PushForthInterpreter.new([[:henceforth]]).step!.stack).
+        to eq [[:henceforth]]
+    end
+
+    it "should create deep_copies of things" do
+      e = Dictionary.new()
+      d = Dictionary.new(1 => e)
+      pf = PushForthInterpreter.new([[:henceforth,d],[4,5,6]]).step!
+      expect(pf.stack[0][2].object_id).not_to eq d.object_id
+      expect(pf.stack[0][2].get(1).object_id).not_to eq d.get(1).object_id
+    end
+  end
+
+  describe ":snapshot" do
+    it "should make a complete copy of the entire stack on the data stack" do
+      expect(PushForthInterpreter.new([[:snapshot,1,[2,3]],4,5,6]).step!.stack).
+        to eq [[1, [2, 3]], [[1, [2, 3]], 4, 5, 6], 4, 5, 6]
+    end
+
+    it "should make a complete copy of the entire stack on the data stack" do
+      expect(PushForthInterpreter.new([[:snapshot,1]]).step!.stack).
+        to eq [[1], [[1]]]
+    end
+
+    it "should make a complete copy of the entire stack on the data stack" do
+      expect(PushForthInterpreter.new([[:snapshot]]).step!.stack).
+        to eq  [[], [[]]]
+    end
+
+
+  end
 end
