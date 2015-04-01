@@ -74,7 +74,7 @@ module PushForth
 
     @@instructions = [
       :eval, :noop, :args, :later, :flip!, 
-        :henceforth, :snapshot, :again, :wrapitup,
+        :henceforth, :snapshot, :again, :wrapitup, :do_times,
       :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, 
         :unit, :reverse, :map, :while, :until0, :leafmap,
@@ -216,6 +216,30 @@ module PushForth
       return stack
     end
 
+    def do_times(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        type1 = pushforth_type(arg1) == :IntegerType
+        type2 = list?(arg2)
+        if type1 && type2
+          if arg1 > 0
+            code.unshift(*deep_copy(arg2),arg2,arg1-1,:do_times)
+          else
+            stack.unshift(arg2)
+          end
+        elsif type1
+          code.unshift(:do_times,arg2)
+          stack.unshift(arg1)
+        else type2
+          code.unshift(:swap,:do_times,arg1)
+          stack.unshift(arg2)
+        end
+        stack.unshift(code)
+      end
+      return(stack)
+    end
+
     def snapshot(stack)
       stack.insert(1,deep_copy(stack))
       return stack
@@ -229,8 +253,9 @@ module PushForth
     end
 
     def wrapitup(stack)
+      loopers = [:henceforth, :do_times, :while]
       code = stack.shift
-      code = code.delete_if {|item| item == :henceforth}
+      code = code.delete_if {|item| loopers.include?(item)}
       stack.unshift(code)
       return stack
     end
