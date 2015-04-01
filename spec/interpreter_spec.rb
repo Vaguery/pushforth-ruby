@@ -76,7 +76,7 @@ describe PushForth do
 
   describe "timeout" do
     it "should be possible to set it from the #run call" do
-      pf = PushForthInterpreter.new([[1],2]).run(5000,0.0)
+      pf = PushForthInterpreter.new([[1],2]).run(time_limit:0.0)
       expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
       expect(pf.stack[1].string).to match /HALTED: .+ seconds elapsed/
     end
@@ -84,7 +84,7 @@ describe PushForth do
 
   describe "step limit" do
     it "should be possible to set it from the #run call" do
-      pf = PushForthInterpreter.new([[1],2]).run(0)
+      pf = PushForthInterpreter.new([[1],2]).run(step_limit:0)
       expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
       expect(pf.stack[1].string).to match /HALTED: .+ steps reached/
     end
@@ -92,7 +92,7 @@ describe PushForth do
 
   describe "size limit" do
     it "should be possible to set it from the #run call" do
-      pf = PushForthInterpreter.new([[1,2,3,4,5,6,7,8,9],10]).run(11)
+      pf = PushForthInterpreter.new([[1,2,3,4,5,6,7,8,9],10]).run(size_limit:11)
       expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
       expect(pf.stack[1].string).to match /HALTED: \d+ points/
     end
@@ -113,7 +113,7 @@ describe PushForth do
 
     it "should step until the timer runs out" do
       slow = PushForthInterpreter.new([[1,2,3,4,5,6,7,8,9,10]])
-      slow.run(5000,0.000000001)
+      slow.run(time_limit:0.000000001)
       expect(slow.stack[1]).to be_a_kind_of(Error)
       expect(slow.stack[1].string).to match /HALTED: .+ seconds elapsed/
     end

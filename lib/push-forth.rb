@@ -85,11 +85,16 @@ module PushForth
 
 
     attr_accessor :stack,:steps,:arg_list
+    attr_reader :step_limit,:time_limit,:size_limit
 
-    def initialize(token_array=[],args=[])
+    def initialize(token_array=[],args=[],limits={})
       @stack = token_array
       @steps = 0
       @arg_list = args
+
+      @step_limit = limits[:step_limit] || 1000
+      @size_limit = limits[:size_limit] || 1000
+      @time_limit = limits[:time_limit] || 120
     end
 
     def get_args
@@ -103,28 +108,34 @@ module PushForth
     end
 
 
-    def run(max_steps=5000,timeout=120,trace=false)
+    def run(arguments={})
+      step_limit = arguments[:step_limit] || @step_limit
+      time_limit = arguments[:time_limit] || @time_limit
+      size_limit = arguments[:size_limit] || @size_limit
+      trace = arguments[:trace] || false
+
       done = false
       start_time = Time.now
       while !done && evaluable?(@stack)
-        self.step!
         puts @stack.inspect if trace
+        self.step!
         now = Time.now
-        if size(@stack) >= max_steps
+        if size(@stack) >= size_limit
           done = true
           @stack.insert(1,Error.new("HALTED: #{size@stack} points in state"))
         end
-        if @steps >= max_steps
+        if @steps >= step_limit
           done = true
           @stack.insert(1,Error.new("HALTED: #{@steps} steps reached"))
         end
-        if (now - start_time) >= timeout
+        if (now - start_time) >= time_limit
           done = true
           @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
         end
       end
       self
     end
+
 
     ### utilities
 
