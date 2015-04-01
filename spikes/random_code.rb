@@ -104,12 +104,13 @@ end
 # puts pf.stack.inspect
 # puts id_tree(pf.stack).inspect
 
-dudes = 1000.times.collect do
+dudes = 100000.times.collect do
   x = Random.rand(100)
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
   puts "#{pf.stack.inspect}"
-  pf.run(step_limit:5000,time_limit:60)
-  puts ">>>   #{pf.stack.inspect}"
+  pf.run(step_limit:5000,time_limit:60,size_limit:5000)
+  puts ">>>  args: #{[x]}"
+  puts ">>>  #{pf.stack.inspect}"
   pf
 end
 
