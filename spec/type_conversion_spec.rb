@@ -160,12 +160,12 @@ describe "type conversions" do
   #   let it fail
 
   # Dictionary -> List
-  it "should make a Dictionary into a List of key-value pairs (in lists)" do
+  it "should make a Dictionary into a List of key-value pairs, flattened" do
     d = Dictionary.new({1 => 2, false => [11,22,33], "foo" => :BooleanType})
     expect(PushForthInterpreter.new([[:become],d,:ListType]).step!.stack).
-      to eq [[], [[1, 2], [false, [11, 22, 33]], ["foo", :BooleanType]]]
+      to eq [[], [1, 2, false, [11, 22, 33], "foo", :BooleanType]]
     expect(PushForthInterpreter.new([[:become],Dictionary.new(),:ListType]).step!.stack).
-      to eq [[], []]
+      to eq [[],[]]
   end
 
   # Dictionary -> Rational
@@ -227,24 +227,92 @@ describe "type conversions" do
   end
 
   # Integer -> Complex
-  # Integer -> Dictionary
-  # Integer -> Float
-  # Integer -> Integer
-  # Integer -> List
-  # Integer -> Rational
-  #
-  # List -> Boolean
-  # List -> Complex
-  # List -> Dictionary
-  # List -> Float
-  # List -> Integer
-  # List -> Rational
-  #
-  # Rational -> Boolean
-  # Rational -> Complex
-  # Rational -> Dictionary
-  # Rational -> Float
-  # Rational -> Integer
-  # Rational -> List
+  it "should make an Integer into a Complex by adding 0i" do
+    expect(PushForthInterpreter.new([[:become],99,:ComplexType]).step!.stack).
+      to eq [[], Complex(99,0)]
+    expect(PushForthInterpreter.new([[:become],-99,:ComplexType]).step!.stack).
+      to eq [[], Complex(-99,0)]
+    expect(PushForthInterpreter.new([[:become],0,:ComplexType]).step!.stack).
+      to eq [[], Complex(0,0)]
+  end
 
+  # Integer -> Dictionary
+  it "should make an Integer into a Dictionary with k,v = arg1" do
+    expect(PushForthInterpreter.new([[:become],123,:DictionaryType]).step!.stack[1].contents).to eq({123 => 123})
+  end
+
+  # Integer -> Float
+  it "should use the .to_f method" do
+    expect(PushForthInterpreter.new([[:become],123,:FloatType]).step!.stack[1]).to be 123.0
+  end
+
+  # Integer -> List
+  it "should wrap itself into a List" do
+    expect(PushForthInterpreter.new([[:become],300,:ListType]).step!.stack).
+      to eq [[],[300]]
+  end
+
+  # Integer -> Rational
+  it "should use the .to_r method" do
+    expect(PushForthInterpreter.new([[:become],123,:RationalType]).step!.stack).
+      to eq [[], (123/1)]
+  end
+
+  #
+  # List -> Boolean; List -> Complex; List -> Float; List -> Integer; List -> Rational
+    #   let it fail
+
+  # List -> Dictionary
+  it "should build a Dictionary using pairs of elements as k,v" do
+    expect(PushForthInterpreter.new([[:become],[1,2,3,4,5,6],:DictionaryType]).
+      step!.stack[1].contents).to eq({1=>2, 3=>4, 5=>6})
+    expect(PushForthInterpreter.new([[:become],[],:DictionaryType]).
+      step!.stack[1].contents).to eq({})
+  end
+
+  it "should drop the last element if there are an odd number" do
+    expect(PushForthInterpreter.new([[:become],[1,2,3,4,5],:DictionaryType]).
+      step!.stack[1].contents).to eq({1=>2, 3=>4})
+  end
+
+  # Rational -> Boolean
+  it "should be false if 0 or less" do
+    expect(PushForthInterpreter.new([[:become],Rational("1/11"),:BooleanType]).
+      step!.stack).to eq [[],true]
+  end
+
+  # Rational -> Complex
+  it "should make a Rational into a Complex by adding 0i" do
+    expect(PushForthInterpreter.new([[:become],Rational("1/4"),:ComplexType]).step!.stack).
+      to eq  [[], (Rational("1/4")+0i)]
+    expect(PushForthInterpreter.new([[:become],Rational("0/1"),:ComplexType]).step!.stack).
+      to eq [[], (Rational("0/1")+0i)]
+    expect(PushForthInterpreter.new([[:become],Rational("-2/4"),:ComplexType]).step!.stack).
+      to eq [[], (Rational("-1/2")+0i)]
+  end
+
+  # Rational -> Dictionary
+  it "should make a Rational into a Dictionary with k,v = arg1" do
+    r = Rational("1/23")
+    expect(PushForthInterpreter.new([[:become],r,:DictionaryType]).step!.stack[1].contents).to eq({r => r})
+  end
+
+  # Rational -> Float
+  it "should use the .to_f method" do
+    r = Rational("-1/16")
+    expect(PushForthInterpreter.new([[:become],r,:FloatType]).step!.stack).to eq [[], -0.0625]
+  end
+
+  # Rational -> Integer
+  it "should use the .to_i method" do
+    r = Rational("-133/16")
+    expect(PushForthInterpreter.new([[:become],r,:IntegerType]).step!.stack).to eq [[], -8]
+  end
+
+  # Rational -> List
+  it "should wrap itself into a List" do
+    r = Rational("-133/16")
+    expect(PushForthInterpreter.new([[:become],r,:ListType]).step!.stack).
+      to eq [[],[r]]
+  end
 end
