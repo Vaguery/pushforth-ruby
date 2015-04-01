@@ -98,6 +98,39 @@ describe PushForth do
     end
   end
 
+  describe "depth" do
+    it "should return the (max) depth of a List" do
+      pf = PushForthInterpreter.new
+      expect(pf.depth([])).to eq 1
+      expect(pf.depth(1)).to eq 0
+      expect(pf.depth([1])).to eq 1
+      expect(pf.depth([1,2])).to eq 1
+      expect(pf.depth([1,[2]])).to eq 2
+      expect(pf.depth([1,[[2]]])).to eq 3
+      expect(pf.depth([[[1],[[2]]]])).to eq 4
+    end
+
+    it "should return the (max) depth of any key or value of a Dictionary" do
+      pf = PushForthInterpreter.new
+      d = Dictionary.new()
+      expect(pf.depth(d)).to eq 1
+      d.set(1,2)
+      expect(pf.depth(d)).to eq 1
+      d.set([1],2)
+      expect(pf.depth(d)).to eq 2
+      d.set(3,[[[1],[[2]]]]) # depth = 4
+      expect(pf.depth(d)).to eq 5
+    end
+  end
+
+  describe "depth limit" do
+    it "should be possible to set it from the #run call" do
+      pf = PushForthInterpreter.new([[:add],[[[[[[[[[[[[1]]]]]]]]]]]],2,3]).run(depth_limit:3)
+      expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
+      expect(pf.stack[1].string).to match /HALTED: \d+ exceeds limit/
+    end
+  end
+
 
   describe "run" do
     it "should step until it's not #evaluable?" do

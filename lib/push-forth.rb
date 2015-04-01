@@ -85,7 +85,7 @@ module PushForth
 
 
     attr_accessor :stack,:steps,:arg_list
-    attr_reader :step_limit,:time_limit,:size_limit
+    attr_reader :step_limit,:time_limit,:size_limit, :depth_limit
 
     def initialize(token_array=[],args=[],limits={})
       @stack = token_array
@@ -95,6 +95,7 @@ module PushForth
       @step_limit = limits[:step_limit] || 1000
       @size_limit = limits[:size_limit] || 1000
       @time_limit = limits[:time_limit] || 120
+      @depth_limit = limits[:depth_limit] || 1000
     end
 
     def get_args
@@ -109,9 +110,10 @@ module PushForth
 
 
     def run(arguments={})
-      step_limit = arguments[:step_limit] || @step_limit
-      time_limit = arguments[:time_limit] || @time_limit
-      size_limit = arguments[:size_limit] || @size_limit
+      step_limit  = arguments[:step_limit] || @step_limit
+      time_limit  = arguments[:time_limit] || @time_limit
+      size_limit  = arguments[:size_limit] || @size_limit
+      depth_limit = arguments[:depth_limit] || @depth_limit
       trace = arguments[:trace] || false
 
       done = false
@@ -132,6 +134,11 @@ module PushForth
           done = true
           @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
         end
+        if depth(@stack) >= depth_limit
+          done = true
+          @stack.insert(1,Error.new("HALTED: #{depth(@stack)} exceeds limit"))
+        end
+
       end
       self
     end
@@ -147,6 +154,19 @@ module PushForth
         thing.contents.inject(1) {|sum,(key,value)| sum + size(key) + size(value)}
       else
         1
+      end
+    end
+
+    def depth(thing)
+      case thing
+      when Array
+        inner_d = thing.collect {|item| depth(item)}
+        1 + (inner_d.empty? ? 0 : inner_d.max)
+      when Dictionary
+        inner_d = thing.contents.collect {|k,v| [depth(k),depth(v)]}
+        1 + (inner_d.empty? ? 0 : inner_d.flatten.max)
+      else
+        0
       end
     end
 
