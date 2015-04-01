@@ -127,7 +127,7 @@ describe PushForth do
     it "should be possible to set it from the #run call" do
       pf = PushForthInterpreter.new([[:add],[[[[[[[[[[[[1]]]]]]]]]]]],2,3]).run(depth_limit:3)
       expect(pf.stack[1]).to be_a_kind_of(PushForth::Error)
-      expect(pf.stack[1].string).to match /HALTED: \d+ exceeds limit/
+      expect(pf.stack[1].string).to match /HALTED: \d+ exceeds depth limit/
     end
   end
 

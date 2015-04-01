@@ -136,7 +136,7 @@ module PushForth
         end
         if depth(@stack) >= depth_limit
           done = true
-          @stack.insert(1,Error.new("HALTED: #{depth(@stack)} exceeds limit"))
+          @stack.insert(1,Error.new("HALTED: #{depth(@stack)} exceeds depth limit"))
         end
 
       end
