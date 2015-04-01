@@ -172,13 +172,60 @@ describe "type conversions" do
   #   let it fail
 
   # Float -> Boolean
+  it "should make a Float into a true or false by inverting the relation" do
+    expect(PushForthInterpreter.new([[:become],99.1,:BooleanType]).step!.stack).
+      to eq [[], true]
+    expect(PushForthInterpreter.new([[:become],-99.1,:BooleanType]).step!.stack).
+      to eq [[], false]
+    expect(PushForthInterpreter.new([[:become],0.0,:BooleanType]).step!.stack).
+      to eq [[], false]
+  end
+
   # Float -> Complex
+  it "should make a Float into a Complex by adding 0i" do
+    expect(PushForthInterpreter.new([[:become],99.1,:ComplexType]).step!.stack).
+      to eq [[], Complex(99.1,0.0)]
+    expect(PushForthInterpreter.new([[:become],-99.1,:ComplexType]).step!.stack).
+      to eq [[], Complex(-99.1,0.0)]
+    expect(PushForthInterpreter.new([[:become],0.0,:ComplexType]).step!.stack).
+      to eq [[], Complex(0.0,0.0)]
+  end
+
   # Float -> Dictionary
+  it "should make a Float into a Dictionary with k,v = arg1" do
+    expect(PushForthInterpreter.new([[:become],123.45,:DictionaryType]).step!.stack[1].contents).to eq({123.45 => 123.45})
+  end
+
   # Float -> Integer
+  it "should use the .to_i method" do
+    expect(PushForthInterpreter.new([[:become],123.45,:IntegerType]).step!.stack).to eq [[],123]
+  end
+
   # Float -> List
+  it "should wrap itself into a List" do
+    expect(PushForthInterpreter.new([[:become],771.25,:ListType]).step!.stack).
+      to eq [[],[771.25]]
+  end
+
   # Float -> Rational
+  it "should use the .to_r method" do
+    expect(PushForthInterpreter.new([[:become],771.25,:RationalType]).step!.stack).
+      to eq [[], Rational("3085/4")]
+    expect(PushForthInterpreter.new([[:become],-0.0,:RationalType]).step!.stack).
+      to eq [[], Rational("0/1")]
+  end
+
   #
   # Integer -> Boolean
+  it "should make an Integer into a true or false by inverting the relation" do
+    expect(PushForthInterpreter.new([[:become],99,:BooleanType]).step!.stack).
+      to eq [[], true]
+    expect(PushForthInterpreter.new([[:become],-99,:BooleanType]).step!.stack).
+      to eq [[], false]
+    expect(PushForthInterpreter.new([[:become],0,:BooleanType]).step!.stack).
+      to eq [[], false]
+  end
+
   # Integer -> Complex
   # Integer -> Dictionary
   # Integer -> Float

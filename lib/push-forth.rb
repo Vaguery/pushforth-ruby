@@ -103,11 +103,12 @@ module PushForth
     end
 
 
-    def run(max_steps=5000,timeout=120)
+    def run(max_steps=5000,timeout=120,trace=false)
       done = false
       start_time = Time.now
       while !done && evaluable?(@stack)
         self.step!
+        puts @stack.inspect if trace
         now = Time.now
         if size(@stack) >= max_steps
           done = true
