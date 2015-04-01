@@ -88,18 +88,28 @@ def first_number(dude)
   dude.stack.detect {|item| item.kind_of?(Numeric)}
 end
 
-t = tree2(100)
-puts build_tree(t).inspect
+def id_tree(stack)
+  stack.collect do |item|
+    if item.kind_of?(Array)
+      [item.object_id,id_tree(item)]
+    elsif item.kind_of?(Dictionary)
+      [item.object_id, item.contents.collect {|k,v| [id_tree(k),id_tree(v)]} ]
+    else
+      0
+    end
+  end.flatten.sort
+end
+
+# pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
+# puts pf.stack.inspect
+# puts id_tree(pf.stack).inspect
 
 dudes = 1000.times.collect do
   x = Random.rand(100)
-  y = 9*x*x - 11*x + 1964
   pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
   puts "#{pf.stack.inspect}"
-  pf.run(5000,60)
+  pf.run(step_limit:5000,time_limit:60)
   puts ">>>   #{pf.stack.inspect}"
-  err = first_number(pf) ? (first_number(pf) - y).abs  : nil
-  puts "#{err}\n\n"
   pf
 end
 

@@ -32,5 +32,5 @@ pf = PushForthInterpreter.new(dude,[x])
 #   puts pf.stack.inspect
 # end
 
-pf.run(6000,120,true)
+pf.run(step_limit:6000,time_limit:120,size_limit:3000,trace:true)
 puts pf.stack.inspect
