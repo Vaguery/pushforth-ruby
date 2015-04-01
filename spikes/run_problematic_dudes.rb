@@ -1,7 +1,10 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[310, :and, :later, 0.3125, :divide, :gather_all, [:divmod, :wrapitup, :==, :dict, :eval, :henceforth, :split, -3.71875, :map, -10.78125], :unit, :not, :args, 10.5, 10.1875, :cdr, :dict, :set, :eval, -2.84375, :add, :henceforth, 6.90625, :while, :≠, false, 12.1875, :type, true, :gather_all, :<, 414, 347, :split, false, :later, :gather_same, :become, :divide, [[-240]]], -13.4375, -322, :≤, 408, 457, false, -189, :≠, false, -17, -432, :is_a?, [-1.5625, false, :pop, 265, -0.40625, -8.03125, :args, -34, [-8.09375], :args, :subtract, :<, [:eval, :not, true, 7.9375, 0.21875], [:noop, :is_a?, 14.09375, [], :while, false, :args, :type, -5.6875, false], [14.625, :gather_same]]]
+dude = [[[false, :map, -14.5, false, :dict, :set, :dict, :add, 177, :which], -385, true, :do_times, :dict, :wrapitup, :multiply, [:not, [:rotate, -13.46875, :noop, :dict, :gather_same, false, true, :>], :args, :divide], :while, :become, :args, :flip!, :≤, false, :wrapitup, :noop, :leafmap, -12.34375, :leafmap, :not, :and, -3.5, :unit, 2.78125, true], :multiply, 149, [:become, :not, :dict, false, 0.90625, :type, :≥, true, :==, [], :divmod, -136, false, [:later, :snapshot, -142, -377, [:gather_all], :add, :while, 384, 324], :==, :enlist, -2.65625, :types, false], :and, -12.84375, :≤, :multiply, :while, false, :later, 44, :noop, :type, :divide, :which, :>, true] # appeared to produce multiple Dictionaries with same object_id, but not replicable...
+
+
+# [[310, :and, :later, 0.3125, :divide, :gather_all, [:divmod, :wrapitup, :==, :dict, :eval, :henceforth, :split, -3.71875, :map, -10.78125], :unit, :not, :args, 10.5, 10.1875, :cdr, :dict, :set, :eval, -2.84375, :add, :henceforth, 6.90625, :while, :≠, false, 12.1875, :type, true, :gather_all, :<, 414, 347, :split, false, :later, :gather_same, :become, :divide, [[-240]]], -13.4375, -322, :≤, 408, 457, false, -189, :≠, false, -17, -432, :is_a?, [-1.5625, false, :pop, 265, -0.40625, -8.03125, :args, -34, [-8.09375], :args, :subtract, :<, [:eval, :not, true, 7.9375, 0.21875], [:noop, :is_a?, 14.09375, [], :while, false, :args, :type, -5.6875, false], [14.625, :gather_same]]]
 
 
 # [[-8.03125, 1.75, [-10.8125, :args, :dup, true, [false, :until0, :dict, :do_times, :pop], -12.40625, -0.9375, 361, :is_a?, 323], :and, -13.875, :set, false, :≤, 423, :dict, :gather_all, :swap, :≤, :or, 3.65625, [[-400, :map, :rotate, -12.875, :gather_same, false, :gather_same, :if, -15.875], 48], :==, false, :henceforth, :gather_same], :args, :≥, :leafmap, -7.0, :snapshot, :gather_same, :gather_same, true, :become, :reverse, false, :become, 12.375, [:leafmap, :swap, -49, :eval, true, :==, :wrapitup, :rotate, [:type], -13, :args, [:again, :multiply, :concat, :or, :==, :get], 6.25, 328, :unit, :until0], -27, :not, true, :get, :become, :args, true, -463, [:≥]]
@@ -29,7 +32,7 @@ dude = [[310, :and, :later, 0.3125, :divide, :gather_all, [:divmod, :wrapitup, :
 
 
 
-pf = PushForthInterpreter.new(dude,[x])
+pf = PushForthInterpreter.new(dude,[81])
 
 # (0..1000).each do |i|
 #   puts i
@@ -38,5 +41,5 @@ pf = PushForthInterpreter.new(dude,[x])
 #   puts pf.stack.inspect
 # end
 
-pf.run(step_limit:6000,time_limit:120,size_limit:3000,trace:true)
+pf.run(step_limit:5000,time_limit:60,size_limit:5000,trace:true)
 puts pf.stack.inspect
