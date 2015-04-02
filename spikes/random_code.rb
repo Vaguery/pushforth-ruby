@@ -116,11 +116,11 @@ File.open("discard.txt","w") do |file|
       pf.run(step_limit:5000,time_limit:60,size_limit:5000)
       file.puts ">>>  #{pf.stack.inspect}"
     rescue SystemStackError => boom
-      puts boom
-      file.puts "**** #{boom} at interpreter step #{pf.steps}"
+      puts boom.message
+      file.puts "**** #{boom.message} at interpreter step #{pf.steps}"
     rescue StandardError => bang 
-      puts "**** #{bang} at interpreter step #{pf.steps}"
-      file.puts "**** #{bang} at interpreter step #{pf.steps}"
+      puts "**** #{bang.message} at interpreter step #{pf.steps}"
+      file.puts "**** #{bang.message} at interpreter step #{pf.steps}"
     end
   end
 end
