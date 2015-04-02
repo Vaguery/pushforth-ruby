@@ -102,4 +102,32 @@ describe "Dictionary" do
       expect(expected_error.string).to eq "key not found"
     end
   end
+
+  describe "merge" do
+    it "should disappear if there are not two args" do
+      expect(PushForthInterpreter.new([[:merge]]).step!.stack).to eq [[]]
+      expect(PushForthInterpreter.new([[:merge],1]).step!.stack).to eq [[],1]
+    end
+
+    it "should merge the hash of arg2 into arg1" do
+      d1 = Dictionary.new({1 => 2})
+      d2 = Dictionary.new({3 => 4})
+      expect(PushForthInterpreter.new([[:merge],d1,d2]).step!.stack[1].contents).
+        to eq({1=>2, 3=>4})
+    end
+
+    it "should overwrite arg1 with arg2 as necessary" do
+      d1 = Dictionary.new({1 => 2})
+      d2 = Dictionary.new({1 => 4,2=>3})
+      expect(PushForthInterpreter.new([[:merge],d1,d2]).step!.stack[1].contents).
+        to eq({1=>4, 2=>3})
+    end
+
+    it "should work as expcted if arg2 is empty" do
+      d1 = Dictionary.new({1 => 2})
+      d2 = Dictionary.new
+      expect(PushForthInterpreter.new([[:merge],d1,d2]).step!.stack[1].contents).
+        to eq({1=>2})
+    end
+  end
 end

@@ -67,6 +67,7 @@ module PushForth
     require_relative './pf-dictionary'
     require_relative './pf-functional'
     require_relative './pf-miscellaneous'
+    require_relative './pf-range'
 
     def self.instructions
       return @@instructions
@@ -79,7 +80,7 @@ module PushForth
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, 
         :unit, :reverse, :map, :while, :until0, :leafmap,
       :and, :or, :not, :if, :which,
-      :set, :get, :dict,
+      :set, :get, :dict, :merge,
       :>, :<, :≥, :≤, :==, :≠,
       :type, :types, :is_a?, :gather_all, :gather_same, :become]
 
