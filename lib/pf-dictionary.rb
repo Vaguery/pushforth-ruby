@@ -39,5 +39,19 @@ module PushForth
     def dict(stack)
       return stack.insert(1,PushForth::Dictionary.new)
     end
+
+
+    def merge(stack)
+      if stack.length > 2
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if dictionary?(arg1) && dictionary?(arg2)
+          stack.unshift(Dictionary.new(arg1.contents.merge(arg2.contents)))
+        else
+        end
+        stack.unshift(code)
+      end
+      return stack
+    end
   end
 end
