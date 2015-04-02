@@ -105,7 +105,7 @@ end
 # puts id_tree(pf.stack).inspect
 
 File.open("discard.txt","w") do |file|
-  dudes = (0..1000).each do |i|
+  dudes = (0..10000).collect do |i|
     x = Random.rand(100)
     pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
     puts i
@@ -113,7 +113,7 @@ File.open("discard.txt","w") do |file|
     file.puts "#{pf.stack.inspect}"
     file.puts ">>>  args: #{[x]}"
     begin
-      pf.run(step_limit:5000,time_limit:60,size_limit:5000)
+      pf.run(step_limit:2000,time_limit:30,size_limit:2000,depth_limit:200)
       file.puts ">>>  #{pf.stack.inspect}"
     rescue SystemStackError => boom
       puts boom.message
@@ -122,6 +122,9 @@ File.open("discard.txt","w") do |file|
       puts "**** #{bang.message} at interpreter step #{pf.steps}"
       file.puts "**** #{bang.message} at interpreter step #{pf.steps}"
     end
+    pf
   end
+
+  puts "\nsteps run:"
+  puts dudes.collect {|dude| dude.steps}.sort
 end
-puts dudes.collect {|dude| dude.steps}.sort
