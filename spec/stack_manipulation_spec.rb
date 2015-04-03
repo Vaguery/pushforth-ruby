@@ -284,10 +284,6 @@ end
 
 
 describe ":flip!" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:flip!)).to be true
-  end
-
   it "should swap the :code and :data parts of the running stack" do
     expect(PushForthInterpreter.new([[:flip!],[1,2],3,[4]]).step!.stack).
       to eq [[[1,2],3,[4]]]

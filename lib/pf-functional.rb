@@ -86,8 +86,8 @@ module PushForth
 
 
     def flip!(stack)
-      old_code = stack.shift
-      stack = [stack] + old_code 
+      code = stack.shift
+      stack = [stack] + code 
       return stack
     end
 
