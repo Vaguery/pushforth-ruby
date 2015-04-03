@@ -217,38 +217,6 @@ describe PushForth do
     end
   end
 
-  describe "do_times" do
-    it "should disappear if there aren't 2 arguments" do
-      expect(PushForthInterpreter.new([[:do_times],1]).step!.stack).
-        to eq [[], 1]
-      expect(PushForthInterpreter.new([[:do_times]]).step!.stack).
-        to eq [[]]
-    end
-
-    it "should do nothing if arg1 is an Integer 0 or less" do
-      expect(PushForthInterpreter.new([[:do_times],0,[4,4]]).step!.stack).
-        to eq [[], [4,4]]
-      expect(PushForthInterpreter.new([[:do_times],-10,[4,4]]).step!.stack).
-        to eq [[], [4,4]]
-    end
-
-    it "should run the top List code if arg1 is an Integer 1 or more, and count down" do
-      expect(PushForthInterpreter.new([[:do_times],1,[4,4]]).step!.stack).
-        to eq [[4, 4, [4, 4], 0, :do_times]]
-      expect(PushForthInterpreter.new([[:do_times],123,[4,4]]).step!.stack).
-        to eq [[4, 4, [4, 4], 122, :do_times]]
-    end
-
-    it "should set aside the integer if arg2 is not a List" do
-      expect(PushForthInterpreter.new([[:do_times],1,4]).step!.stack).
-        to eq [[:do_times, 4], 1]
-    end
-
-    it "should set aside the List if arg1 is not an Integer" do
-      expect(PushForthInterpreter.new([[:do_times],:add,[8],11]).step!.stack).
-        to eq [[:swap, :do_times, :add], [8], 11]
-    end
-  end
 
 
   describe ":wrapitup" do
