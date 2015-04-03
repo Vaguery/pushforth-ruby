@@ -83,7 +83,8 @@ module PushForth
       :and, :or, :not, :if, :which,
       :set, :get, :dict, :merge,
       :>, :<, :≥, :≤, :==, :≠,
-      :type, :types, :is_a?, :gather_all, :gather_same, :become]
+      :type, :types, :is_a?, :gather_all, :gather_same, :become,
+      :cover?]
 
 
     attr_accessor :stack,:steps,:arg_list

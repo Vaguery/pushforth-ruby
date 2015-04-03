@@ -1,7 +1,8 @@
 module PushForth
   class PushForthInterpreter
 
-    @@types = [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RationalType, :TypeType, :UnknownType]
+    @@types = [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RangeType, 
+      :RationalType, :TypeType, :UnknownType]
 
     @@type_tree = {:BooleanType => [:BooleanType],
                    :ComplexType => [:ComplexType,:NumberType],
@@ -12,6 +13,7 @@ module PushForth
                    :IntegerType => [:IntegerType,:NumberType],
                    :ListType => [:ListType],
                    :NumberType => [:NumberType],
+                   :RangeType => [:RangeType],
                    :RationalType => [:RationalType,:NumberType],
                    :TypeType => [:TypeType],
                    :UnknownType => [:UnknownType]
@@ -27,11 +29,12 @@ module PushForth
       FalseClass => :BooleanType, 
       Fixnum => :IntegerType, 
       Float => :FloatType, 
+      Range => :RangeType,
       Rational => :RationalType, 
       TrueClass => :BooleanType}
 
     @@convertible_types = [:BooleanType, :ComplexType, 
-      :DictionaryType, :FloatType, :IntegerType, :ListType, :RationalType]
+      :DictionaryType, :FloatType, :IntegerType, :ListType, :RangeType, :RationalType]
 
 
     ### type instructions and helpers

@@ -41,6 +41,10 @@ describe ":type instruction" do
   it "should recognize Types" do
     expect(PushForthInterpreter.new([[:type],:UnknownType]).step!.stack).to eq [[],:TypeType]
   end
+
+  it "should recognize Ranges" do
+    expect(PushForthInterpreter.new([[:type],(8..99)]).step!.stack).to eq [[],:RangeType]
+  end
 end
 
 describe ":types instruction" do
