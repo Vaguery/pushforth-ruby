@@ -193,33 +193,27 @@ module PushForth
         code = stack.shift
         arg1,arg2,arg3 = stack.shift(3)
         match1 = arg1.kind_of?(Integer) && arg1 >= 0
-        match2 = arg2.kind_of?(Array)
-        match3 = arg3.kind_of?(Array)
+        match2 = list?(arg2)
+        match3 = list?(arg3)
         if match1
           if match2
             if match3
               if arg1 > 0
                 code.unshift(*deep_copy(arg3),arg3,arg2,arg1-1,:until0)
-              elsif arg1 == 0
+              else
                 code.unshift(*arg2)
-              else # negative arg1
-                stack.unshift(arg1,arg2,arg3)
               end
-            else # arg2 not arg3
+            else
               code.unshift(:until0,arg3)
               stack.unshift(arg1,arg2)
             end
           else
-            if match3 # arg3 not arg2
-              code.unshift(:until0,arg2)
-              stack.unshift(arg1,arg3)
-            else # neither is list
-              code.unshift(:until0,arg2,arg3)
-              stack.unshift(arg1)
-            end
+            code.unshift(:until0,arg2)
+            stack.unshift(arg1,arg3)
           end
         else
-          stack.unshift(arg1,arg2,arg3)
+          code.unshift(:until0,arg1)
+          stack.unshift(arg2,arg3)
         end
         stack.unshift(code)
       end

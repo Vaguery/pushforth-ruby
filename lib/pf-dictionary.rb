@@ -8,7 +8,8 @@ module PushForth
         code = stack.shift
         arg1,arg2 = stack.shift(2)
         if dictionary?(arg1)
-          stack.unshift(arg1.get(arg2),arg1)
+          stack.unshift(arg1)
+          stack.unshift(arg1.get(arg2)) unless arg1.get(arg2).nil?
         else
           code.unshift(:get,arg1)
           stack.unshift(arg2)

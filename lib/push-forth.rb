@@ -25,7 +25,7 @@ module PushForth
     end
 
     def get(key)
-      return contents[key] || Error.new("key not found")
+      return contents[key] || nil
     end
 
     def eql?(other)

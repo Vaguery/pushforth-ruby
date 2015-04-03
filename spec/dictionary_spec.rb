@@ -33,18 +33,13 @@ describe "Dictionary" do
       expect(d.get(3)).to be_a_kind_of PushForth::Dictionary
     end
 
-    it "should return an Error if the key's unknown" do
+    it "should have no return value if the key's unknown" do
       d = Dictionary.new
-      expect(d.get(3)).to be_a_kind_of PushForth::Error
-      expect(d.get(3).string).to eq "key not found"
+      expect(d.get(3)).to be nil
     end
   end
 
   describe ":dict" do
-    it "should be a recognized instruction" do
-      expect(PushForthInterpreter.new.instruction?(:dict)).to be true
-    end
-
     it "should create a new Dictionary (empty)" do
       expect(PushForthInterpreter.new([[:dict],3]).step!.stack[1]).to be_a_kind_of Dictionary
     end
@@ -52,10 +47,6 @@ describe "Dictionary" do
 
 
   describe ":set" do
-    it "should be a recognized instruction" do
-      expect(PushForthInterpreter.new.instruction?(:set)).to be true
-    end
-
     it "should disappear if there are not three args" do
       expect(PushForthInterpreter.new([[:set]]).step!.stack).to eq [[]]
       expect(PushForthInterpreter.new([[:set],1]).step!.stack).to eq [[],1]
@@ -75,9 +66,6 @@ describe "Dictionary" do
   end
 
   describe ":get" do
-    it "should be a recognized instruction" do
-      expect(PushForthInterpreter.new.instruction?(:get)).to be true
-    end
 
     it "should disappear if there are not two args" do
       expect(PushForthInterpreter.new([[:get]]).step!.stack).to eq [[]]
@@ -95,11 +83,10 @@ describe "Dictionary" do
       expect(PushForthInterpreter.new([[:get],"a",2,3]).step!.stack).to eq [[:get, "a"], 2, 3]
     end
 
-    it "should return an Error object if the key's not found" do
+    it "should not return any value if the key's not found, but keep the Dictionary" do
       d = Dictionary.new
-      expected_error = PushForthInterpreter.new([[:get],d,2]).step!.stack[1]
-      expect(expected_error).to be_a_kind_of(PushForth::Error)
-      expect(expected_error.string).to eq "key not found"
+      expect(PushForthInterpreter.new([[:get],d,2]).step!.stack).
+        to eq [[],d]
     end
   end
 

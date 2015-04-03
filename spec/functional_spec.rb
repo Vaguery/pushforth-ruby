@@ -2,9 +2,6 @@ require 'spec_helper'
 
 
 describe ":map" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:map)).to be true
-  end
 
   it "shouldn't work unless there are at least two arguments" do
     expect(PushForthInterpreter.new([[:map]]).step!.stack).to eq [[]]
@@ -46,9 +43,6 @@ end
 
 
 describe ":until0" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:until0)).to be true
-  end
 
   it "shouldn't work unless there are at least three arguments" do
     expect(PushForthInterpreter.new([[:until0]]).step!.stack).to eq [[]]
@@ -56,11 +50,27 @@ describe ":until0" do
     expect(PushForthInterpreter.new([[:until0],1,2]).step!.stack).to eq [[],1,2]
   end
 
-  it "shouldn't work unless arg1 is a positive integer, arg2 & arg3 are Arrays" do
-    expect(PushForthInterpreter.new([[:until0],-1,1,2]).step!.stack).to eq [[],-1,1,2]
-    expect(PushForthInterpreter.new([[:until0],[0],1,2]).step!.stack).to eq [[],[0],1,2]
-    expect(PushForthInterpreter.new([[:until0],-1,1,:add]).step!.stack).
-      to eq [[], -1, 1, :add]
+  it "should build a continuation if arg1 isn't a positive Integer" do
+    expect(PushForthInterpreter.new([[:until0],-1,1,2]).step!.stack).
+      to eq [[:until0,-1],1,2]
+    expect(PushForthInterpreter.new([[:until0],[0],1,2]).step!.stack).
+      to eq [[:until0,[0]],1,2]
+    expect(PushForthInterpreter.new([[:until0],:add,1,:add]).step!.stack).
+      to eq [[:until0,:add], 1, :add]
+  end
+
+  it "should build a continuation if arg2 isn't a List" do
+    expect(PushForthInterpreter.new([[:until0],1,2,[3]]).step!.stack).
+      to eq [[:until0,2],1,[3]]
+    expect(PushForthInterpreter.new([[:until0],1,:foo,[2]]).step!.stack).
+      to eq [[:until0,:foo],1,[2]]
+  end
+
+  it "should build a continuation if arg3 isn't a List" do
+    expect(PushForthInterpreter.new([[:until0],1,[2],3]).step!.stack).
+      to eq [[:until0,3],1,[2]]
+    expect(PushForthInterpreter.new([[:until0],1,[:foo],3]).step!.stack).
+      to eq [[:until0,3],1,[:foo]]
   end
 
   it "should decrement the integer if positive and build a continuation" do
@@ -99,13 +109,6 @@ describe ":until0" do
     # ...
     pf.run
     expect(pf.stack).to eq [[], 1, 12672]
-  end
-
-  it "should build a continuation if either of arg2,arg3 isn't a List" do
-    expect(PushForthInterpreter.new([[:until0],11,[1],2]).step!.stack).to eq [[:until0,2],11,[1]]
-    expect(PushForthInterpreter.new([[:until0],11,1,[2]]).step!.stack).to eq [[:until0,1],11,[2]]
-    expect(PushForthInterpreter.new([[:until0],11,1,:add]).step!.stack).
-      to eq [[:until0,1,:add], 11]
   end
 end
 
