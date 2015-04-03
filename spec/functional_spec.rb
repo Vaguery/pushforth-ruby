@@ -2,7 +2,6 @@ require 'spec_helper'
 
 
 describe ":map" do
-
   it "shouldn't work unless there are at least two arguments" do
     expect(PushForthInterpreter.new([[:map]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:map],1]).step!.stack).to eq [[],1]
@@ -42,75 +41,7 @@ describe ":map" do
 end
 
 
-describe ":until0" do
 
-  it "shouldn't work unless there are at least three arguments" do
-    expect(PushForthInterpreter.new([[:until0]]).step!.stack).to eq [[]]
-    expect(PushForthInterpreter.new([[:until0],1]).step!.stack).to eq [[],1]
-    expect(PushForthInterpreter.new([[:until0],1,2]).step!.stack).to eq [[],1,2]
-  end
-
-  it "should build a continuation if arg1 isn't a positive Integer" do
-    expect(PushForthInterpreter.new([[:until0],-1,1,2]).step!.stack).
-      to eq [[:until0,-1],1,2]
-    expect(PushForthInterpreter.new([[:until0],[0],1,2]).step!.stack).
-      to eq [[:until0,[0]],1,2]
-    expect(PushForthInterpreter.new([[:until0],:add,1,:add]).step!.stack).
-      to eq [[:until0,:add], 1, :add]
-  end
-
-  it "should build a continuation if arg2 isn't a List" do
-    expect(PushForthInterpreter.new([[:until0],1,2,[3]]).step!.stack).
-      to eq [[:until0,2],1,[3]]
-    expect(PushForthInterpreter.new([[:until0],1,:foo,[2]]).step!.stack).
-      to eq [[:until0,:foo],1,[2]]
-  end
-
-  it "should build a continuation if arg3 isn't a List" do
-    expect(PushForthInterpreter.new([[:until0],1,[2],3]).step!.stack).
-      to eq [[:until0,3],1,[2]]
-    expect(PushForthInterpreter.new([[:until0],1,[:foo],3]).step!.stack).
-      to eq [[:until0,3],1,[:foo]]
-  end
-
-  it "should decrement the integer if positive and build a continuation" do
-    expect(PushForthInterpreter.new([[:until0],1,[1],[:add]]).step!.stack).
-      to eq [[:add, [:add], [1], 0, :until0]]
-    expect(PushForthInterpreter.new([[:until0],13,[1],[:add]]).step!.stack).
-      to eq [[:add, [:add], [1], 12, :until0]]
-  end
-
-  it "should return the second argument when it reaches a 0 counter" do
-    expect(PushForthInterpreter.new([[:until0],0,[33],[:add]]).step!.stack).
-      to eq [[33]]
-  end
-
-  it "should actually recurse" do
-    pf = PushForthInterpreter.new([[:until0],7,[1],[:dup,:add],99]).step!
-    expect(pf.stack).to eq [[:dup, :add, [:dup, :add], [1], 6, :until0], 99]
-    pf.step!
-    expect(pf.stack).to eq [[:add, [:dup, :add], [1], 6, :until0], 99, 99]
-    pf.step!
-    expect(pf.stack).to eq [[[:dup, :add], [1], 6, :until0], 198]
-    pf.step!
-    expect(pf.stack).to eq [[[1], 6, :until0], [:dup, :add], 198]
-    pf.step!
-    expect(pf.stack).to eq [[6, :until0], [1], [:dup, :add], 198]
-    pf.step!
-    expect(pf.stack).to eq [[:until0], 6, [1], [:dup, :add], 198]
-    pf.step!
-    expect(pf.stack).to eq [[:dup, :add, [:dup, :add], [1], 5, :until0], 198]
-    pf.step!
-    expect(pf.stack).to eq [[:add, [:dup, :add], [1], 5, :until0], 198, 198]
-    pf.step!
-    expect(pf.stack).to eq [[[:dup, :add], [1], 5, :until0], 396]
-    pf.step!
-    expect(pf.stack).to eq [[[1], 5, :until0], [:dup, :add], 396]
-    # ...
-    pf.run
-    expect(pf.stack).to eq [[], 1, 12672]
-  end
-end
 
 
 describe "append_to_leaves helper" do

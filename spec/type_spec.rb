@@ -66,6 +66,10 @@ describe ":types instruction" do
     expect(PushForthInterpreter.new([[:types],Rational("1/4")]).step!.stack).to eq [[], [:RationalType, :NumberType]]
     expect(PushForthInterpreter.new([[:types],3+1i]).step!.stack).to eq [[], [:ComplexType, :NumberType]]
   end
+
+  it "should recognize a Range" do
+    expect(PushForthInterpreter.new([[:types],(1.2..2.8)]).step!.stack).to eq [[],[:RangeType]]
+  end
 end
 
 describe ":is_a? instruction" do
