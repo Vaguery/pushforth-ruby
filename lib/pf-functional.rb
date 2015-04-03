@@ -43,14 +43,16 @@ module PushForth
 
     def cons(stack)
       if stack.length > 2
-        arg1 = stack.delete_at(1)
-        arg2 = stack.delete_at(1)
-        if arg2.kind_of?(Array)
-          stack.insert(1, arg2.unshift(deep_copy(arg1)) )
+        code = stack.shift
+        arg1,arg2 = stack.shift(2)
+        if list?(arg2)
+          arg2.unshift(arg1)
+          stack.unshift(arg2)
         else
-          stack[0].unshift(:cons,arg2)
-          stack.insert(1,arg1)
+          code.unshift(:cons,arg2)
+          stack.unshift(arg1)
         end
+        stack.unshift(code)
       end
       return stack
     end

@@ -103,10 +103,6 @@ end
 
 
 describe ":cons" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:cons)).to be true
-  end
-
   it "should won't work unless there are two args" do
     expect(PushForthInterpreter.new([[:cons]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:cons],7]).step!.stack).to eq [[],7]
