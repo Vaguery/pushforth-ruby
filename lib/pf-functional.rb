@@ -63,8 +63,10 @@ module PushForth
 
 
     def enlist(stack)
-      if stack[1].kind_of?(Array)
-        stack[0] += stack.delete_at(1)
+      if stack.length > 1
+        code,arg = stack.shift(2)
+        list?(arg) ? code.push(*arg) : code.unshift(:enlist,arg)
+        stack.unshift(code)
       end
       return stack
     end
@@ -88,7 +90,8 @@ module PushForth
     def reverse(stack)
       if stack.length > 1
         code = stack.shift
-        stack[0].reverse! if list?(stack[0])
+        arg = stack.shift
+        list?(arg) ? stack.unshift(arg.reverse) : code.unshift(:reverse,arg)
         stack.unshift(code)
       end
       return stack
@@ -153,9 +156,9 @@ module PushForth
       if stack.length > 2
         code = stack.shift
         arg1,arg2 = stack.shift(2)
-        if arg1.kind_of?(Array) && arg2.kind_of?(Array)
+        if list?(arg1) && list?(arg2)
           mapped = append_to_leaves(deep_copy(arg1),deep_copy(arg2))
-        elsif arg2.kind_of?(Array)
+        elsif list?(arg2)
           mapped = deep_copy(arg2).unshift(deep_copy(arg1))
         else
           mapped = append_to_leaves([deep_copy(arg1)],[deep_copy(arg2)])
@@ -171,12 +174,12 @@ module PushForth
       if stack.length > 2
         code = stack.shift
         arg1,arg2 = stack.shift(2)
-        if arg1.kind_of?(Array) && arg2.kind_of?(Array)
+        if list?(arg1) && list?(arg2)
           mapped = arg1.collect do |i|
             [i] + deep_copy(arg2)
           end
           mapped = mapped.flatten(1)
-        elsif arg2.kind_of?(Array)
+        elsif list?(arg2)
           mapped = arg2.unshift(arg1)
         else
           mapped = [arg1,arg2]

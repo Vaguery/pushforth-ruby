@@ -8,7 +8,7 @@ describe ":map" do
     expect(PushForthInterpreter.new([[:map],1]).step!.stack).to eq [[],1]
   end
 
-  it "should build a 'mapping' on the code stack if they're both lists" do
+  it "should build a 'mapping' on the CODE stack if they're both lists" do
     expect(PushForthInterpreter.new([[:map],[1,2],[:dup]]).step!.stack).
       to eq [[1, :dup, 2, :dup]]
     expect(PushForthInterpreter.new([[:map],[1,2],[:dup,:cons]]).step!.stack).
@@ -112,6 +112,7 @@ describe ":until0" do
   end
 end
 
+
 describe "append_to_leaves helper" do
   it "should insert items between the things if it's a flat array" do
     pf = PushForthInterpreter.new
@@ -145,7 +146,7 @@ describe ":leafmap" do
     expect(PushForthInterpreter.new([[:leafmap],1]).step!.stack).to eq [[],1]
   end
 
-  it "should insert arg2 with every leaf of arg1, if they're both lists" do
+  it "should insert arg2 with every leaf of arg1, if they're both lists, on the CODE stack" do
     expect(PushForthInterpreter.new([[:leafmap],[1,2],[:dup]]).step!.stack).
       to eq [[1, :dup, 2, :dup]] # works like :map
     expect(PushForthInterpreter.new([[:leafmap],[1,[2]],[:dup,:cons]]).step!.stack).
@@ -157,11 +158,10 @@ describe ":leafmap" do
     to eq [[1,:dup,[:add,8], :map, [2, :dup, [:add, 8], :map]]]
   end
 
-  it "should do nothing when arg2 isn't a list" do
+  it "should work fine when arg2 isn't a list" do
     expect(PushForthInterpreter.new([[:leafmap],[1,[2]],:dup]).step!.stack).
     to eq [[[1, :dup, [2, :dup]]]]
   end
-
 
   it "should build a 'mapping' on the code stack if arg1 isn't a list" do
     expect(PushForthInterpreter.new([[:leafmap],1,[:dup,[:cons]],2,3]).step!.stack).

@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe ":dup" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:dup)).to be true
-  end
 
   it "should actually duplicate the top remaining item" do
     d = PushForthInterpreter.new([[1,:dup]])
@@ -30,10 +27,6 @@ end
 
 
 describe "swap" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:swap)).to be true
-  end
-
   it "should disappear unless there are two args" do
     expect(PushForthInterpreter.new([[:swap]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:swap],1]).step!.stack).to eq [[],1]
@@ -57,9 +50,6 @@ end
 
 
 describe "rotate" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:rotate)).to be true
-  end
 
   it "should disappear unless there are three args" do
     expect(PushForthInterpreter.new([[:rotate]]).step!.stack).to eq [[]]
@@ -67,7 +57,7 @@ describe "rotate" do
     expect(PushForthInterpreter.new([[:rotate],1,2]).step!.stack).to eq [[],1,2]
   end
 
-  it "should rotate things if there are at least two" do
+  it "should rotate things if there are at least three" do
     expect(PushForthInterpreter.new([[:rotate],1,2,3]).step!.stack).to eq [[],2,3,1]
     expect(PushForthInterpreter.new([[:rotate],1,2,3,4]).step!.stack).to eq [[],2,3,1,4]
   end
@@ -85,14 +75,12 @@ end
 
 
 describe ":enlist (i combinator)" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:enlist)).to be true
+  it "should disappear unless there is an argument" do
+    expect(PushForthInterpreter.new([[:enlist]]).step!.stack).to eq [[]]
   end
 
-  it "should disappear unless the top data item is a list" do
-    expect(PushForthInterpreter.new([[:enlist]]).step!.stack).to eq [[]]
-    expect(PushForthInterpreter.new([[:enlist],1]).step!.stack).to eq [[],1]
-    expect(PushForthInterpreter.new([[:enlist],1,[2]]).step!.stack).to eq [[],1,[2]]
+  it "should form a continuation if arg1 isn't a list" do
+    expect(PushForthInterpreter.new([[:enlist],1,2]).step!.stack).to eq [[:enlist, 1], 2]
   end
 
   it "should queue a list from the data stack for execution" do
@@ -102,14 +90,14 @@ describe ":enlist (i combinator)" do
       [[1,[2]],3,4])
   end
 
-  it "should work when the :code stack is populated" do
+  it "should append the new code to the _tail_ of the CODE stack" do
     d = PushForthInterpreter.new([[:enlist,1,2],[3],4])
     expect(d.step!.stack).to eq [[1,2,3],4]
   end
 
   it "should ignore a non-list item" do
     expect(PushForthInterpreter.new([[:enlist,88],1,2,3]).step!.stack).to eq(
-      [[88],1,2,3])
+      [[:enlist,1,88],2,3])
   end
 end
 

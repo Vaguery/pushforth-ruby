@@ -7,9 +7,9 @@ describe "List instructions" do
         to eq [[],[3,2,1]]
     end
 
-    it "should fail without a List argument" do
+    it "should make a continuation without a List argument" do
       expect(PushForthInterpreter.new([[:reverse],77]).step!.stack).
-        to eq [[],77]
+        to eq [[:reverse,77]]
     end
 
     it "should not reverse the guts of a List (but why would it?)" do
@@ -34,6 +34,11 @@ describe "List instructions" do
       expect(PushForthInterpreter.new([[:length],d]).step!.stack).
         to eq [[],2]
     end
+
+    it "should build a continuation if arg isn't a collection" do
+      expect(PushForthInterpreter.new([[:length],66]).step!.stack).
+        to eq [[:length, 66]]
+    end
   end
 
   describe ":depth" do
@@ -49,10 +54,16 @@ describe "List instructions" do
 
     it "should return the number of pairs in a Dictionary" do
       d = Dictionary.new({1 => [2], 3 => 4})
-      expect(PushForthInterpreter.new([[:length],d]).step!.stack).
+      expect(PushForthInterpreter.new([[:depth],d]).step!.stack).
         to eq [[],2]
     end
+
+    it "should work for atoms too" do
+      expect(PushForthInterpreter.new([[:depth],182]).step!.stack).
+        to eq [[], 0]
+    end
   end
+
 
   describe ":points" do
     it "should return total number of points in List" do
