@@ -194,13 +194,12 @@ end
 
 
 describe ":cdr" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:cdr)).to be true
-  end
-
   it "should disappear if the top item isn't a list" do
     expect(PushForthInterpreter.new([[:cdr]]).step!.stack).to eq [[]]
-    expect(PushForthInterpreter.new([[:cdr],1]).step!.stack).to eq [[],1]
+  end
+
+  it "should have a continuation form if the arg isn't a List" do
+    expect(PushForthInterpreter.new([[:cdr],1]).step!.stack).to eq [[:cdr,1]]
   end
 
   it "should delete the top item of the top item on the data stack" do

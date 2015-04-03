@@ -17,9 +17,14 @@ module PushForth
 
 
     def cdr(stack)
-      if stack[1].kind_of?(Array)
-        arg = stack.delete_at(1)
-        stack.insert(1,arg.drop(1)) unless arg.empty?
+      if stack.length > 1
+        code,arg = stack.shift(2)
+        if list?(arg)
+          stack.unshift(arg.drop(1)) unless arg.empty? 
+        else
+          code.unshift(:cdr,arg)
+        end
+        stack.unshift(code)
       end
       return stack
     end
