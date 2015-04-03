@@ -12,7 +12,7 @@ describe "add" do
 
   it "should return the sum if there are two Numerics of the same type there" do
     expect(PushForthInterpreter.new([[:add],1,2]).step!.stack).to eq [[],3]
-    expect(PushForthInterpreter.new([[:add],Rational("1/4"),Rational("2/3")]).step!.stack).to eq [[],Rational("11/12")]
+    expect(PushForthInterpreter.new([[:add],0.25r,Rational("2/3")]).step!.stack).to eq [[],Rational("11/12")]
     expect(PushForthInterpreter.new([[:add],0.125,0.5]).step!.stack).to eq [[],0.625]
   end
 
@@ -55,7 +55,7 @@ describe "subtract" do
 
   it "should return the difference if there are two Numerics there" do
     expect(PushForthInterpreter.new([[:subtract],3,5]).step!.stack).to eq [[],-2]
-    expect(PushForthInterpreter.new([[:subtract],Rational("1/4"),Rational("8/17")]).step!.stack).to eq [[],Rational("-15/68")]
+    expect(PushForthInterpreter.new([[:subtract],0.25r,Rational("8/17")]).step!.stack).to eq [[],Rational("-15/68")]
   end
 
   it "should build a continuation if either of the args isn't Numeric" do
@@ -181,7 +181,7 @@ describe "divmod" do
   end
 
   it "should return an Error if the denominator is Complex" do
-    div0 = PushForthInterpreter.new([[:divmod],Complex(1,2),Complex(1,2)]).step!()
+    div0 = PushForthInterpreter.new([[:divmod],1+2i,1+2i]).step!()
     expect(div0.stack.length).to be 2
     expect(div0.stack[-1]).to be_a_kind_of(Error)
   end

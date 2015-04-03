@@ -13,7 +13,7 @@ describe ":type instruction" do
     expect(PushForthInterpreter.new([[:type],8]).step!.stack).to eq [[],:IntegerType]
     expect(PushForthInterpreter.new([[:type],0.8]).step!.stack).to eq [[],:FloatType]
     expect(PushForthInterpreter.new([[:type],Rational("1/4")]).step!.stack).to eq [[],:RationalType]
-    expect(PushForthInterpreter.new([[:type],Complex(3,1)]).step!.stack).to eq [[],:ComplexType]
+    expect(PushForthInterpreter.new([[:type],3+1i]).step!.stack).to eq [[],:ComplexType]
   end
 
   it "should recognize booleans" do
@@ -64,7 +64,7 @@ describe ":types instruction" do
     expect(PushForthInterpreter.new([[:types],8]).step!.stack).to eq [[],[:IntegerType, :NumberType]]
     expect(PushForthInterpreter.new([[:types],0.8]).step!.stack).to eq [[],[:FloatType, :NumberType]]
     expect(PushForthInterpreter.new([[:types],Rational("1/4")]).step!.stack).to eq [[], [:RationalType, :NumberType]]
-    expect(PushForthInterpreter.new([[:types],Complex(3,1)]).step!.stack).to eq [[], [:ComplexType, :NumberType]]
+    expect(PushForthInterpreter.new([[:types],3+1i]).step!.stack).to eq [[], [:ComplexType, :NumberType]]
   end
 end
 

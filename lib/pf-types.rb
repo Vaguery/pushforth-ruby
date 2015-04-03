@@ -137,12 +137,12 @@ module PushForth
     end
 
     @@type_conversions = {
-      [:BooleanType,:ComplexType] => Proc.new {|arg| arg ? Complex(1,1) : Complex(-1,-1) },
+      [:BooleanType,:ComplexType] => Proc.new {|arg| arg ? 1+1i : -1-1i },
       [:BooleanType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
       [:BooleanType,:FloatType] => Proc.new {|arg| arg ? 1.0 : -1.0 },
       [:BooleanType,:IntegerType] => Proc.new {|arg| arg ? 1 : -1 },
       [:BooleanType,:ListType] => Proc.new {|arg| arg ? [true] : [false] },
-      [:BooleanType,:RationalType] => Proc.new {|arg| arg ? Rational("1/1") : Rational("-1/1") },
+      [:BooleanType,:RationalType] => Proc.new {|arg| arg ? 1r : -1r },
       [:ComplexType,:BooleanType] => Proc.new {|arg| arg.real > 0 ? true : false },
       [:ComplexType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
       [:ComplexType,:FloatType] => Proc.new {|arg| [arg.real.to_f,arg.imag.to_f] },

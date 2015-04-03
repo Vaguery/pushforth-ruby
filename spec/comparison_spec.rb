@@ -31,7 +31,7 @@ describe "comparison" do
     end
 
     it "produce an error if one of the arguments is a Complex number" do
-      expect(PushForthInterpreter.new([[:>],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be_a_kind_of(Error)
+      expect(PushForthInterpreter.new([[:>],0.25r,-4+1i]).step!.stack[-1]).to be_a_kind_of(Error)
     end
   end
 
@@ -65,7 +65,7 @@ describe "comparison" do
     end
 
     it "produce an error if one of the arguments is a Complex number" do
-      expect(PushForthInterpreter.new([[:<],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be_a_kind_of(Error)
+      expect(PushForthInterpreter.new([[:<],0.25r,-4+1i]).step!.stack[-1]).to be_a_kind_of(Error)
     end
   end
 
@@ -99,7 +99,7 @@ describe "comparison" do
     end
 
     it "produce an error if one of the arguments is a Complex number" do
-      expect(PushForthInterpreter.new([[:≥],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be_a_kind_of(Error)
+      expect(PushForthInterpreter.new([[:≥],0.2r,-4+1i]).step!.stack[-1]).to be_a_kind_of(Error)
     end
   end
 
@@ -133,7 +133,7 @@ describe "comparison" do
     end
 
     it "produce an error if one of the arguments is a Complex number" do
-      expect(PushForthInterpreter.new([[:≤],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be_a_kind_of(Error)
+      expect(PushForthInterpreter.new([[:≤],0.3r,2+2i]).step!.stack[-1]).to be_a_kind_of(Error)
     end
   end
 
@@ -155,7 +155,7 @@ describe "comparison" do
     end
 
     it "should work for Complex (unlike <=> operators)" do
-      expect(PushForthInterpreter.new([[:==],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be false
+      expect(PushForthInterpreter.new([[:==],0.2r,3+1i]).step!.stack[-1]).to be false
     end
 
     it "should build a continuation if either of the args isn't Numeric" do
@@ -189,7 +189,7 @@ describe "comparison" do
     end
 
     it "should work for Complex (unlike <=> operators)" do
-      expect(PushForthInterpreter.new([[:≠],Rational("1/4"),Complex(-4,1)]).step!.stack[-1]).to be true
+      expect(PushForthInterpreter.new([[:≠],0.2r,1+1i]).step!.stack[-1]).to be true
     end
 
     it "should build a continuation if either of the args isn't Numeric" do

@@ -62,9 +62,9 @@ describe "type conversions" do
   # Boolean -> Complex
   it "should make a Boolean into a 1+1i or -1-1i, respectively" do
     expect(PushForthInterpreter.new([[:become],true,:ComplexType]).step!.stack).
-      to eq [[], Complex(1,1)]
+      to eq [[], 1+1i]
     expect(PushForthInterpreter.new([[:become],false,:ComplexType]).step!.stack).
-      to eq [[], Complex(-1,-1)]
+      to eq [[], -1-1i]
   end
 
   # Boolean -> Dictionary
@@ -102,57 +102,57 @@ describe "type conversions" do
   # Boolean -> Rational
   it "should make a Boolean into a 1 or -1, respectively" do
     expect(PushForthInterpreter.new([[:become],true,:RationalType]).step!.stack).
-      to eq [[], Rational("1/1")]
+      to eq [[], 1r]
     expect(PushForthInterpreter.new([[:become],false,:RationalType]).step!.stack).
-      to eq [[], Rational("-1/1")]
+      to eq [[], -1r]
   end
 
   # 
   # Complex -> Boolean
   it "should make a Complex into a true or false by inverting the relation" do
-    expect(PushForthInterpreter.new([[:become],Complex(5,2),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],5+2i,:BooleanType]).step!.stack).
       to eq [[], true]
-    expect(PushForthInterpreter.new([[:become],Complex(-5,-2),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],-5-2i,:BooleanType]).step!.stack).
       to eq [[], false]
-    expect(PushForthInterpreter.new([[:become],Complex(-5,2),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],-5+2i,:BooleanType]).step!.stack).
       to eq [[], false]
-    expect(PushForthInterpreter.new([[:become],Complex(5,-2),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],5-2i,:BooleanType]).step!.stack).
       to eq [[], true]
-    expect(PushForthInterpreter.new([[:become],Complex(-5,0),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],-5+0i,:BooleanType]).step!.stack).
       to eq [[], false]
-    expect(PushForthInterpreter.new([[:become],Complex(5,0),:BooleanType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],5+0i,:BooleanType]).step!.stack).
       to eq [[], true]
   end
 
   # Complex -> Dictionary
   it "should make a Complex into a Dictionary with k,v = arg1" do
-    expect(PushForthInterpreter.new([[:become],Complex(1,2),:DictionaryType]).step!.stack[1].contents).to eq({Complex(1,2) => Complex(1,2)})
+    expect(PushForthInterpreter.new([[:become],1+2i,:DictionaryType]).step!.stack[1].contents).to eq({1+2i => 1+2i})
   end
 
   # Complex -> Float 
   it "should make a Complex into two Floats" do
-    expect(PushForthInterpreter.new([[:become],Complex(1,2),:FloatType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],1+2i,:FloatType]).step!.stack).
       to eq [[],[1.0,2.0]]
   end
 
   # Complex -> Integer
   it "should make a Complex into two Floats" do
-    expect(PushForthInterpreter.new([[:become],Complex(1,2),:IntegerType]).step!.stack).
+    expect(PushForthInterpreter.new([[:become],1+2i,:IntegerType]).step!.stack).
       to eq [[],[1,2]]
   end
 
   # Complex -> List
   it "should wrap itself into a List" do
-    expect(PushForthInterpreter.new([[:become],Complex(1,2),:ListType]).step!.stack).
-      to eq [[],[Complex(1,2)]]
+    expect(PushForthInterpreter.new([[:become],1+2i,:ListType]).step!.stack).
+      to eq [[],[1+2i]]
   end
 
   # Complex -> Rational
   it "should make a Complex into two Rationals (using #to_r)" do
-    expect(PushForthInterpreter.new([[:become],Complex(1,2),:RationalType]).step!.stack).
-      to eq [[],[Rational("1/1"),Rational("2/1")]]
-    expect(PushForthInterpreter.new([[:become],Complex(-0.25,2.5),:RationalType]).step!.stack).
-      to eq [[], [Rational("-1/4"), Rational("5/2")]]
+    expect(PushForthInterpreter.new([[:become],1+2i,:RationalType]).step!.stack).
+      to eq [[],[1r,2r]]
+    expect(PushForthInterpreter.new([[:become],-0.25+2.5i,:RationalType]).step!.stack).
+      to eq [[], [-0.25r, 2.5r]]
   end
 
   # 
@@ -184,11 +184,11 @@ describe "type conversions" do
   # Float -> Complex
   it "should make a Float into a Complex by adding 0i" do
     expect(PushForthInterpreter.new([[:become],99.1,:ComplexType]).step!.stack).
-      to eq [[], Complex(99.1,0.0)]
+      to eq [[], 99.1+0.0i]
     expect(PushForthInterpreter.new([[:become],-99.1,:ComplexType]).step!.stack).
-      to eq [[], Complex(-99.1,0.0)]
+      to eq [[], -99.1+0.0i]
     expect(PushForthInterpreter.new([[:become],0.0,:ComplexType]).step!.stack).
-      to eq [[], Complex(0.0,0.0)]
+      to eq [[], 0.0+0.0i]
   end
 
   # Float -> Dictionary
@@ -212,7 +212,7 @@ describe "type conversions" do
     expect(PushForthInterpreter.new([[:become],771.25,:RationalType]).step!.stack).
       to eq [[], Rational("3085/4")]
     expect(PushForthInterpreter.new([[:become],-0.0,:RationalType]).step!.stack).
-      to eq [[], Rational("0/1")]
+      to eq [[], 0r]
   end
 
   #
@@ -229,11 +229,11 @@ describe "type conversions" do
   # Integer -> Complex
   it "should make an Integer into a Complex by adding 0i" do
     expect(PushForthInterpreter.new([[:become],99,:ComplexType]).step!.stack).
-      to eq [[], Complex(99,0)]
+      to eq [[], 99+0i]
     expect(PushForthInterpreter.new([[:become],-99,:ComplexType]).step!.stack).
-      to eq [[], Complex(-99,0)]
+      to eq [[], -99+0i]
     expect(PushForthInterpreter.new([[:become],0,:ComplexType]).step!.stack).
-      to eq [[], Complex(0,0)]
+      to eq [[], 0+0i]
   end
 
   # Integer -> Dictionary
@@ -283,12 +283,12 @@ describe "type conversions" do
 
   # Rational -> Complex
   it "should make a Rational into a Complex by adding 0i" do
-    expect(PushForthInterpreter.new([[:become],Rational("1/4"),:ComplexType]).step!.stack).
-      to eq  [[], (Rational("1/4")+0i)]
-    expect(PushForthInterpreter.new([[:become],Rational("0/1"),:ComplexType]).step!.stack).
-      to eq [[], (Rational("0/1")+0i)]
-    expect(PushForthInterpreter.new([[:become],Rational("-2/4"),:ComplexType]).step!.stack).
-      to eq [[], (Rational("-1/2")+0i)]
+    expect(PushForthInterpreter.new([[:become],0.25r,:ComplexType]).step!.stack).
+      to eq  [[], 0.25r+0i]
+    expect(PushForthInterpreter.new([[:become],0r,:ComplexType]).step!.stack).
+      to eq [[], 0r+0i]
+    expect(PushForthInterpreter.new([[:become],-0.5r,:ComplexType]).step!.stack).
+      to eq [[], -0.5r+0i]
   end
 
   # Rational -> Dictionary
