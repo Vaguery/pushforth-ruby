@@ -19,7 +19,7 @@ def randomBool
 end
 
 def randomRational
-  Rational("#{randomInteger}/#{randomInteger}")
+  Rational(Random.rand(100),Random.rand(100)+1)
 end
 
 def randomRange
