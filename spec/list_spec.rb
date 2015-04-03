@@ -52,6 +52,30 @@ describe "List instructions" do
       expect(PushForthInterpreter.new([[:length],d]).step!.stack).
         to eq [[],2]
     end
+  end
+
+  describe ":points" do
+    it "should return total number of points in List" do
+      expect(PushForthInterpreter.new([[:points],[1,[[2],3]]]).step!.stack).
+        to eq [[],6]
+    end
+
+    it "should work for an empty List" do
+      expect(PushForthInterpreter.new([[:points],[]]).step!.stack).
+        to eq [[],1]
+    end
+
+    it "should work for a number" do
+      expect(PushForthInterpreter.new([[:points],77]).step!.stack).
+        to eq [[],1]
+    end
+
+    it "should return the total size of a Dictionary" do
+      d = Dictionary.new({1 => [2], 3 => 4})
+      expect(PushForthInterpreter.new([[:points],d]).step!.stack).
+        to eq [[],6]
+    end
 
   end
+
 end

@@ -79,7 +79,7 @@ module PushForth
         :henceforth, :snapshot, :again, :wrapitup, :do_times,
       :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, 
-        :unit, :reverse, :map, :while, :until0, :leafmap, :length, :depth,
+        :unit, :reverse, :map, :while, :until0, :leafmap, :length, :depth, :points,
       :and, :or, :not, :if, :which,
       :set, :get, :dict, :merge,
       :>, :<, :≥, :≤, :==, :≠,

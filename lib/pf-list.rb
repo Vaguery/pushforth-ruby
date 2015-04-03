@@ -35,5 +35,15 @@ module PushForth
       return stack
     end
 
+    def points(stack)
+      if stack.length > 1
+        code = stack.shift
+        arg = stack.shift
+        stack.unshift(size(arg))
+        stack.unshift(code)
+      end
+      return stack
+    end
+
   end
 end
