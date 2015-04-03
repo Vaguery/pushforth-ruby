@@ -2,9 +2,6 @@ require 'spec_helper'
 
   describe "type conversions" do
     describe ":become instruction" do
-      it "should be a recognized instruction" do
-        expect(PushForthInterpreter.new.instruction?(:become)).to be true
-      end
 
       it "should disappear without any args" do
         expect(PushForthInterpreter.new([[:become]]).step!.stack).to eq [[]]
@@ -51,9 +48,9 @@ require 'spec_helper'
     end
   end
 
-  # [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RationalType, :TypeType, :UnknownType]
+  # [:BooleanType, :ComplexType, :DictionaryType, :ErrorType, :FloatType, :InstructionType, :IntegerType, :ListType, :NumberType, :RangeType, :RationalType, :TypeType, :UnknownType]
 
-  # the only "convertible" types are: Boolean, Complex, Dictionary, Float, Integer, List, Rational
+  # the only "convertible" types are: Boolean, Complex, Dictionary, Float, Integer, List, Range, Rational
   # the "unconvertible" types are: Error, Instruction, Number, Type, Unknown
   # nothing converts into an Error, Instruction, Number, Type or Unknown
 
@@ -98,6 +95,9 @@ describe "type conversions" do
     expect(PushForthInterpreter.new([[:become],false,:ListType]).step!.stack).
       to eq [[], [false]]
   end
+
+  # Boolean -> Range
+  #   let it fail
 
   # Boolean -> Rational
   it "should make a Boolean into a 1 or -1, respectively" do
@@ -147,6 +147,9 @@ describe "type conversions" do
       to eq [[],[1+2i]]
   end
 
+  # Complex -> Range
+  #   let it fail
+
   # Complex -> Rational
   it "should make a Complex into two Rationals (using #to_r)" do
     expect(PushForthInterpreter.new([[:become],1+2i,:RationalType]).step!.stack).
@@ -167,6 +170,9 @@ describe "type conversions" do
     expect(PushForthInterpreter.new([[:become],Dictionary.new(),:ListType]).step!.stack).
       to eq [[],[]]
   end
+
+  # Dictionary -> Range
+  #   let it fail
 
   # Dictionary -> Rational
   #   let it fail
@@ -205,6 +211,12 @@ describe "type conversions" do
   it "should wrap itself into a List" do
     expect(PushForthInterpreter.new([[:become],771.25,:ListType]).step!.stack).
       to eq [[],[771.25]]
+  end
+
+  # Float -> Range
+  it "should create a 'closed' Range with the value at both ends" do
+    expect(PushForthInterpreter.new([[:become],771.25,:RangeType]).step!.stack).
+      to eq [[], 771.25..771.25]
   end
 
   # Float -> Rational
@@ -252,6 +264,12 @@ describe "type conversions" do
       to eq [[],[300]]
   end
 
+  # Integer -> Range
+  it "should create a 'closed' Range with the value at both ends" do
+    expect(PushForthInterpreter.new([[:become],-33,:RangeType]).step!.stack).
+      to eq [[], -33..-33]
+  end
+
   # Integer -> Rational
   it "should use the .to_r method" do
     expect(PushForthInterpreter.new([[:become],123,:RationalType]).step!.stack).
@@ -259,7 +277,7 @@ describe "type conversions" do
   end
 
   #
-  # List -> Boolean; List -> Complex; List -> Float; List -> Integer; List -> Rational
+  # List -> Boolean; List -> Complex; List -> Float; List -> Integer; List -> Rational; List -> Range
     #   let it fail
 
   # List -> Dictionary
@@ -315,4 +333,11 @@ describe "type conversions" do
     expect(PushForthInterpreter.new([[:become],r,:ListType]).step!.stack).
       to eq [[],[r]]
   end
+
+  # Rational -> Range
+  it "should create a 'closed' Range with the value at both ends" do
+    expect(PushForthInterpreter.new([[:become],0.25r,:RangeType]).step!.stack).
+      to eq [[], (0.25r..0.25r)]
+  end
+
 end

@@ -155,12 +155,14 @@ module PushForth
       [:FloatType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
       [:FloatType,:IntegerType] => Proc.new {|arg| arg.to_i },
       [:FloatType,:ListType] => Proc.new {|arg| [arg] },
+      [:FloatType,:RangeType] => Proc.new {|arg| (arg..arg) },
       [:FloatType,:RationalType] => Proc.new {|arg| arg.to_r },
       [:IntegerType,:BooleanType] => Proc.new {|arg| arg > 0 },
       [:IntegerType,:ComplexType] => Proc.new {|arg| Complex(arg,0) },
       [:IntegerType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
       [:IntegerType,:FloatType] => Proc.new {|arg| arg.to_f },
       [:IntegerType,:ListType] => Proc.new {|arg| [arg] },
+      [:IntegerType,:RangeType] => Proc.new {|arg| (arg..arg) },
       [:IntegerType,:RationalType] => Proc.new {|arg| arg.to_r },
       [:ListType,:DictionaryType] => Proc.new do |arg| 
         arg.length.even?  ? Dictionary.new(Hash[*arg]) : Dictionary.new(Hash[*(arg.take(arg.length-1))])
@@ -170,8 +172,8 @@ module PushForth
       [:RationalType,:DictionaryType] => Proc.new {|arg| Dictionary.new({arg => arg}) },
       [:RationalType,:FloatType] => Proc.new {|arg| arg.to_f },
       [:RationalType,:IntegerType] => Proc.new {|arg| arg.to_i },
-      [:RationalType,:ListType] => Proc.new {|arg| [arg] }
-
+      [:RationalType,:ListType] => Proc.new {|arg| [arg] },
+      [:RationalType,:RangeType] => Proc.new {|arg| (arg..arg) }
     }
 
 
