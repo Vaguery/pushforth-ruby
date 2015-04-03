@@ -23,7 +23,15 @@ def randomRational
 end
 
 def randomRange
-  Random.rand() < 0.5 ? (randomInteger..randomInteger) :  (randomFloat..randomFloat)
+  if Random.rand() < 0.5
+    first = randomInteger
+    last = first + Random.rand(100)
+    (first..last)
+  else
+    first = randomFloat
+    last = first + Random.rand() * Random.rand(100)
+    (first..last)
+  end
 end
 
 def randomToken
@@ -113,7 +121,7 @@ end
 # puts id_tree(pf.stack).inspect
 
 File.open("discard.csv","w") do |file|
-  dudes = (0..100).collect do |i|
+  dudes = (0..100000).collect do |i|
     x = Random.rand(100)
     pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
     puts i
