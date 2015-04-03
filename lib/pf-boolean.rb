@@ -17,7 +17,7 @@ module PushForth
           code.unshift(instruction,arg1)
           stack.unshift(arg2)
         else
-          stack.unshift(arg2,arg1)
+          code.unshift(instruction,arg2,arg1)
         end
         stack.unshift(code)
       end
@@ -40,8 +40,11 @@ module PushForth
 
 
     def not(stack)
-      if boolean?(stack[1])
-        stack[1] = !stack[1]
+      if stack.length > 1
+        code = stack.shift
+        arg = stack.shift
+        boolean?(arg) ? stack.unshift(!arg) : code.unshift(:not,arg)
+        stack.unshift(code)
       end
       return stack
     end
@@ -49,12 +52,13 @@ module PushForth
 
     def if(stack)
       if stack.length > 2
-          code = stack.shift
+        code = stack.shift
         arg1, arg2 = stack.shift(2)
         if boolean?(arg1)
           stack.unshift(arg2) if arg1
         else
           code.unshift(:if,arg1)
+          stack.unshift(arg2)
         end
         stack.unshift(code)
       end

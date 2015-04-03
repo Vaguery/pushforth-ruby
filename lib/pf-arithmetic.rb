@@ -44,7 +44,7 @@ module PushForth
           code.unshift(instruction,arg1)
           stack.unshift(arg2)
         else
-          stack.unshift(arg2,arg1)
+          code.unshift(instruction,arg2,arg1)
         end
         stack.unshift(code)
       end

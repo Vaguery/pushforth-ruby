@@ -16,12 +16,13 @@ describe "add" do
     expect(PushForthInterpreter.new([[:add],0.125,0.5]).step!.stack).to eq [[],0.625]
   end
 
-  it "should build a continuation if either of the args isn't Numeric" do
+  it "should build a continuation if the args aren't Numeric" do
     expect(PushForthInterpreter.new([[:add],"a",2,3]).step!.stack).to eq [[:add,"a"],2,3]
     expect(PushForthInterpreter.new([[:add],2,"b",3]).step!.stack).to eq [[:add,"b"],2,3]
+    expect(PushForthInterpreter.new([[:add],"a","b",3]).step!.stack).to eq [[:add,"b","a"],3]
   end
 
-  it "should build a continuation if the specific Type of the args doesn't match" do
+  it "should build a continuation if arg1 doesn't match arg2" do
     expect(PushForthInterpreter.new([[:add],2,1.5]).step!.stack).to eq [[:add,1.5],2]
     expect(PushForthInterpreter.new([[:add],1.5,2]).step!.stack).to eq [[:add,2],1.5]
   end
@@ -65,6 +66,8 @@ describe "subtract" do
     skipB = PushForthInterpreter.new([[:subtract],5,"b",9])
     expect(skipB.step!.stack).to eq [[:subtract,"b"],5,9]
     expect(skipB.step!.stack).to eq [["b"],-4]
+    expect(PushForthInterpreter.new([[:subtract],"a","b",3]).step!.stack).
+      to eq [[:subtract,"b","a"],3]
   end
 
   it "should build a continuation if the specific Type of the args doesn't match" do
@@ -105,6 +108,8 @@ describe "multiply" do
     skipB = PushForthInterpreter.new([[:multiply],5,"b",9])
     expect(skipB.step!.stack).to eq [[:multiply,"b"],5,9]
     expect(skipB.step!.stack).to eq [["b"],45]
+    expect(PushForthInterpreter.new([[:multiply],"a","b",3]).step!.stack).
+      to eq [[:multiply,"b","a"],3]
   end
 
   it "should create an overflow when the answer is a Bignum" do
@@ -140,6 +145,8 @@ describe "divide" do
     skipB = PushForthInterpreter.new([[:divide],20.0,"b",5.0])
     expect(skipB.step!.stack).to eq [[:divide,"b"],20.0,5.0]
     expect(skipB.step!.stack).to eq [["b"],4.0]
+    expect(PushForthInterpreter.new([[:divide],"a","b",3]).step!.stack).
+      to eq [[:divide,"b","a"],3]
   end
 
   it "should return an Error if the denominator is 0" do
@@ -172,6 +179,8 @@ describe "divmod" do
     skipB = PushForthInterpreter.new([[:divmod],20.0,"b",5.0])
     expect(skipB.step!.stack).to eq [[:divmod,"b"],20.0,5.0]
     expect(skipB.step!.stack).to eq [["b"], [4.0, 0.0]]
+    expect(PushForthInterpreter.new([[:divmod],"a","b",3]).step!.stack).
+      to eq [[:divmod,"b","a"],3]
   end
 
   it "should return an Error if the denominator is 0" do

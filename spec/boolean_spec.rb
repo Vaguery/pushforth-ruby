@@ -23,6 +23,11 @@ describe "Boolean functions" do
       expect(PushForthInterpreter.new([[:and],false,"b",true]).step!.stack).to eq [[:and,"b"],false,true]
     end
 
+    it "should build a continuation if NEITHER of the args is Boolean" do
+      expect(PushForthInterpreter.new([[:and],"a","b",true]).step!.stack).
+        to eq [[:and,"b","a"],true]
+    end
+
     it "should work when the code stack is populated" do
       expect(PushForthInterpreter.new([[:and,1,2],"a",false,true]).step!.stack).
         to eq [[:and, "a", 1, 2], false, true]
@@ -55,6 +60,12 @@ describe "Boolean functions" do
       expect(PushForthInterpreter.new([[:or],false,"b",true]).step!.stack).to eq [[:or,"b"],false,true]
     end
 
+    it "should build a continuation if NEITHER of the args is Boolean" do
+      expect(PushForthInterpreter.new([[:or],"a","b",true]).step!.stack).
+        to eq [[:or,"b","a"],true]
+    end
+
+
     it "should work when the code stack is populated" do
       expect(PushForthInterpreter.new([[:or,1,2],"a",false,true]).step!.stack).
         to eq [[:or, "a", 1, 2], false, true]
@@ -72,7 +83,6 @@ describe "Boolean functions" do
 
     it "should disappear if there isn't an arg" do
       expect(PushForthInterpreter.new([[:not]]).step!.stack).to eq [[]]
-      expect(PushForthInterpreter.new([[:not],66]).step!.stack).to eq [[],66]
     end
 
     it "should invert a Boolean it finds" do
@@ -84,6 +94,11 @@ describe "Boolean functions" do
       expect(PushForthInterpreter.new([[:not,1,2],false,true]).step!.stack).
         to eq [[1, 2], true, true]
     end
+
+    it "should build a continuation if the arg isn't Boolean" do
+      expect(PushForthInterpreter.new([[:not],"a",true]).step!.stack).
+        to eq [[:not,"a"],true]
+    end
   end
 
   describe "if" do
@@ -91,7 +106,7 @@ describe "Boolean functions" do
       expect(PushForthInterpreter.new.instruction?(:if)).to be true
     end
 
-    it "should disappear if it lacks two args" do
+    it "should disappear if it lacks three args" do
       expect(PushForthInterpreter.new([[:if]]).step!.stack).to eq [[]]
       expect(PushForthInterpreter.new([[:if],true]).step!.stack).to eq [[],true]
     end
@@ -102,12 +117,13 @@ describe "Boolean functions" do
     end
 
     it "should build a continuation if arg1 isn't Boolean" do
-      expect(PushForthInterpreter.new([[:if],"a",false,88]).step!.stack).to eq [[:if, "a"], 88]
+      expect(PushForthInterpreter.new([[:if],"a",false,88]).step!.stack).
+        to eq [[:if, "a"], false, 88]
     end
 
     it "should work when the code stack is populated" do
       expect(PushForthInterpreter.new([[:if,1,2],"a",false,true]).step!.stack).
-        to eq [[:if, "a", 1, 2], true]
+        to eq [[:if, "a", 1, 2], false, true]
       expect(PushForthInterpreter.new([[:if,1,2],false,"a",true]).step!.stack).
         to eq [[1, 2], true]
     end
