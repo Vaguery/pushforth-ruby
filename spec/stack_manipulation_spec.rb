@@ -243,13 +243,9 @@ describe ":unit" do
 end
 
 
-
 describe ":concat (was ':cat')" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:concat)).to be true
-  end
 
-  it "should disappear if the top item isn't a list" do
+  it "should disappear if there aren't 2 args" do
     expect(PushForthInterpreter.new([[:concat]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:concat],1]).step!.stack).to eq [[],1]
   end
@@ -266,12 +262,16 @@ describe ":concat (was ':cat')" do
       to eq [[:concat, 3], [1, 2], [4]]
     expect(PushForthInterpreter.new([[:concat],1,[2,3],[4]]).step!.stack).
       to eq [[:concat, 1], [2, 3], [4]]
-
   end
 
   it "should work when the :code stack is populated" do
     expect(PushForthInterpreter.new([[:concat,1,2],[3,4],[5,6]]).step!.stack).
       to eq [[1,2],[3,4,5,6]]
+  end
+
+  it "should have a continuation form when neither arg is a List" do
+    expect(PushForthInterpreter.new([[:concat],1,2,3]).step!.stack).
+      to eq [[:concat, 1, 2], 3]
   end
 
   it "should be comfortable 'concatenating' empty lists" do
@@ -280,6 +280,8 @@ describe ":concat (was ':cat')" do
     expect(PushForthInterpreter.new([[:concat],[],[]]).step!.stack).to eq [[], []]
   end
 end
+
+
 
 describe ":flip!" do
   it "be a recognized instruction" do

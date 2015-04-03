@@ -32,20 +32,21 @@ module PushForth
 
     def concat(stack)
       if stack.length > 2
-        arg1 = stack.delete_at(1)
-        arg2 = stack.delete_at(1)
-        k1,k2 = [arg1.kind_of?(Array),arg2.kind_of?(Array)]
-        if k1 && k2
-          stack.insert(1,arg1+arg2)
-        elsif k1
-          stack[0].unshift(:concat,arg2)
-          stack.insert(1,arg1)
-        elsif k2
-          stack[0].unshift(:concat,arg1)
-          stack.insert(1,arg2)
+        code,arg1,arg2 = stack.shift(3)
+        type1 = list?(arg1)
+        type2 = list?(arg2)
+        if type1 && type2
+          stack.unshift(arg1+arg2)
+        elsif type1
+          code.unshift(:concat,arg2)
+          stack.unshift(arg1)
+        elsif type2
+          code.unshift(:concat,arg1)
+          stack.unshift(arg2)
         else
-          stack.insert(1,arg2,arg1)
+          code.unshift(:concat,arg1,arg2)
         end
+        stack.unshift(code)
       end
       return stack
     end
