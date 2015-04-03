@@ -98,28 +98,28 @@ describe PushForth do
     end
   end
 
-  describe "depth" do
+  describe "max_depth" do
     it "should return the (max) depth of a List" do
       pf = PushForthInterpreter.new
-      expect(pf.depth([])).to eq 1
-      expect(pf.depth(1)).to eq 0
-      expect(pf.depth([1])).to eq 1
-      expect(pf.depth([1,2])).to eq 1
-      expect(pf.depth([1,[2]])).to eq 2
-      expect(pf.depth([1,[[2]]])).to eq 3
-      expect(pf.depth([[[1],[[2]]]])).to eq 4
+      expect(pf.max_depth([])).to eq 1
+      expect(pf.max_depth(1)).to eq 0
+      expect(pf.max_depth([1])).to eq 1
+      expect(pf.max_depth([1,2])).to eq 1
+      expect(pf.max_depth([1,[2]])).to eq 2
+      expect(pf.max_depth([1,[[2]]])).to eq 3
+      expect(pf.max_depth([[[1],[[2]]]])).to eq 4
     end
 
     it "should return the (max) depth of any key or value of a Dictionary" do
       pf = PushForthInterpreter.new
       d = Dictionary.new()
-      expect(pf.depth(d)).to eq 1
+      expect(pf.max_depth(d)).to eq 1
       d.set(1,2)
-      expect(pf.depth(d)).to eq 1
+      expect(pf.max_depth(d)).to eq 1
       d.set([1],2)
-      expect(pf.depth(d)).to eq 2
-      d.set(3,[[[1],[[2]]]]) # depth = 4
-      expect(pf.depth(d)).to eq 5
+      expect(pf.max_depth(d)).to eq 2
+      d.set(3,[[[1],[[2]]]]) # max_depth = 4
+      expect(pf.max_depth(d)).to eq 5
     end
   end
 

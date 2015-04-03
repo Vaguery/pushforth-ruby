@@ -66,6 +66,7 @@ module PushForth
     require_relative './pf-comparison'
     require_relative './pf-dictionary'
     require_relative './pf-functional'
+    require_relative './pf-list'
     require_relative './pf-miscellaneous'
     require_relative './pf-range'
 
@@ -78,7 +79,7 @@ module PushForth
         :henceforth, :snapshot, :again, :wrapitup, :do_times,
       :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop, :dup, :swap, :rotate, :split, :car, :cdr, :concat, 
-        :unit, :reverse, :map, :while, :until0, :leafmap,
+        :unit, :reverse, :map, :while, :until0, :leafmap, :length, :depth,
       :and, :or, :not, :if, :which,
       :set, :get, :dict, :merge,
       :>, :<, :≥, :≤, :==, :≠,
@@ -135,9 +136,9 @@ module PushForth
           done = true
           @stack.insert(1,Error.new("HALTED: #{now-start_time} seconds elapsed"))
         end
-        if depth(@stack) >= depth_limit
+        if max_depth(@stack) >= depth_limit
           done = true
-          @stack.insert(1,Error.new("HALTED: #{depth(@stack)} exceeds depth limit"))
+          @stack.insert(1,Error.new("HALTED: #{max_depth(@stack)} exceeds depth limit"))
         end
 
       end
@@ -158,13 +159,13 @@ module PushForth
       end
     end
 
-    def depth(thing)
+    def max_depth(thing)
       case thing
       when Array
-        inner_d = thing.collect {|item| depth(item)}
+        inner_d = thing.collect {|item| max_depth(item)}
         1 + (inner_d.empty? ? 0 : inner_d.max)
       when Dictionary
-        inner_d = thing.contents.collect {|k,v| [depth(k),depth(v)]}
+        inner_d = thing.contents.collect {|k,v| [max_depth(k),max_depth(v)]}
         1 + (inner_d.empty? ? 0 : inner_d.flatten.max)
       else
         0
