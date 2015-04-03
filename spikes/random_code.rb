@@ -19,7 +19,7 @@ def randomBool
 end
 
 def randomRational
-  (1/Random.rand(1024)).to_r * randomInteger
+  (1/(1+Random.rand(100))).to_r * randomInteger
 end
 
 def randomRange
