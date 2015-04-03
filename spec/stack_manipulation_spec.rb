@@ -218,18 +218,18 @@ end
 
 
 describe ":unit" do
-  it "be a recognized instruction" do
-    expect(PushForthInterpreter.new.instruction?(:unit)).to be true
-  end
-
   it "should disappear if the top item isn't a list" do
     expect(PushForthInterpreter.new([[:unit]]).step!.stack).to eq [[]]
-    expect(PushForthInterpreter.new([[:unit],1]).step!.stack).to eq [[],1]
+  end
+
+  it "should have a continuation form if the arg isn't a List" do
+    expect(PushForthInterpreter.new([[:unit],1]).step!.stack).to eq [[:unit,1]]
   end
 
   it "should split the arg list into two, with the top item in the first" do
     expect(PushForthInterpreter.new([[:unit],[1,2]]).step!.stack).to eq [[],[1],[2]]
-    expect(PushForthInterpreter.new([[:unit],[[1,2],3],4]).step!.stack).to eq [[],[[1,2]],[3],4]
+    expect(PushForthInterpreter.new([[:unit],[[1,2],3],4]).step!.stack).
+      to eq [[],[[1,2]],[3],4]
   end
 
   it "should work when the :code stack is populated" do

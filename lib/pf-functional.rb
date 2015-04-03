@@ -143,16 +143,19 @@ module PushForth
 
 
     def unit(stack)
-      if stack[1].kind_of?(Array)
-        arg = stack.delete_at(1)
-        case arg.length
-        when 0
-          stack.insert(1,[],[])
-        when 1
-          stack.insert(1,arg,[])
+      if stack.length > 1
+        code,arg = stack.shift(2)
+        if list?(arg)
+          if !arg.empty?
+            popped = arg.shift
+            stack.unshift([popped],arg)
+          else
+            stack.unshift([],[])
+          end
         else
-          stack.insert(1,[arg[0]],arg[1..-1])
+          code.unshift(:unit,arg)
         end
+        stack.unshift(code)
       end
       return stack
     end
