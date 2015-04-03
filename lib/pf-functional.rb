@@ -3,9 +3,14 @@ module PushForth
     ### combinators
 
     def car(stack)
-      if stack[1].kind_of?(Array)
-        arg = stack.delete_at(1)
-        stack.insert(1,arg[0]) unless arg.empty?
+      if stack.length > 1
+        code,arg = stack.shift(2)
+        if list?(arg)
+          stack.unshift(arg[0]) unless arg.empty? 
+        else
+          code.unshift(:car,arg)
+        end
+        stack.unshift(code)
       end
       return stack
     end
@@ -81,7 +86,7 @@ module PushForth
     end
 
 
-    def pop(stack)
+    def pop!(stack)
       if stack.length > 2
         stack.delete_at(1)
       end
@@ -106,14 +111,21 @@ module PushForth
     end
 
 
-    def split(stack)
+    def pop(stack)
       if stack.length > 1
-        if stack[1].kind_of?(Array) && stack[1].length > 1 
-          arg = stack.delete_at(1)
-          out1 = arg[0]
-          out2 = arg.drop(1)
-          stack.insert(1,out1,out2)
+        code = stack.shift
+        arg = stack.shift
+        if list?(arg)
+          if arg.empty?
+            stack.unshift(arg)
+          else
+            popped = arg.shift
+            stack.unshift(popped,arg)
+          end
+        else
+          code.unshift(:pop,arg)
         end
+        stack.unshift(code)
       end
       return stack
     end
