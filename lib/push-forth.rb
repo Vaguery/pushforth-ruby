@@ -75,16 +75,13 @@ module PushForth
     end
 
     @@instructions = [
-      :eval, :noop, :args, :later, :flip!, :reverse!,
-        :henceforth, :snapshot, :again, :wrapitup, :do_times,
-      :add, :subtract, :multiply, :divide, :divmod, 
-      :enlist, :cons, :pop!, :dup, :swap, :rotate, :pop, :car, :cdr, :concat, 
-        :unit, :reverse, :map, :while, :until0, :leafmap, :length, :depth, :points,
-      :and, :or, :not, :if, :which,
-      :set, :get, :dict, :merge,
-      :>, :<, :≥, :≤, :==, :≠,
-      :type, :types, :is_a?, :gather_all, :gather_same, :become,
-      :cover?]
+      :<, :==, :>, :add, :again, :and, :args, :become, :car, :cdr, :concat,
+      :cons, :cover?, :depth, :dict, :divide, :divmod, :do_times, :dup,
+      :enlist, :eval, :flip!, :gather_all, :gather_same, :get, :henceforth,
+      :if, :is_a?, :later, :leafmap, :length, :map, :merge, :multiply, :noop,
+      :not, :or, :points, :pop, :pop!, :reverse, :reverse!, :rotate, :set,
+      :snapshot, :subtract, :swap, :type, :types, :unit, :until0, :which,
+      :while, :wrapitup, :≠, :≤, :≥]
 
 
     attr_accessor :stack,:steps,:arg_list
