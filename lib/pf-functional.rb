@@ -111,6 +111,12 @@ module PushForth
     end
 
 
+    def reverse!(stack)
+      return stack.reverse
+    end
+
+
+
     def rotate(stack)    
       stack[1],stack[2],stack[3] = stack[2],stack[3],stack[1] if stack.length > 3
       return stack

@@ -134,9 +134,13 @@ File.open("discard.csv","w") do |file|
     rescue SystemStackError => boom
       puts boom.message
       file.puts "**** #{boom.message} at interpreter step #{pf.steps}"
+      file.puts "**** state at interpreter step #{pf.steps}:"
+      file.puts pf.stack.inspect
     rescue StandardError => bang 
       puts "**** #{bang.message} at interpreter step #{pf.steps}"
       file.puts "**** #{bang.message} at interpreter step #{pf.steps}"
+      file.puts "**** state at interpreter step #{pf.steps}:"
+      file.puts pf.stack.inspect
     end
     pf
   end

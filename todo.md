@@ -1,7 +1,6 @@
 To Do:
 
 - `:flip` (analog of interpreter-level `:flip!`)
-- `:reverse!`
 - `:rotate!`
 - `:swap!`
 - (etc)

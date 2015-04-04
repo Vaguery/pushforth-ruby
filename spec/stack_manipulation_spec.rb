@@ -50,7 +50,6 @@ end
 
 
 describe "rotate" do
-
   it "should disappear unless there are three args" do
     expect(PushForthInterpreter.new([[:rotate]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:rotate],1]).step!.stack).to eq [[],1]
@@ -244,7 +243,6 @@ end
 
 
 describe ":concat (was ':cat')" do
-
   it "should disappear if there aren't 2 args" do
     expect(PushForthInterpreter.new([[:concat]]).step!.stack).to eq [[]]
     expect(PushForthInterpreter.new([[:concat],1]).step!.stack).to eq [[],1]
@@ -298,3 +296,21 @@ describe ":flip!" do
       to eq [[4, 5, 6]]
   end
 end
+
+
+describe ":reverse!" do
+  it "should invert the entire stack, code includes" do
+    expect(PushForthInterpreter.new([[:reverse!],[1,2],3,[4]]).step!.stack).
+      to eq [[4], 3, [1, 2], []]
+    expect(PushForthInterpreter.new([[:reverse!,1,2,3],4,5,6]).step!.stack).
+      to eq [6,5,4,[1,2,3]]
+  end
+
+  it "should work for empty :code lists and empty :data lists" do
+    expect(PushForthInterpreter.new([[:reverse!,1,2,3]]).step!.stack).
+      to eq [[1,2,3]]
+    expect(PushForthInterpreter.new([[:reverse!],4,5,6]).step!.stack).
+      to eq [6,5,4,[]]
+  end
+end
+

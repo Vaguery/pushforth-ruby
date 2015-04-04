@@ -75,7 +75,7 @@ module PushForth
     end
 
     @@instructions = [
-      :eval, :noop, :args, :later, :flip!, 
+      :eval, :noop, :args, :later, :flip!, :reverse!,
         :henceforth, :snapshot, :again, :wrapitup, :do_times,
       :add, :subtract, :multiply, :divide, :divmod, 
       :enlist, :cons, :pop!, :dup, :swap, :rotate, :pop, :car, :cdr, :concat, 

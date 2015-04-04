@@ -1,7 +1,10 @@
 require_relative '../lib/push-forth'
 include PushForth
 
-dude = [[:until0, true, -78, -91, 443, :rotate, true, -6.3125, :multiply, false, :cons, :multiply, false, -8.40625, [false, :and, :eval, -8.0625, true, :<, :snapshot, 48, :≥, 194], :subtract, 186, :concat, :and, :is_a?, -4.0, :become, :gather_same, :subtract, [:<, [false, -11, 11.78125, :flip!, -339, :gather_same, :divide, 0.71875], :multiply, true]], 186, :add, 333, :wrapitup, :subtract, :≥, -14.03125, :leafmap, :rotate, :swap, :multiply, [:snapshot, :dup, :which, :dup, :map, :and, :while, true, -15.25, :args], false, [:pop, :divmod, :snapshot, :type, 5.0625, -339, 1.71875, :leafmap, 453, :and], true, -355, [[:dict, :or, false, -185, false, [:divide, :wrapitup, :or]]]]
+dude = [[-419, 4.3125..4.937448971311051, :wrapitup, (79/58), -10.71875..27.95256649957986, -373, :types, (1/1), :cons, 463..479, (88/71), 13.53125, (26/5), :args, -438..-346, :==, :is_a?, [:snapshot, :cons, (1/1), -1.53125, :gather_same, :eval, (1/19), true, (17/2), -397], true, 359, true, [-3.1875, :swap, :rotate, false, :enlist, [true, :which, :cdr, false], -112, false, -15.6875..-13.979272221122924, :flip!, 3.625, 9.125]], :add, :not, :leafmap, [false, 12.28125..24.669040752617583, [false, -8.09375, :types, [(16/5), -15.21875, :args], false, -2.375, 11.875], 224, -3.8125, :pop!, -7.1875], -290, :not, :type, (27/29), :or, :again, :until0, :not, :which, :unit, :merge, -15.28125..-3.763113509209015, 11.125, :if, 4.78125..8.949632225180391, :cdr, :types, 12.0625, :gather_same, 379, :≠, (91/11), :≥, :subtract, (19/12), (17/31)]
+
+
+# [[:until0, true, -78, -91, 443, :rotate, true, -6.3125, :multiply, false, :cons, :multiply, false, -8.40625, [false, :and, :eval, -8.0625, true, :<, :snapshot, 48, :≥, 194], :subtract, 186, :concat, :and, :is_a?, -4.0, :become, :gather_same, :subtract, [:<, [false, -11, 11.78125, :flip!, -339, :gather_same, :divide, 0.71875], :multiply, true]], 186, :add, 333, :wrapitup, :subtract, :≥, -14.03125, :leafmap, :rotate, :swap, :multiply, [:snapshot, :dup, :which, :dup, :map, :and, :while, true, -15.25, :args], false, [:pop, :divmod, :snapshot, :type, 5.0625, -339, 1.71875, :leafmap, 453, :and], true, -355, [[:dict, :or, false, -185, false, [:divide, :wrapitup, :or]]]]
 
 
 # [[-8.03125, 1.75, [-10.8125, :args, :dup, true, [false, :until0, :dict, :do_times, :pop], -12.40625, -0.9375, 361, :is_a?, 323], :and, -13.875, :set, false, :≤, 423, :dict, :gather_all, :swap, :≤, :or, 3.65625, [[-400, :map, :rotate, -12.875, :gather_same, false, :gather_same, :if, -15.875], 48], :==, false, :henceforth, :gather_same], :args, :≥, :leafmap, -7.0, :snapshot, :gather_same, :gather_same, true, :become, :reverse, false, :become, 12.375, [:leafmap, :swap, -49, :eval, true, :==, :wrapitup, :rotate, [:type], -13, :args, [:again, :multiply, :concat, :or, :==, :get], 6.25, 328, :unit, :until0], -27, :not, true, :get, :become, :args, true, -463, [:≥]]
@@ -44,5 +47,5 @@ pf = PushForthInterpreter.new(dude,[x])
 #   puts pf.stack.inspect
 # end
 
-pf.run(step_limit:5000,time_limit:60,size_limit:5000,trace:true)
+pf.run(step_limit:5000,time_limit:120,size_limit:3000,depth_limit:500,trace:true)
 puts pf.stack.inspect
