@@ -4,7 +4,6 @@ To Do:
 - `:rotate!`
 - `:swap!`
 - (etc)
-- `Range` type conversions
 - `Range` instructions
 - `Enumerator` type
 - rework `Dictionary` to actually be a Ruby Hash
