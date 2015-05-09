@@ -1,6 +1,6 @@
 # pushforth-ruby
 
-This was originally intended to be a "quick" test-driven implementation of Maarten Keijzer's `push-forth` interpreter in the Ruby language, though it's quickly blooming into a typical Push-like language implementation. For the description I'm working from, see [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
+This was originally intended to be a "quick" test-driven implementation of Maarten Keijzer's `pushforth` interpreter in the Ruby language, though it's quickly blooming into a typical Push-like language implementation. For the description I'm working from, see [his GECCO 2013 paper](https://www.lri.fr/~hansen/proceedings/2013/GECCO/companion/p1635.pdf) (also available in the [ACM digital library](http://dl.acm.org/citation.cfm?id=2482742&dl=ACM&coll=DL&CFID=487151347&CFTOKEN=91969458) for members and subscribers).
 
 Like many languages designed for use in genetic programming (or as I prefer to say, _generative programming_) settings, `pushforth-rb` is not really intended for human beings to _read_ or even _write_. Rather it's designed to be
 
