@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'pushforth'
-  s.version     = '0.0.1'
-  s.date        = '2015-05-09'
+  s.version     = '0.0.2'
+  s.date        = '2015-05-10'
   s.summary     = "pushforth interpreter in Ruby"
   s.description = "Interpreter for Bill Tozier's variant of Maarten Keijzer's pushforth language for genetic programming."
   s.authors     = ["Bill Tozier"]
