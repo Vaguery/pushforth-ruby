@@ -22,6 +22,10 @@ def randomRational
   Rational(Random.rand(100),Random.rand(100)+1)
 end
 
+def randomBracket
+  [']','['].sample
+end
+
 def randomRange
   if Random.rand() < 0.5
     first = randomInteger
@@ -35,95 +39,38 @@ def randomRange
 end
 
 def randomToken
-  which = [:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool, :randomRational, :randomRange].sample
+  which = [:randomBracket,:randomBracket,:randomInstruction,:randomInstruction,:randomInstruction,:randomInstruction,:randomInteger,:randomFloat,:randomBool, :randomRational, :randomRange].sample
   self.method(which).call()
 end
 
-def blockOf5
-  5.times.collect {randomToken}
-end
-
-def blockOf50
-  10.times.collect {blockOf5}
-end
-
-def random_tree
-  PushForthInterpreter.new ([blockOf50.flatten ] + blockOf50)
-end
-
-
-def build_tree(tokens)
-  tree = []
-  done = false
-  until tokens.empty? || done
-    token = tokens.shift
-    if token == "("
-      meta_token = build_tree(tokens)
-      tree << meta_token
-    elsif token == ")"
-      done = true
-    else
-      tree << token
-    end
-  end
-  return tree
-end
-
-
-def tree2(points,prob=0.1)
-  triggers = []
-  script = []
-  while points > 0
-    if Random.rand() < prob
-      # branch
-      triggers << 0
-      script << "("
-    else
-      script << randomToken
-    end
-    points -= 1
-    triggers = triggers.map {|t| t += 1}
-    if triggers[0] && triggers[0] > 1.0/prob
-      script << ")"
-      points -= 1
-      triggers = triggers.drop(1)
-    end
-  end
-  while triggers[0]
-    script << ")"
-    points -= 1
-    triggers = triggers.drop(1)
-  end
-
-  script = build_tree(script)
-
-  return script
-end
 
 def first_number(dude)
   dude.stack.detect {|item| item.kind_of?(Numeric)}
 end
 
-def id_tree(stack)
-  stack.collect do |item|
-    if item.kind_of?(Array)
-      [item.object_id,id_tree(item)]
-    elsif item.kind_of?(Dictionary)
-      [item.object_id, item.contents.collect {|k,v| [id_tree(k),id_tree(v)]} ]
-    else
-      0
-    end
-  end.flatten.sort
+def linear_tokens(length)
+  length.times.collect {randomToken}
 end
+
+def light_handed_join(array_of_tokens)
+  (array_of_tokens.collect {|token| token.is_a?(Symbol) ? token.inspect : token}).join(",")
+end
+
+def random_program(length)
+  tokens = linear_tokens(length)
+  return [Script.to_program(light_handed_join(tokens))]
+end
+
+# puts random_program(20).inspect
 
 # pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50))
 # puts pf.stack.inspect
 # puts id_tree(pf.stack).inspect
 
 File.open("discard.csv","w") do |file|
-  dudes = (0..100000).collect do |i|
+  dudes = (0..10000).collect do |i|
     x = Random.rand(100)
-    pf = PushForthInterpreter.new([tree2(50,0.1)] + tree2(50), [x])
+    pf = PushForthInterpreter.new(random_program(100), [x])
     puts i
     file.puts i
     file.puts "#{pf.stack.inspect}"
