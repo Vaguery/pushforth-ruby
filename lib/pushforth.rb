@@ -69,6 +69,8 @@ module PushForth
     require_relative './pf-list'
     require_relative './pf-miscellaneous'
     require_relative './pf-range'
+    require_relative './pf-script'
+
 
     def self.instructions
       return @@instructions
