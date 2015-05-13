@@ -58,18 +58,18 @@ module PushForth
 
   class PushForthInterpreter
     ## types
-    require_relative './pf-types'
+    require_relative File.dirname(__FILE__) + '/pf-types'
 
     ## instructions
-    require_relative './pf-arithmetic'
-    require_relative './pf-boolean'
-    require_relative './pf-comparison'
-    require_relative './pf-dictionary'
-    require_relative './pf-functional'
-    require_relative './pf-list'
-    require_relative './pf-miscellaneous'
-    require_relative './pf-range'
-    require_relative './pf-script'
+    require_relative File.dirname(__FILE__) + '/pf-arithmetic'
+    require_relative File.dirname(__FILE__) + '/pf-boolean'
+    require_relative File.dirname(__FILE__) + '/pf-comparison'
+    require_relative File.dirname(__FILE__) + '/pf-dictionary'
+    require_relative File.dirname(__FILE__) + '/pf-functional'
+    require_relative File.dirname(__FILE__) + '/pf-list'
+    require_relative File.dirname(__FILE__) + '/pf-miscellaneous'
+    require_relative File.dirname(__FILE__) + '/pf-range'
+    require_relative File.dirname(__FILE__) + '/pf-script'
 
 
     def self.instructions
