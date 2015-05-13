@@ -2,11 +2,13 @@ module PushForth
   class Script < String
 
     # assume a script is a comma-delimited list where brackets are legal items
-    def self.to_program(string)
+    def self.to_code(string)
       string = balance_brackets(string)
-
+      
+      string = string.gsub(/(,\s*){2,}/,",")
       string = string.gsub(/,\s*\]/,"]")
       string = string.gsub(/\[\s*,/,"[")
+
       result =  eval("[#{string}]")
       if result.nil?
         return []

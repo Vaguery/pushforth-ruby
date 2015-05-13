@@ -1,23 +1,23 @@
 module PushForth
   class CodeGenerator
     def randomInstruction
-      PushForthInterpreter.instructions.sample
+      PushForthInterpreter.instructions.sample.inspect
     end
 
     def randomInteger(scale=1024)
-      Random.rand(scale)-scale/2
+      (Random.rand(scale)-scale/2).inspect
     end
 
     def randomFloat
-      randomInteger/32.0
+      (randomInteger.to_i/32.0).inspect
     end
 
     def randomBool
-      [true, false].sample
+      ([true, false].sample).inspect
     end
 
     def randomRational(resolution=100)
-      Rational(Random.rand(resolution),Random.rand(resolution)+1)
+      (Rational(Random.rand(resolution),Random.rand(resolution)+1)).inspect
     end
 
     def randomBracket
@@ -26,13 +26,13 @@ module PushForth
 
     def randomRange(scale=100)
       if Random.rand() < 0.5
-        first = randomInteger
+        first = randomInteger.to_i
         last = first + Random.rand(scale)
-        (first..last)
+        (first..last).inspect
       else
-        first = randomFloat
+        first = randomFloat.to_f
         last = first + Random.rand() * Random.rand(scale)
-        (first..last)
+        (first..last).inspect
       end
     end
 
@@ -49,12 +49,14 @@ module PushForth
       (array_of_tokens.collect {|token| token.is_a?(Symbol) ? token.inspect : token}).join(",")
     end
 
-    def random_program(code_length,data_length=0)
-      code_tokens = token_list(code_length)
-      data_tokens = token_list(data_length)
-      program = [Script.to_program(light_handed_join(code_tokens))]
-      program += Script.to_program(light_handed_join(data_tokens))
-      return program
+    def random_module(length)
+      token_list(length).join(",")
+    end
+
+    def random_script(code_length,data_length=0)
+      code = random_module(code_length)
+      data = random_module(data_length)
+      return "[,#{code},],#{data}"
     end
   end
 end
