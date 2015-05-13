@@ -17,6 +17,7 @@ module PushForth
       end
     end
 
+
     def self.balance_brackets(raw_script)
       token_list = raw_script.split(",")
       new_tokens = []
@@ -38,8 +39,5 @@ module PushForth
       new_tokens += ([']'] * nesting)
       return new_tokens.join(",")
     end
-  
-
-
   end
 end
