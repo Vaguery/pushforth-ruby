@@ -53,7 +53,7 @@ module PushForth
       code_tokens = token_list(code_length)
       data_tokens = token_list(data_length)
       program = [Script.to_program(light_handed_join(code_tokens))]
-      program += data_tokens if data_length > 0
+      program += Script.to_program(light_handed_join(data_tokens))
       return program
     end
   end
