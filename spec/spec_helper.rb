@@ -1,3 +1,3 @@
 require 'rspec'
-require_relative '../lib/pushforth-interpreter'
+require_relative '../lib/pushforth_interpreter'
 include PushForth

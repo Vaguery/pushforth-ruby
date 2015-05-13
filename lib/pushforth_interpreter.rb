@@ -58,18 +58,18 @@ module PushForth
 
   class PushForthInterpreter
     ## types
-    require 'pf-types'
+    require 'pf_types'
 
     ## instructions
-    require 'pf-arithmetic'
-    require 'pf-boolean'
-    require 'pf-comparison'
-    require 'pf-dictionary'
-    require 'pf-functional'
-    require 'pf-list'
-    require 'pf-miscellaneous'
-    require 'pf-range'
-    require 'pf-script'
+    require 'pf_arithmetic'
+    require 'pf_boolean'
+    require 'pf_comparison'
+    require 'pf_dictionary'
+    require 'pf_functional'
+    require 'pf_list'
+    require 'pf_miscellaneous'
+    require 'pf_range'
+    require 'pf_script'
 
 
     def self.instructions
